@@ -27,39 +27,22 @@ public class FileRepository {
         var packages = new ArrayList<Package>();
         try (var reader = new BufferedReader(new FileReader(fileName))) {
             String line;
-            var width = 0;
-            var height = 0;
-            var content = new StringBuilder();
+            var content = new ArrayList<String>();
 
             while ((line = reader.readLine()) != null) {
                 if (line.trim().isEmpty()) {
-                    var pack = new Package(width, height, content.toString());
-                    if (pack.valid()) {
-                        packages.add(pack);
-                    }
-                    else {
-                        printLogInvalidPackage(width, height, content);
-                    }
+                    packages.add(new Package(new ArrayList<>(content)));
 
-                    width = 0;
-                    height = 0;
-                    content = new StringBuilder();
+                    content = new ArrayList<>();
                     continue;
                 }
 
-                width = width < line.length() ? line.length() : width;
-                height++;
-                content.append(line);
+                content.add(line);
             }
 
             if (!content.isEmpty()) {
-                var pack = new Package(width, height, content.toString());
-                if (pack.valid()) {
-                    packages.add(pack);
-                }
-                else {
-                    printLogInvalidPackage(width, height, content);
-                }
+                var pack = new Package(content);
+                packages.add(pack);
             }
 
             log.debug("Чтение посылок из файла {} успешно завершено, загружено {} посылок", fileName, packages.size());
@@ -69,9 +52,5 @@ public class FileRepository {
             log.error("Ошибка заполнения списка посылок из файла {}", fileName, e);
             return Collections.emptyList();
         }
-    }
-
-    private static void printLogInvalidPackage(int width, int height, StringBuilder content) {
-        log.warn("Получена невалидная посылка, ширина {}, высота {}, содержимое {}", width, height, content);
     }
 }

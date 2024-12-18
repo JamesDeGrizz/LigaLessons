@@ -5,30 +5,29 @@ import ru.hofftech.liga.lessons.model.Package;
 import ru.hofftech.liga.lessons.model.Truck;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 @Slf4j
 public class OnePerTruckLogisticService implements LogisticService {
+    private final int TRUCK_MAX_WIDTH = 6;
+    private final int TRUCK_MAX_HEIGHT = 6;
+
     @Override
-    public void placePackagesToTrucks(List<Package> packages) {
+    public List<Truck> placePackagesToTrucks(List<Package> packages) {
         log.info("Начинаем заполнение грузовиков методом \"один грузовик = одна посылка\"");
+        var trucks = new ArrayList<Truck>();
 
-        for (Package pack : packages) {
-            var truckContent =  new HashMap<Integer, String>();
+        for (Package pkg : packages) {
+            var truckContentService = TruckContentServiceFactory.getTruckContentService(TRUCK_MAX_WIDTH, TRUCK_MAX_HEIGHT);
+            truckContentService.placePackage(pkg, 0, 0);
 
-            for (var i = 0; i < pack.getMaxHeight(); i++) {
-                var indexFrom = i * pack.getMaxWidth();
-                var indexTo = indexFrom + pack.getMaxWidth() > pack.getContent().length() ? pack.getContent().length() : indexFrom + pack.getMaxWidth();
-                truckContent.put(i, pack.getContent().substring(indexFrom, indexTo));
-            }
+            var truck = new Truck(truckContentService.getTruckContent());
+            trucks.add(truck);
 
-            // тут можно было бы собрать грузовики в список и куда-нибудь его отдать, но в нашем случае достаточно просто распечатать
-            var truck = new Truck(truckContent);
-            log.info("Заполнен грузовик:");
-            log.info(truck.toString());
+            log.info("Посылка {} успешно погружена в грузовик", pkg);
         }
 
         log.info("Заполнение грузовиков методом \"один грузовик = одна посылка\" успешно завершено");
+        return trucks;
     }
 }

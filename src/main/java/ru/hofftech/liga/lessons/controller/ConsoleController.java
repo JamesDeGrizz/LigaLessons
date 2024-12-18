@@ -50,7 +50,11 @@ public class ConsoleController {
                         continue;
                     }
 
-                    packageService.placePackagesFromFileIntoTrucks(fileName, PlacingAlgorithm.values()[algorithm]);
+                    var trucks = packageService.placePackagesFromFileIntoTrucks(fileName, PlacingAlgorithm.values()[algorithm]);
+                    log.info("Посылки упакованы в грузовики:");
+                    for (var truck : trucks) {
+                        log.info(truck.toString());
+                    }
                     continue;
                 default:
                     log.error("Неизвестный сбой");
