@@ -1,8 +1,8 @@
-package ru.hofftech.liga.lessons.repository;
+package ru.hofftech.liga.lessons.packageloader.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import ru.hofftech.liga.lessons.model.Package;
+import ru.hofftech.liga.lessons.packageloader.model.Package;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -14,7 +14,7 @@ import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
-public class FileRepository {
+public class FileLoaderService {
 
     public List<Package> getPackages(String fileName) {
         log.debug("Начинается чтение посылок из файла {}", fileName);

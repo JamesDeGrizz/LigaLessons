@@ -1,10 +1,9 @@
-package ru.hofftech.liga.lessons.service;
+package ru.hofftech.liga.lessons.packageloader.service;
 
 import org.junit.jupiter.api.Test;
-import ru.hofftech.liga.lessons.model.Package;
+import ru.hofftech.liga.lessons.packageloader.model.Package;
 
-import java.util.Arrays;
-import java.util.Collections;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -13,7 +12,7 @@ class TruckContentServiceTest {
     @Test
     void TruckContentService_canPlacePackage() {
         var service = TruckContentServiceFactory.getTruckContentService(6, 6);
-        var pkg = new Package(Arrays.asList("333"));
+        var pkg = new Package(List.of("333"));
 
         assertTrue(service.canPlacePackage(pkg, 0, 0));
     }

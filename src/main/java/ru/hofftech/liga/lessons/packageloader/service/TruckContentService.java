@@ -1,9 +1,9 @@
-package ru.hofftech.liga.lessons.service;
+package ru.hofftech.liga.lessons.packageloader.service;
 
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import ru.hofftech.liga.lessons.model.Package;
-import ru.hofftech.liga.lessons.model.TruckContent;
+import ru.hofftech.liga.lessons.packageloader.model.Package;
+import ru.hofftech.liga.lessons.packageloader.model.TruckContent;
 
 import java.util.stream.IntStream;
 

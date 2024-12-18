@@ -1,20 +1,19 @@
-package ru.hofftech.liga.lessons.service;
+package ru.hofftech.liga.lessons.packageloader.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import ru.hofftech.liga.lessons.model.PlacingAlgorithm;
-import ru.hofftech.liga.lessons.model.Truck;
-import ru.hofftech.liga.lessons.repository.FileRepository;
+import ru.hofftech.liga.lessons.packageloader.model.enums.PlacingAlgorithm;
+import ru.hofftech.liga.lessons.packageloader.model.Truck;
 
 import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
 public class PackageService {
-    private final FileRepository fileRepository;
+    private final FileLoaderService fileLoaderService;
 
     public List<Truck> placePackagesFromFileIntoTrucks(String fileName, PlacingAlgorithm algorithm) {
-        var packages = fileRepository.getPackages(fileName);
+        var packages = fileLoaderService.getPackages(fileName);
 
         return LogisticServiceFactory.getLogisticService(algorithm)
                 .placePackagesToTrucks(packages);

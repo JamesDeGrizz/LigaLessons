@@ -1,8 +1,8 @@
-package ru.hofftech.liga.lessons.service;
+package ru.hofftech.liga.lessons.packageloader.service;
 
 import lombok.extern.slf4j.Slf4j;
-import ru.hofftech.liga.lessons.model.Package;
-import ru.hofftech.liga.lessons.model.Truck;
+import ru.hofftech.liga.lessons.packageloader.model.Package;
+import ru.hofftech.liga.lessons.packageloader.model.Truck;
 
 import java.util.ArrayList;
 import java.util.List;

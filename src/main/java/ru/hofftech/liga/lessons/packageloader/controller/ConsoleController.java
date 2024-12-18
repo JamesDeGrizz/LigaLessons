@@ -1,10 +1,10 @@
-package ru.hofftech.liga.lessons.controller;
+package ru.hofftech.liga.lessons.packageloader.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import ru.hofftech.liga.lessons.model.Command;
-import ru.hofftech.liga.lessons.model.PlacingAlgorithm;
-import ru.hofftech.liga.lessons.service.PackageService;
+import ru.hofftech.liga.lessons.packageloader.model.enums.Command;
+import ru.hofftech.liga.lessons.packageloader.model.enums.PlacingAlgorithm;
+import ru.hofftech.liga.lessons.packageloader.service.PackageService;
 
 import java.util.Scanner;
 import java.util.regex.Pattern;
@@ -51,7 +51,6 @@ public class ConsoleController {
                     }
 
                     var trucks = packageService.placePackagesFromFileIntoTrucks(fileName, PlacingAlgorithm.values()[algorithm]);
-                    log.info("Посылки упакованы в грузовики:");
                     for (var truck : trucks) {
                         log.info(truck.toString());
                     }

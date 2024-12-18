@@ -1,11 +1,10 @@
-package ru.hofftech.liga.lessons.model;
+package ru.hofftech.liga.lessons.packageloader.model;
 
+import lombok.AllArgsConstructor;
+
+@AllArgsConstructor
 public class Truck {
     private TruckContent content;
-
-    public Truck(TruckContent content) {
-        this.content = content;
-    }
 
     @Override
     public String toString() {

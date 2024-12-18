@@ -1,4 +1,4 @@
-package ru.hofftech.liga.lessons.model;
+package ru.hofftech.liga.lessons.packageloader.model.enums;
 
 public enum PlacingAlgorithm {
     OnePerTruck,

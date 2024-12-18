@@ -1,13 +1,14 @@
-package ru.hofftech.liga.lessons.repository;
+package ru.hofftech.liga.lessons.packageloader.repository;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import ru.hofftech.liga.lessons.packageloader.service.FileLoaderService;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -15,14 +16,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FileRepositoryTests {
     private Path testFilePath;
-    private FileRepository fileRepository;
+    private FileLoaderService fileLoaderService;
 
     @BeforeEach
     void setUp() throws IOException {
-        fileRepository = new FileRepository();
+        fileLoaderService = new FileLoaderService();
 
         testFilePath = Files.createTempFile("packages_test", ".txt");
-        List<String> lines = Arrays.asList(
+        List<String> lines = List.of(
                 "1",
                 "",
                 "22",
@@ -51,20 +52,20 @@ public class FileRepositoryTests {
 
     @Test
     void FileRepository_getPackages_fileNotFound() {
-        var packages = fileRepository.getPackages("non-existent-file");
+        var packages = fileLoaderService.getPackages("non-existent-file");
         assertTrue(packages.isEmpty());
     }
 
     @Test
     void FileRepository_getPackages_emptyFile() throws IOException {
-        Files.write(testFilePath, Arrays.asList());
-        var packages = fileRepository.getPackages(testFilePath.toString());
+        Files.write(testFilePath, Collections.emptyList());
+        var packages = fileLoaderService.getPackages(testFilePath.toString());
         assertTrue(packages.isEmpty());
     }
 
     @Test
     void FileRepository_getPackages_ShouldBe4Packages() {
-        var packages = fileRepository.getPackages(testFilePath.toString());
+        var packages = fileLoaderService.getPackages(testFilePath.toString());
         assertEquals(4, packages.size());
     }
 }
