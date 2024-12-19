@@ -1,13 +1,12 @@
 package ru.hofftech.liga.lessons.packageloader.model;
 
-import lombok.AllArgsConstructor;
+import lombok.Getter;
 
-@AllArgsConstructor
+@Getter
 public class Truck {
-    private TruckContent content;
+    private char[][] content;
 
-    @Override
-    public String toString() {
-        return content.toString();
+    public Truck(int width, int height) {
+        this.content = new char[width][height];
     }
 }

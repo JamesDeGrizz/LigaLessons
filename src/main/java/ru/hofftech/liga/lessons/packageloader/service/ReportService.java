@@ -1,19 +1,12 @@
-package ru.hofftech.liga.lessons.packageloader.model;
+package ru.hofftech.liga.lessons.packageloader.service;
 
-import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.stream.IntStream;
 
-@Getter
-public class TruckContent {
-    private char[][] content;
-
-    public TruckContent(int width, int height) {
-        this.content = new char[width][height];
-    }
-
-    @Override
-    public String toString() {
+@Slf4j
+public class ReportService {
+    public void reportTruckContent(char[][] content) {
         var builder = new StringBuilder();
         builder.append("\n");
 
@@ -27,6 +20,6 @@ public class TruckContent {
         IntStream.range(0, content[0].length).forEach(j -> builder.append("+"));
         builder.append("+\n");
 
-        return builder.toString();
+        log.info(builder.toString());
     }
 }

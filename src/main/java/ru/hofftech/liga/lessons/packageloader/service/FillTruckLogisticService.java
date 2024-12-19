@@ -17,7 +17,7 @@ public class FillTruckLogisticService implements LogisticService {
         log.info("Начинаем заполнение грузовиков методом \"один грузовик = максимум посылок\"");
         var trucks = new ArrayList<Truck>();
 
-        var truckContentService = TruckContentServiceFactory.getTruckContentService(TRUCK_MAX_WIDTH, TRUCK_MAX_HEIGHT);
+        var truckContentService = TruckContentServiceFactory.getTruckService(TRUCK_MAX_WIDTH, TRUCK_MAX_HEIGHT);
         for (var pkg : packages) {
             boolean placed = false;
 
@@ -37,7 +37,7 @@ public class FillTruckLogisticService implements LogisticService {
             }
         }
 
-        trucks.add(new Truck(truckContentService.getTruckContent()));
+        trucks.add(truckContentService.getTruck());
         log.info("Заполнение грузовиков методом \"один грузовик = максимум посылок\" успешно завершено");
         return trucks;
     }

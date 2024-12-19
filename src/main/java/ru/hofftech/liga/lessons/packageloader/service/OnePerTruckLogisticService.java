@@ -18,11 +18,10 @@ public class OnePerTruckLogisticService implements LogisticService {
         var trucks = new ArrayList<Truck>();
 
         for (Package pkg : packages) {
-            var truckContentService = TruckContentServiceFactory.getTruckContentService(TRUCK_MAX_WIDTH, TRUCK_MAX_HEIGHT);
+            var truckContentService = TruckContentServiceFactory.getTruckService(TRUCK_MAX_WIDTH, TRUCK_MAX_HEIGHT);
             truckContentService.placePackage(pkg, 0, 0);
 
-            var truck = new Truck(truckContentService.getTruckContent());
-            trucks.add(truck);
+            trucks.add(truckContentService.getTruck());
 
             log.info("Посылка {} успешно погружена в грузовик", pkg);
         }

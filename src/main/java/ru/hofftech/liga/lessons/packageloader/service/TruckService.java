@@ -3,26 +3,26 @@ package ru.hofftech.liga.lessons.packageloader.service;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import ru.hofftech.liga.lessons.packageloader.model.Package;
-import ru.hofftech.liga.lessons.packageloader.model.TruckContent;
+import ru.hofftech.liga.lessons.packageloader.model.Truck;
 
 import java.util.stream.IntStream;
 
 @Slf4j
 @Getter
-public class TruckContentService {
-    private final TruckContent truckContent;
+public class TruckService {
+    private final Truck truck;
 
-    public TruckContentService(int width, int height) {
-        truckContent = new TruckContent(width, height);
+    public TruckService(int width, int height) {
+        truck = new Truck(width, height);
         IntStream.range(0, height)
                 .forEach(i -> IntStream.range(0, width)
-                        .forEach(j -> truckContent.getContent()[i][j] = ' '));
+                        .forEach(j -> truck.getContent()[i][j] = ' '));
     }
 
     public boolean canPlacePackage(Package pkg, int startRow, int startCol) {
         for (var i = 0; i < pkg.getHeight(); i++) {
             for (var j = 0; j < pkg.getWidth(); j++) {
-                if (truckContent.getContent()[startRow + i][startCol + j] != ' ') {
+                if (truck.getContent()[startRow + i][startCol + j] != ' ') {
                     log.debug("Не получится разместить посылку {} на позиции: ({}, {})", pkg, startRow, startCol);
                     return false;
                 }
@@ -36,7 +36,7 @@ public class TruckContentService {
     public void placePackage(Package pkg, int startRow, int startCol) {
         for (int i = 0; i < pkg.getHeight(); i++) {
             for (int j = 0; j < pkg.getWidth(); j++) {
-                truckContent.getContent()[startRow + i][startCol + j] = pkg.charAt(i, j);
+                truck.getContent()[startRow + i][startCol + j] = pkg.charAt(i, j);
             }
         }
     }
