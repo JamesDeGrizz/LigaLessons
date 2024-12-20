@@ -43,6 +43,4 @@ bin/
 .DS_Store
 
 ### Custom ###
-packages.txt
-packages2.txt
 gradle/
