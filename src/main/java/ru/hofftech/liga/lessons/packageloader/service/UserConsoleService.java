@@ -48,18 +48,29 @@ public class UserConsoleService {
         while (true) {
             log.info("""
                     Выбор алгоритма погрузки:
-                    0 - один грузовик = одна посылка 
+                    0 - один грузовик = одна посылка
                     1 - один грузовик = максимум посылок
                 """);
             scanner.hasNextLine();
-            var algorithm = Integer.valueOf(scanner.nextLine());
+            int algorithm = 0;
+            try {
+                algorithm = Integer.parseInt(scanner.nextLine());
+            }
+            catch (NumberFormatException e) {
+                logWrongAlgorithmArgumentError(algorithm);
+                continue;
+            }
 
-            if (algorithm == null || algorithm < 0 || algorithm > 1) {
-                log.error("Неправильное значение типа алгоритма: {}", algorithm);
+            if (algorithm < 0 || algorithm > 1) {
+                logWrongAlgorithmArgumentError(algorithm);
                 continue;
             }
 
             return PlacingAlgorithm.values()[algorithm];
         }
+    }
+
+    private static void logWrongAlgorithmArgumentError(int algorithm) {
+        log.error("Неправильное значение типа алгоритма: {}", algorithm);
     }
 }

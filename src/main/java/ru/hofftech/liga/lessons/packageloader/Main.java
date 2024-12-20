@@ -40,7 +40,6 @@ public class Main {
 
         var userCommandProcessorService = new UserCommandProcessorService(userConsoleService, userCommandServiceFactory);
 
-        var controller = new ConsoleController(userCommandProcessorService);
-        return controller;
+        return new ConsoleController(userCommandProcessorService);
     }
 }

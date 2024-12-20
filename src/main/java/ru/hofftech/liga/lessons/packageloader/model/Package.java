@@ -17,6 +17,9 @@ public class Package {
     }
 
     public int getWidth() {
+        if (content.isEmpty()) {
+            return 0;
+        }
         return content.stream().findFirst().get().length();
     }
 
