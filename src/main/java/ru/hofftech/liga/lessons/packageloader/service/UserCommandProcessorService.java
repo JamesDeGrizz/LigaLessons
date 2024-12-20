@@ -15,7 +15,8 @@ public class UserCommandProcessorService {
 
         while (true) {
             var command = userConsoleService.getUserCommand();
-            userCommandServiceFactory.getUserCommandService(command).execute();
+            var service = userCommandServiceFactory.getUserCommandService(command);
+            service.execute();
         }
     }
 }

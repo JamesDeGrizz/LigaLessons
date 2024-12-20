@@ -29,7 +29,7 @@ public class Package {
         var builder = new StringBuilder();
         builder.append("\r\n");
         for (var line : content) {
-            builder.append(line + "\r\n");
+            builder.append(line).append("\r\n");
         }
         return builder.toString();
     }
