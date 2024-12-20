@@ -5,6 +5,7 @@ import ru.hofftech.liga.lessons.packageloader.controller.ConsoleController;
 import ru.hofftech.liga.lessons.packageloader.service.FileLoaderService;
 import ru.hofftech.liga.lessons.packageloader.service.PackageService;
 import ru.hofftech.liga.lessons.packageloader.service.ReportService;
+import ru.hofftech.liga.lessons.packageloader.service.UserCommandProcessorService;
 import ru.hofftech.liga.lessons.packageloader.service.UserCommandService;
 import ru.hofftech.liga.lessons.packageloader.service.UserHelpService;
 
@@ -17,14 +18,16 @@ public class Main {
         log.info("Приложение запущено");
 
         (new ConsoleController(
-                new PackageService(
-                        new FileLoaderService(),
-                        new ReportService()
-                ),
-                new UserCommandService(
-                        new Scanner(System.in)
-                ),
-                new UserHelpService()
+                new UserCommandProcessorService(
+                        new PackageService(
+                                new FileLoaderService(),
+                                new ReportService()
+                        ),
+                        new UserHelpService(),
+                        new UserCommandService(
+                                new Scanner(System.in)
+                        )
+                )
         )).listen();
 
         log.info("Завершение работы");
