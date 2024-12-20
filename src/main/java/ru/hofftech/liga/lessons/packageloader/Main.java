@@ -6,6 +6,7 @@ import ru.hofftech.liga.lessons.packageloader.service.FileLoaderService;
 import ru.hofftech.liga.lessons.packageloader.service.PackageService;
 import ru.hofftech.liga.lessons.packageloader.service.ReportService;
 import ru.hofftech.liga.lessons.packageloader.service.UserCommandService;
+import ru.hofftech.liga.lessons.packageloader.service.UserHelpService;
 
 import java.util.Scanner;
 
@@ -22,7 +23,8 @@ public class Main {
                 ),
                 new UserCommandService(
                         new Scanner(System.in)
-                )
+                ),
+                new UserHelpService()
         )).listen();
 
         log.info("Завершение работы");

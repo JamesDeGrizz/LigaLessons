@@ -9,13 +9,11 @@ import java.util.Scanner;
 import java.util.regex.Pattern;
 
 @Slf4j
+@Getter
 public class UserCommandService {
     private final String pattern = "import (.+\\.txt)";
     private final Pattern IMPORT_COMMAND_PATTERN = Pattern.compile(pattern);
-
-    @Getter
     private String fileName;
-
     private Scanner scanner;
 
     public UserCommandService(Scanner scanner) {
@@ -32,14 +30,7 @@ public class UserCommandService {
         }
 
         if (command.equals("help")) {
-            log.info("""
-                Доступные команды:
-                help - эта справка;
-                import <filename> - загрузка файла с посылками. Паттерн: {};
-                exit - завершение работы;
-                """, pattern);
-
-            return Command.Retry;
+            return Command.Help;
         }
 
         var matcher = IMPORT_COMMAND_PATTERN.matcher(command);
