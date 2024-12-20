@@ -55,6 +55,7 @@ public class FileLoaderService {
                 return Collections.emptyList();
             }
         } catch (Exception e) {
+            log.error(e.getMessage(), e);
             return Collections.emptyList();
         }
     }

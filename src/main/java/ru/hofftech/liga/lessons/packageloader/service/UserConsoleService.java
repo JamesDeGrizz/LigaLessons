@@ -14,7 +14,7 @@ public class UserConsoleService {
     private final String pattern = "import (.+\\.txt)";
     private final Pattern IMPORT_COMMAND_PATTERN = Pattern.compile(pattern);
     private String fileName;
-    private Scanner scanner;
+    private final Scanner scanner;
 
     public UserConsoleService(Scanner scanner) {
         this.scanner = scanner;
