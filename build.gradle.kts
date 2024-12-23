@@ -14,6 +14,9 @@ dependencies {
     implementation("ch.qos.logback:logback-core:1.5.12")
     implementation("ch.qos.logback:logback-classic:1.5.12")
 
+    implementation("com.fasterxml.jackson.core:jackson-core:2.18.2")
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.18.2")
+
     implementation("org.projectlombok:lombok:1.18.36")
     compileOnly("org.projectlombok:lombok:1.18.36")
     annotationProcessor("org.projectlombok:lombok:1.18.36")

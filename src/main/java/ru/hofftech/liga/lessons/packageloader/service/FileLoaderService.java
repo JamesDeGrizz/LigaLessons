@@ -1,8 +1,10 @@
 package ru.hofftech.liga.lessons.packageloader.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ru.hofftech.liga.lessons.packageloader.model.Package;
+import ru.hofftech.liga.lessons.packageloader.model.Truck;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -54,6 +56,36 @@ public class FileLoaderService {
                 log.error("Ошибка заполнения списка посылок из файла {}", fileName, e);
                 return Collections.emptyList();
             }
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            return Collections.emptyList();
+        }
+    }
+
+    public List<Truck> getTrucks(String fileName) {
+        try {
+            log.debug("Начинается чтение грузовиков из файла {}", fileName);
+
+            var trucks = new ArrayList<Truck>();
+
+            var objectMapper = new ObjectMapper();
+            var root = objectMapper.readTree(new File(getClass().getClassLoader().getResource(fileName).toURI()));
+
+            for (var rootNode : root) {
+                var jsonNode = rootNode.fields().next().getValue();
+
+                // исходим из того, что содержимое грузовика всегда прямоугольно
+                var content = new char[jsonNode.size()][jsonNode.get(0).asText().length()];
+
+                for (int i = 0; i < jsonNode.size(); i++) {
+                    content[i] = jsonNode.get(i).asText().toCharArray();
+                }
+
+                trucks.add(new Truck(content));
+            }
+
+            log.debug("Чтение грузовиков из файла {} успешно завершено, загружено {} грузовиков", fileName, trucks.size());
+            return trucks;
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             return Collections.emptyList();

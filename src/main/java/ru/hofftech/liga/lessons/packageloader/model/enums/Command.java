@@ -1,7 +1,8 @@
 package ru.hofftech.liga.lessons.packageloader.model.enums;
 
 public enum Command {
-    Proceed,
+    ProceedTrucks,
+    ProceedPackages,
     Exit,
     Retry,
     Help

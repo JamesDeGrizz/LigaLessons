@@ -3,7 +3,6 @@ package ru.hofftech.liga.lessons.packageloader;
 import lombok.extern.slf4j.Slf4j;
 import ru.hofftech.liga.lessons.packageloader.controller.ConsoleController;
 import ru.hofftech.liga.lessons.packageloader.service.FileLoaderService;
-import ru.hofftech.liga.lessons.packageloader.service.PackageService;
 import ru.hofftech.liga.lessons.packageloader.service.ReportService;
 import ru.hofftech.liga.lessons.packageloader.service.UserCommandProcessorService;
 import ru.hofftech.liga.lessons.packageloader.service.UserConsoleService;
@@ -33,10 +32,9 @@ public class Main {
         var truckServiceFactory = new TruckServiceFactory();
         var logisticServiceFactory = new LogisticServiceFactory(truckServiceFactory);
 
-        var packageService = new PackageService(fileLoaderService, reportService, logisticServiceFactory);
-        var userHelpService = new UserHelpService();
         var userConsoleService = new UserConsoleService(new Scanner(System.in));
-        var userCommandServiceFactory = new UserCommandServiceFactory(packageService, userHelpService, userConsoleService);
+        var userHelpService = new UserHelpService();
+        var userCommandServiceFactory = new UserCommandServiceFactory(userHelpService, userConsoleService, fileLoaderService, reportService, logisticServiceFactory, truckServiceFactory);
 
         var userCommandProcessorService = new UserCommandProcessorService(userConsoleService, userCommandServiceFactory);
 
