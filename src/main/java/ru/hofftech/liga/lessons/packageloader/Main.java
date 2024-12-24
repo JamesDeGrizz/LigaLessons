@@ -6,7 +6,6 @@ import ru.hofftech.liga.lessons.packageloader.service.FileLoaderService;
 import ru.hofftech.liga.lessons.packageloader.service.ReportService;
 import ru.hofftech.liga.lessons.packageloader.service.UserCommandProcessorService;
 import ru.hofftech.liga.lessons.packageloader.service.UserConsoleService;
-import ru.hofftech.liga.lessons.packageloader.service.UserHelpService;
 import ru.hofftech.liga.lessons.packageloader.service.factory.LogisticServiceFactory;
 import ru.hofftech.liga.lessons.packageloader.service.factory.TruckServiceFactory;
 import ru.hofftech.liga.lessons.packageloader.service.factory.UserCommandServiceFactory;
@@ -33,8 +32,7 @@ public class Main {
         var logisticServiceFactory = new LogisticServiceFactory(truckServiceFactory);
 
         var userConsoleService = new UserConsoleService(new Scanner(System.in));
-        var userHelpService = new UserHelpService();
-        var userCommandServiceFactory = new UserCommandServiceFactory(userHelpService, userConsoleService, fileLoaderService, reportService, logisticServiceFactory, truckServiceFactory);
+        var userCommandServiceFactory = new UserCommandServiceFactory(userConsoleService, fileLoaderService, reportService, logisticServiceFactory, truckServiceFactory);
 
         var userCommandProcessorService = new UserCommandProcessorService(userConsoleService, userCommandServiceFactory);
 

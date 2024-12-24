@@ -22,10 +22,18 @@ public class OnePerTruckLogisticService implements LogisticService {
         }
 
         log.info("Начинаем заполнение грузовиков методом \"один грузовик = одна посылка\"");
+
+        var trucks = placePackages(packages);
+
+        log.info("Заполнение грузовиков методом \"один грузовик = одна посылка\" успешно завершено");
+        return trucks;
+    }
+
+    private List<Truck> placePackages(List<Package> packages) {
         var trucks = new ArrayList<Truck>();
 
         for (Package pkg : packages) {
-            var truckContentService = truckServiceFactory.getTruckService(TRUCK_MAX_WIDTH, TRUCK_MAX_HEIGHT);
+            var truckContentService = truckServiceFactory.getTruckService(Truck.TRUCK_MAX_WIDTH, Truck.TRUCK_MAX_HEIGHT);
             truckContentService.placePackage(pkg, 0, 0);
 
             trucks.add(truckContentService.getTruck());
@@ -33,7 +41,6 @@ public class OnePerTruckLogisticService implements LogisticService {
             log.info("Посылка \n{} успешно погружена в грузовик", pkg);
         }
 
-        log.info("Заполнение грузовиков методом \"один грузовик = одна посылка\" успешно завершено");
         return trucks;
     }
 }

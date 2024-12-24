@@ -24,8 +24,20 @@ public class UserConsoleService {
 
     public Command getUserCommand() {
         log.info("Введите команду:");
-        scanner.hasNextLine();
-        var command = scanner.nextLine();
+        String command = null;
+        try {
+            scanner.hasNextLine();
+            command = scanner.nextLine();
+        }
+        catch (Exception e) {
+            log.error(e.getMessage());
+            return Command.Retry;
+        }
+
+        if (command == null || command.isEmpty()) {
+            log.error("Вы не ввели команду. Попробуйте ещё раз.");
+            return Command.Retry;
+        }
 
         if (command.equals("exit")) {
             return Command.Exit;
@@ -55,17 +67,20 @@ public class UserConsoleService {
                         1 - один грузовик = максимум посылок
                         2 - равномерная погрузка по машинам
                     """);
-            scanner.hasNextLine();
+
             int algorithm = 0;
+            String userCommand = null;
             try {
-                algorithm = Integer.parseInt(scanner.nextLine());
+                scanner.hasNextLine();
+                userCommand = scanner.nextLine();
+                algorithm = Integer.parseInt(userCommand);
             } catch (NumberFormatException e) {
-                logWrongAlgorithmArgumentError(algorithm);
+                logWrongAlgorithmArgumentError(userCommand);
                 continue;
             }
 
             if (algorithm < 0 || algorithm > 2) {
-                logWrongAlgorithmArgumentError(algorithm);
+                logWrongAlgorithmArgumentError(userCommand);
                 continue;
             }
 
@@ -131,7 +146,7 @@ public class UserConsoleService {
         }
     }
 
-    private static void logWrongAlgorithmArgumentError(int algorithm) {
-        log.error("Неправильное значение типа алгоритма: {}", algorithm);
+    private static void logWrongAlgorithmArgumentError(String userText) {
+        log.error("Неправильное значение типа алгоритма: {}", userText == null ? "" : userText);
     }
 }

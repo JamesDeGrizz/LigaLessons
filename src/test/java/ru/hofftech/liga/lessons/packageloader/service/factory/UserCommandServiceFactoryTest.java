@@ -9,7 +9,6 @@ import ru.hofftech.liga.lessons.packageloader.service.command.HelpUserCommandSer
 import ru.hofftech.liga.lessons.packageloader.service.ReportService;
 import ru.hofftech.liga.lessons.packageloader.service.command.RetryUserCommandService;
 import ru.hofftech.liga.lessons.packageloader.service.UserConsoleService;
-import ru.hofftech.liga.lessons.packageloader.service.UserHelpService;
 import ru.hofftech.liga.lessons.packageloader.service.command.ProceedPackagesUserCommandService;
 import ru.hofftech.liga.lessons.packageloader.service.command.ProceedTrucksUserCommandService;
 
@@ -23,7 +22,6 @@ class UserCommandServiceFactoryTest {
     @BeforeEach
     void setUpOnce() {
         userCommandServiceFactory = new UserCommandServiceFactory(
-                new UserHelpService(),
                 new UserConsoleService(new Scanner(System.in)),
                 new FileLoaderService(),
                 new ReportService(),

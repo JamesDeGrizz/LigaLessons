@@ -20,11 +20,25 @@ public class FullFillTruckLogisticService implements LogisticService {
     @Override
     public List<Truck> placePackagesToTrucks(List<Package> packages, int trucksCount) {
         log.info("Начинаем заполнение грузовиков методом \"один грузовик = максимум посылок\"");
+        var truckServices = getTruckServices(trucksCount);
+
+        fillTrucks(packages, truckServices);
+
+        log.info("Заполнение грузовиков методом \"один грузовик = максимум посылок\" успешно завершено");
+        return truckServices.stream()
+                .map(x -> x.getTruck())
+                .collect(Collectors.toUnmodifiableList());
+    }
+
+    private List<TruckService> getTruckServices(int trucksCount) {
         var truckServices = new ArrayList<TruckService>();
         for (var i = 0; i < trucksCount; i++) {
-            truckServices.add(truckServiceFactory.getTruckService(TRUCK_MAX_WIDTH, TRUCK_MAX_HEIGHT));
+            truckServices.add(truckServiceFactory.getTruckService(Truck.TRUCK_MAX_WIDTH, Truck.TRUCK_MAX_HEIGHT));
         }
+        return truckServices;
+    }
 
+    private void fillTrucks(List<Package> packages, List<TruckService> truckServices) {
         for (var pkg : packages) {
             var placed = false;
             for (var truckService : truckServices) {
@@ -32,12 +46,12 @@ public class FullFillTruckLogisticService implements LogisticService {
                     break;
                 }
 
-                for (int i = 0; i <= TRUCK_MAX_HEIGHT - pkg.getHeight(); i++) {
+                for (int i = 0; i <= Truck.TRUCK_MAX_HEIGHT - pkg.getHeight(); i++) {
                     if (placed) {
                         break;
                     }
 
-                    for (int j = 0; j <= TRUCK_MAX_WIDTH - pkg.getWidth(); j++) {
+                    for (int j = 0; j <= Truck.TRUCK_MAX_WIDTH - pkg.getWidth(); j++) {
                         if (truckService.canPlacePackage(pkg, i, j)) {
                             truckService.placePackage(pkg, i, j);
                             placed = true;
@@ -51,10 +65,5 @@ public class FullFillTruckLogisticService implements LogisticService {
                 throw new IllegalArgumentException("Посылки невозможно отправить заданным алгоритмом, размер посылок превышает ёмкость грузовиков.");
             }
         }
-
-        log.info("Заполнение грузовиков методом \"один грузовик = максимум посылок\" успешно завершено");
-        return truckServices.stream()
-                .map(x -> x.getTruck())
-                .collect(Collectors.toUnmodifiableList());
     }
 }

@@ -11,11 +11,9 @@ import ru.hofftech.liga.lessons.packageloader.service.command.RetryUserCommandSe
 import ru.hofftech.liga.lessons.packageloader.service.command.ProceedTrucksUserCommandService;
 import ru.hofftech.liga.lessons.packageloader.service.interfaces.UserCommandService;
 import ru.hofftech.liga.lessons.packageloader.service.UserConsoleService;
-import ru.hofftech.liga.lessons.packageloader.service.UserHelpService;
 
 @AllArgsConstructor
 public class UserCommandServiceFactory {
-    private final UserHelpService userHelpService;
     private final UserConsoleService userConsoleService;
     private final FileLoaderService fileLoaderService;
     private final ReportService reportService;
@@ -26,7 +24,7 @@ public class UserCommandServiceFactory {
         return switch (command) {
             case Exit -> new ExitUserCommandService();
             case Retry -> new RetryUserCommandService();
-            case Help -> new HelpUserCommandService(userHelpService);
+            case Help -> new HelpUserCommandService();
             case ProceedPackages -> new ProceedPackagesUserCommandService(userConsoleService, fileLoaderService, reportService, logisticServiceFactory);
             case ProceedTrucks -> new ProceedTrucksUserCommandService(userConsoleService, fileLoaderService, reportService, truckServiceFactory);
         };

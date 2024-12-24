@@ -6,6 +6,8 @@ import java.util.stream.IntStream;
 
 @Getter
 public class Truck {
+    public static final int TRUCK_MAX_WIDTH = 6;
+    public static final int TRUCK_MAX_HEIGHT = 6;
     private final char[][] content;
 
     public Truck(int width, int height) {

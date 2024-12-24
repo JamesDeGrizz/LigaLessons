@@ -9,7 +9,9 @@ import ru.hofftech.liga.lessons.packageloader.model.Truck;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -22,42 +24,57 @@ public class FileLoaderService {
         try {
             log.debug("Начинается чтение посылок из файла {}", fileName);
 
-            var filePath = new File(getClass().getClassLoader().getResource(fileName).toURI()).toPath();
-
-            if (fileName == null || fileName.isEmpty() || !Files.exists(filePath)) {
-                log.error("Файл не найден");
+            var filePath = getFileFullPath(fileName);
+            if (filePath == null) {
                 return Collections.emptyList();
             }
 
-            var packages = new ArrayList<Package>();
-            try (var reader = new BufferedReader(new FileReader(filePath.toString()))) {
-                String line;
-                var content = new ArrayList<String>();
+            return loadPackagesFromFile(filePath);
 
-                while ((line = reader.readLine()) != null) {
-                    if (line.trim().isEmpty()) {
-                        packages.add(new Package(new ArrayList<>(content)));
-
-                        content = new ArrayList<>();
-                        continue;
-                    }
-
-                    content.add(line);
-                }
-
-                if (!content.isEmpty()) {
-                    var pack = new Package(content);
-                    packages.add(pack);
-                }
-
-                log.debug("Чтение посылок из файла {} успешно завершено, загружено {} посылок", fileName, packages.size());
-                return packages;
-            } catch (Exception e) {
-                log.error("Ошибка заполнения списка посылок из файла {}", fileName, e);
-                return Collections.emptyList();
-            }
         } catch (Exception e) {
             log.error(e.getMessage(), e);
+            return Collections.emptyList();
+        }
+    }
+
+    private Path getFileFullPath(String fileName) throws URISyntaxException {
+        var filePath = new File(getClass().getClassLoader().getResource(fileName).toURI()).toPath();
+
+        if (fileName == null || fileName.isEmpty() || !Files.exists(filePath)) {
+            log.error("Файл не найден");
+            return null;
+        }
+
+        return filePath;
+    }
+
+    private List<Package> loadPackagesFromFile(Path filePath) {
+        var packages = new ArrayList<Package>();
+
+        try (var reader = new BufferedReader(new FileReader(filePath.toString()))) {
+            String line;
+            var content = new ArrayList<String>();
+
+            while ((line = reader.readLine()) != null) {
+                if (line.trim().isEmpty()) {
+                    packages.add(new Package(new ArrayList<>(content)));
+
+                    content = new ArrayList<>();
+                    continue;
+                }
+
+                content.add(line);
+            }
+
+            if (!content.isEmpty()) {
+                var pack = new Package(content);
+                packages.add(pack);
+            }
+
+            log.debug("Чтение посылок из файла {} успешно завершено, загружено {} посылок", filePath.getFileName(), packages.size());
+            return packages;
+        } catch (Exception e) {
+            log.error("Ошибка заполнения списка посылок из файла {}", filePath.getFileName(), e);
             return Collections.emptyList();
         }
     }
@@ -87,7 +104,7 @@ public class FileLoaderService {
             log.debug("Чтение грузовиков из файла {} успешно завершено, загружено {} грузовиков", fileName, trucks.size());
             return trucks;
         } catch (Exception e) {
-            log.error(e.getMessage(), e);
+            log.error(e.getMessage());
             return Collections.emptyList();
         }
     }
