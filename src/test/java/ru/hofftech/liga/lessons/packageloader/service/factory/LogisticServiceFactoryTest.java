@@ -8,6 +8,7 @@ import ru.hofftech.liga.lessons.packageloader.service.logistic.FullFillTruckLogi
 import ru.hofftech.liga.lessons.packageloader.service.logistic.OnePerTruckLogisticService;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
 class LogisticServiceFactoryTest {
     LogisticServiceFactory logisticServiceFactory;
@@ -36,5 +37,12 @@ class LogisticServiceFactoryTest {
         var logisticService = logisticServiceFactory.getLogisticService(PlacingAlgorithm.Balanced);
         assertThat(logisticService)
                 .isInstanceOf(BalancedFillTruckLogisticService.class);
+    }
+
+    @Test
+    void getLogisticService_givenNoneOfPlacingAlgorithm_returnsIllegalArgumentException() {
+        assertThatThrownBy(() -> logisticServiceFactory.getLogisticService(PlacingAlgorithm.NoneOf))
+                .isInstanceOf(IllegalArgumentException.class);
+
     }
 }

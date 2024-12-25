@@ -55,8 +55,7 @@ class UserConsoleServiceTest {
                 .isEqualTo(Command.Retry);
 
         assertThat(outputStream.toString())
-                .contains("Введите команду")
-                .contains("Неправильная команда. Попробуйте ещё раз.");
+                .contains("Введите команду");
     }
 
     @Test
@@ -195,7 +194,7 @@ class UserConsoleServiceTest {
         userConsoleService.getAlgorithm();
 
         assertThat(outputStream.toString())
-                .contains("Неправильное значение типа алгоритма:")
+                .contains("Введённое значение нельзя привести к числу:")
                 .contains("""
                     Выбор алгоритма погрузки:
                     0 - один грузовик = одна посылка

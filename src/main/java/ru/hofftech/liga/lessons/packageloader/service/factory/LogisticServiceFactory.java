@@ -16,6 +16,7 @@ public class LogisticServiceFactory {
             case OnePerTruck -> new OnePerTruckLogisticService(truckServiceFactory);
             case FillTruck -> new FullFillTruckLogisticService(truckServiceFactory);
             case Balanced -> new BalancedFillTruckLogisticService(truckServiceFactory);
+            case NoneOf -> throw new IllegalArgumentException("Не выбран ни один алгоритм");
         };
     }
 }

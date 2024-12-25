@@ -13,6 +13,9 @@ import java.util.regex.Pattern;
 public class UserConsoleService {
     private final Pattern PACKAGES_PATTERN = Pattern.compile("import (.+\\.txt)");
     private final Pattern TRUCKS_PATTERN = Pattern.compile("import (.+\\.json)");
+    private final int FILENAME_ORDINAL_NUMBER = 1;
+    private final String EXIT_COMMAND = "exit";
+    private final String HELP_COMMAND = "help";
     private final Scanner scanner;
 
     @Getter
@@ -34,28 +37,36 @@ public class UserConsoleService {
             return Command.Retry;
         }
 
-        if (command.equals("exit")) {
+        if (command.equals(EXIT_COMMAND)) {
             return Command.Exit;
         }
 
-        if (command.equals("help")) {
+        if (command.equals(HELP_COMMAND)) {
             return Command.Help;
         }
 
+        return parseRestCommand(command);
+    }
+
+    private Command parseRestCommand(String command) {
         var packagesMatcher = PACKAGES_PATTERN.matcher(command);
         var trucksMatcher = TRUCKS_PATTERN.matcher(command);
 
-        if (!packagesMatcher.matches() && !trucksMatcher.matches()) {
-            log.error("Неправильная команда. Попробуйте ещё раз.");
+        var packagesMatches = packagesMatcher.matches();
+        var trucksMatches = trucksMatcher.matches();
+        if (!packagesMatches && !trucksMatches) {
             return Command.Retry;
         }
 
-        fileName = packagesMatcher.matches() ? packagesMatcher.group(1) : trucksMatcher.group(1);
-        return packagesMatcher.matches() ? Command.ProceedPackages : Command.ProceedTrucks;
+        fileName = packagesMatches ? packagesMatcher.group(FILENAME_ORDINAL_NUMBER) : trucksMatcher.group(FILENAME_ORDINAL_NUMBER);
+        return packagesMatches ? Command.ProceedPackages : Command.ProceedTrucks;
     }
 
     public PlacingAlgorithm getAlgorithm() {
-        while (true) {
+        var canStop = false;
+        var algorithm = 0;
+
+        while (!canStop) {
             log.info("""
                         Выбор алгоритма погрузки:
                         0 - один грузовик = одна посылка
@@ -63,7 +74,6 @@ public class UserConsoleService {
                         2 - равномерная погрузка по машинам
                     """);
 
-            int algorithm = 0;
             String userCommand = null;
             try {
                 if (scanner.hasNextLine()) {
@@ -71,96 +81,119 @@ public class UserConsoleService {
                 }
 
                 if (userCommand == null || userCommand.isEmpty()) {
-                    logWrongAlgorithmArgumentError(userCommand);
+                    log.error("Вы ничего не ввели. Попробуйте ещё раз.");
                     continue;
                 }
 
                 algorithm = Integer.parseInt(userCommand);
+
+                if (algorithm < 0 || algorithm > 2) {
+                    log.error("Неправильное значение типа алгоритма: {}", userCommand);
+                    continue;
+                }
             } catch (Exception e) {
-                logWrongAlgorithmArgumentError(userCommand);
+                log.error("Введённое значение нельзя привести к числу: {}", userCommand == null ? "" : userCommand);
                 continue;
             }
 
-            if (algorithm < 0 || algorithm > 2) {
-                logWrongAlgorithmArgumentError(userCommand);
-                continue;
-            }
-
-            return PlacingAlgorithm.values()[algorithm];
+            canStop = true;
         }
+
+        return PlacingAlgorithm.valueOf(algorithm);
     }
 
     public int getTrucksCount() {
-        while (true) {
+        var canStop = false;
+        var trucksCount = 0;
+
+        while (!canStop) {
             log.info("""
                         Введите максимальное количество грузовиков:
                     """);
-            if (!scanner.hasNextLine()) {
-                log.error("Ошибка чтения консоли. Попробуйте ещё раз.");
+
+            String truckCountString = null;
+            if (scanner.hasNextLine()) {
+                truckCountString = scanner.nextLine();
+            }
+
+            if (truckCountString == null || truckCountString.isEmpty()) {
+                log.error("Вы ничего не ввели. Попробуйте ещё раз.");
                 continue;
             }
 
-            int trucksCount = 0;
             try {
-                trucksCount = Integer.parseInt(scanner.nextLine());
+                trucksCount = Integer.parseInt(truckCountString);
+
+                if (trucksCount < 0) {
+                    log.error("Количество машин не может быть меньше 0. Попробуйте ещё раз.");
+                    continue;
+                }
             } catch (NumberFormatException e) {
                 log.error("Вы ввели не число или число больше {}. Попробуйте ещё раз.", Integer.MAX_VALUE);
                 continue;
             }
-            if (trucksCount < 0) {
-                log.error("Количество машин не может быть меньше 0. Попробуйте ещё раз.");
-                continue;
-            }
 
-            return trucksCount;
+            canStop = true;
         }
+
+        return trucksCount;
     }
 
     public boolean needSaveToFile() {
-        while (true) {
+        var canStop = false;
+        String command = null;
+
+        while (!canStop) {
             log.info("""
                         Вы хотите сохранить результат работы в файл? Введите + или -
                     """);
-            if (!scanner.hasNextLine()) {
-                log.error("Ошибка чтения консоли. Попробуйте ещё раз.");
+            if (scanner.hasNextLine()) {
+                command = scanner.nextLine();
+            }
+
+            if (command == null || command.isEmpty()) {
+                log.error("Вы ничего не ввели. Попробуйте ещё раз.");
                 continue;
             }
 
-            var command = scanner.nextLine();
             if (!command.equals("+") && !command.equals("-")) {
                 log.error("Вы ввели неправильную команду. Попробуйте ещё раз");
                 continue;
             }
 
-            return command.equals("+");
+            canStop = true;
         }
+
+        return command.equals("+");
     }
 
     public String getReportFileName() {
-        while (true) {
+        var canStop = false;
+        String fileName = null;
+
+        while (!canStop) {
             try {
                 log.info("""
                             Введите название файла. Можно указать абсолютный путь, в противном случае файл будет сохранён в директорию приложения.
                             Лучше указывайте название файла с расширением.
                         """);
-                if (!scanner.hasNextLine()) {
-                    log.error("Ошибка чтения консоли. Попробуйте ещё раз.");
+                if (scanner.hasNextLine()) {
+                    fileName = scanner.nextLine();
+                }
+
+                if (fileName == null || fileName.isEmpty()) {
+                    log.error("Вы ничего не ввели. Попробуйте ещё раз.");
                     continue;
                 }
 
-                var fileName = scanner.nextLine();
-
                 Paths.get(fileName);
 
-                return fileName;
-
+                canStop = true;
             } catch (Exception e) {
                 log.error("Вы ввели некорректное название. Попробуйте ещё раз.");
             }
         }
-    }
 
-    private static void logWrongAlgorithmArgumentError(String userText) {
-        log.error("Неправильное значение типа алгоритма: {}", userText == null ? "" : userText);
+        return fileName;
     }
 }
