@@ -14,6 +14,4 @@ public class Main {
 
         log.info("Завершение работы");
     }
-
-
 }

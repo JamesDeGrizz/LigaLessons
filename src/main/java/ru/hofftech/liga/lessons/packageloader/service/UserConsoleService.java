@@ -25,13 +25,8 @@ public class UserConsoleService {
     public Command getUserCommand() {
         log.info("Введите команду:");
         String command = null;
-        try {
-            scanner.hasNextLine();
+        if (scanner.hasNextLine()) {
             command = scanner.nextLine();
-        }
-        catch (Exception e) {
-            log.error(e.getMessage());
-            return Command.Retry;
         }
 
         if (command == null || command.isEmpty()) {
@@ -71,10 +66,17 @@ public class UserConsoleService {
             int algorithm = 0;
             String userCommand = null;
             try {
-                scanner.hasNextLine();
-                userCommand = scanner.nextLine();
+                if (scanner.hasNextLine()) {
+                    userCommand = scanner.nextLine();
+                }
+
+                if (userCommand == null || userCommand.isEmpty()) {
+                    logWrongAlgorithmArgumentError(userCommand);
+                    continue;
+                }
+
                 algorithm = Integer.parseInt(userCommand);
-            } catch (NumberFormatException e) {
+            } catch (Exception e) {
                 logWrongAlgorithmArgumentError(userCommand);
                 continue;
             }
@@ -93,7 +95,11 @@ public class UserConsoleService {
             log.info("""
                         Введите максимальное количество грузовиков:
                     """);
-            scanner.hasNextLine();
+            if (!scanner.hasNextLine()) {
+                log.error("Ошибка чтения консоли. Попробуйте ещё раз.");
+                continue;
+            }
+
             int trucksCount = 0;
             try {
                 trucksCount = Integer.parseInt(scanner.nextLine());
@@ -115,7 +121,10 @@ public class UserConsoleService {
             log.info("""
                         Вы хотите сохранить результат работы в файл? Введите + или -
                     """);
-            scanner.hasNextLine();
+            if (!scanner.hasNextLine()) {
+                log.error("Ошибка чтения консоли. Попробуйте ещё раз.");
+                continue;
+            }
 
             var command = scanner.nextLine();
             if (!command.equals("+") && !command.equals("-")) {
@@ -134,6 +143,11 @@ public class UserConsoleService {
                             Введите название файла. Можно указать абсолютный путь, в противном случае файл будет сохранён в директорию приложения.
                             Лучше указывайте название файла с расширением.
                         """);
+                if (!scanner.hasNextLine()) {
+                    log.error("Ошибка чтения консоли. Попробуйте ещё раз.");
+                    continue;
+                }
+
                 var fileName = scanner.nextLine();
 
                 Paths.get(fileName);
