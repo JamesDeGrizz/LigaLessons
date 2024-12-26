@@ -11,11 +11,11 @@ import java.util.regex.Pattern;
 
 @Slf4j
 public class UserConsoleService {
-    private final Pattern PACKAGES_PATTERN = Pattern.compile("import (.+\\.txt)");
-    private final Pattern TRUCKS_PATTERN = Pattern.compile("import (.+\\.json)");
-    private final int FILENAME_ORDINAL_NUMBER = 1;
-    private final String EXIT_COMMAND = "exit";
-    private final String HELP_COMMAND = "help";
+    private static final Pattern PACKAGES_PATTERN = Pattern.compile("import (.+\\.txt)");
+    private static final Pattern TRUCKS_PATTERN = Pattern.compile("import (.+\\.json)");
+    private static final int FILENAME_ORDINAL_NUMBER = 1;
+    private static final String EXIT_COMMAND = "exit";
+    private static final String HELP_COMMAND = "help";
     private final Scanner scanner;
 
     @Getter

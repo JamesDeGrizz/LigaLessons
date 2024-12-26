@@ -12,9 +12,9 @@ public enum PlacingAlgorithm {
 
     public static PlacingAlgorithm valueOf(int algorithm) {
         return switch(algorithm) {
-            case 0 -> PlacingAlgorithm.OnePerTruck;
-            case 1 -> PlacingAlgorithm.FillTruck;
-            case 2 -> PlacingAlgorithm.Balanced;
+            case ONE_PER_TRUCK -> PlacingAlgorithm.OnePerTruck;
+            case FILL_TRUCK -> PlacingAlgorithm.FillTruck;
+            case BALANCED -> PlacingAlgorithm.Balanced;
             default -> PlacingAlgorithm.NoneOf;
         };
     }
