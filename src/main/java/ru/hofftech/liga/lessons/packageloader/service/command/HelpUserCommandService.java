@@ -12,7 +12,8 @@ public class HelpUserCommandService implements UserCommandService {
         log.info("""
                 Доступные команды:
                 help - эта справка;
-                import <filename> - загрузка файла с посылками;
+                import <filename>.txt - загрузка файла с посылками;
+                import <filename>.json - загрузка файла с грузовиками;
                 exit - завершение работы;
                 """);
     }

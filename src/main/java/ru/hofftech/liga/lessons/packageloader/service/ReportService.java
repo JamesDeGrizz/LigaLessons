@@ -3,6 +3,7 @@ package ru.hofftech.liga.lessons.packageloader.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import ru.hofftech.liga.lessons.packageloader.model.Truck;
+import ru.hofftech.liga.lessons.packageloader.model.Package;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -12,6 +13,10 @@ import java.util.stream.IntStream;
 
 @Slf4j
 public class ReportService {
+    private static final String PACKAGES_UNLOAD_MESSAGE = "Из грузовиков извлечены следующие посылки:";
+    private static final String TRUCKS_SAVED_TO_FILE_MESSAGE = "Грузовики успешно сохранены в файл ";
+    private static final String PACKAGES_SAVED_TO_FILE_MESSAGE = "Посылки успешно сохранены в файл ";
+
     public void reportTruckContent(char[][] content) {
         var builder = new StringBuilder();
         builder.append("\n");
@@ -29,8 +34,8 @@ public class ReportService {
         log.info(builder.toString());
     }
 
-    public void reportPackages(List<ru.hofftech.liga.lessons.packageloader.model.Package> packages) {
-        log.info("Из грузовиков извлечены следующие посылки:");
+    public void reportPackages(List<Package> packages) {
+        log.info(PACKAGES_UNLOAD_MESSAGE);
         for (var pkg : packages) {
             log.info("\n" + pkg.toString());
         }
@@ -40,13 +45,13 @@ public class ReportService {
         var objectMapper = new ObjectMapper();
         try {
             objectMapper.writeValue(new File(fileName), trucks);
-            log.info("Грузовики успешно сохранены в файл " + fileName);
+            log.info(TRUCKS_SAVED_TO_FILE_MESSAGE + fileName);
         } catch (IOException e) {
             log.error(e.getMessage());
         }
     }
 
-    public void savePackagesToFile(String fileName, List<ru.hofftech.liga.lessons.packageloader.model.Package> packages) {
+    public void savePackagesToFile(String fileName, List<Package> packages) {
         var sb = new StringBuilder();
         for (var pkg : packages) {
             sb.append(pkg).append("\n");
@@ -58,7 +63,7 @@ public class ReportService {
             outputStream.write(strToBytes);
 
             outputStream.close();
-            log.info("Посылки успешно сохранены в файл " + fileName);
+            log.info(PACKAGES_SAVED_TO_FILE_MESSAGE + fileName);
         } catch (IOException e) {
             log.error(e.getMessage());
         }

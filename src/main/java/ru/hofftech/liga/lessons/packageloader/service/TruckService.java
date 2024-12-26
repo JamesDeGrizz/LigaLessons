@@ -59,25 +59,7 @@ public class TruckService {
     public List<Package> getPackages() {
         var packageList = new ArrayList<Package>();
 
-        var contentMap = new HashMap<Integer, Integer>();
-        contentMap.put(1, 0);
-        contentMap.put(2, 0);
-        contentMap.put(3, 0);
-        contentMap.put(4, 0);
-        contentMap.put(5, 0);
-        contentMap.put(6, 0);
-        contentMap.put(7, 0);
-        contentMap.put(8, 0);
-        contentMap.put(9, 0);
-
-        for (var i = 0; i < truck.getContent().length; i++) {
-            for (var j = 0; j < truck.getContent()[i].length; j++) {
-                if (truck.getContent()[i][j] != ' ') {
-                    var intValue = Integer.valueOf(truck.getContent()[i][j] - '0');
-                    contentMap.put(intValue, contentMap.get(intValue) + 1);
-                }
-            }
-        }
+        var contentMap = initPackagesMap();
 
         var sb = new StringBuilder();
         for (var content : contentMap.entrySet()) {
@@ -102,5 +84,28 @@ public class TruckService {
         }
 
         return packageList;
+    }
+
+    private HashMap<Integer, Integer> initPackagesMap() {
+        var contentMap = new HashMap<Integer, Integer>();
+        contentMap.put(1, 0);
+        contentMap.put(2, 0);
+        contentMap.put(3, 0);
+        contentMap.put(4, 0);
+        contentMap.put(5, 0);
+        contentMap.put(6, 0);
+        contentMap.put(7, 0);
+        contentMap.put(8, 0);
+        contentMap.put(9, 0);
+
+        for (var i = 0; i < truck.getContent().length; i++) {
+            for (var j = 0; j < truck.getContent()[i].length; j++) {
+                if (truck.getContent()[i][j] != ' ') {
+                    var intValue = Integer.valueOf(truck.getContent()[i][j] - '0');
+                    contentMap.put(intValue, contentMap.get(intValue) + 1);
+                }
+            }
+        }
+        return contentMap;
     }
 }

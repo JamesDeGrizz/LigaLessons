@@ -1,5 +1,6 @@
 package ru.hofftech.liga.lessons.packageloader.service;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -9,6 +10,7 @@ import ru.hofftech.liga.lessons.packageloader.model.Truck;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -85,18 +87,12 @@ public class FileLoaderService {
 
             var trucks = new ArrayList<Truck>();
 
-            var objectMapper = new ObjectMapper();
-            var root = objectMapper.readTree(new File(getClass().getClassLoader().getResource(fileName).toURI()));
+            var root = getRootNode(fileName);
 
             for (var rootNode : root) {
                 var jsonNode = rootNode.fields().next().getValue();
 
-                // исходим из того, что содержимое грузовика всегда прямоугольно
-                var content = new char[jsonNode.size()][jsonNode.get(0).asText().length()];
-
-                for (int i = 0; i < jsonNode.size(); i++) {
-                    content[i] = jsonNode.get(i).asText().toCharArray();
-                }
+                var content = parseNodeToTruckContent(jsonNode);
 
                 trucks.add(new Truck(content));
             }
@@ -107,5 +103,21 @@ public class FileLoaderService {
             log.error(e.getMessage());
             return Collections.emptyList();
         }
+    }
+
+    private JsonNode getRootNode(String fileName) throws IOException, URISyntaxException {
+        var objectMapper = new ObjectMapper();
+        var root = objectMapper.readTree(new File(getClass().getClassLoader().getResource(fileName).toURI()));
+        return root;
+    }
+
+    private char[][] parseNodeToTruckContent(JsonNode jsonNode) {
+        // исходим из того, что содержимое грузовика всегда прямоугольно
+        var content = new char[jsonNode.size()][jsonNode.get(0).asText().length()];
+
+        for (int i = 0; i < jsonNode.size(); i++) {
+            content[i] = jsonNode.get(i).asText().toCharArray();
+        }
+        return content;
     }
 }

@@ -3,6 +3,7 @@ package ru.hofftech.liga.lessons.packageloader.service.command;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ru.hofftech.liga.lessons.packageloader.model.Truck;
+import ru.hofftech.liga.lessons.packageloader.model.Package;
 import ru.hofftech.liga.lessons.packageloader.service.FileLoaderService;
 import ru.hofftech.liga.lessons.packageloader.service.ReportService;
 import ru.hofftech.liga.lessons.packageloader.service.UserConsoleService;
@@ -45,8 +46,8 @@ public class ProceedTrucksUserCommandService implements UserCommandService {
         return userConsoleService.getReportFileName();
     }
 
-    private List<ru.hofftech.liga.lessons.packageloader.model.Package> getPackagesFromTrucks(List<Truck> trucks) {
-        var packages = new ArrayList<ru.hofftech.liga.lessons.packageloader.model.Package>();
+    private List<Package> getPackagesFromTrucks(List<Truck> trucks) {
+        var packages = new ArrayList<Package>();
         for (var truck : trucks) {
             var truckService = truckServiceFactory.getTruckService(truck);
             packages.addAll(truckService.getPackages());
@@ -54,7 +55,7 @@ public class ProceedTrucksUserCommandService implements UserCommandService {
         return packages;
     }
 
-    private void saveReportToFileIfNeed(boolean needToSaveReport, String reportFileName, List<ru.hofftech.liga.lessons.packageloader.model.Package> packages) {
+    private void saveReportToFileIfNeed(boolean needToSaveReport, String reportFileName, List<Package> packages) {
         if (needToSaveReport) {
             reportService.savePackagesToFile(reportFileName, packages);
         }

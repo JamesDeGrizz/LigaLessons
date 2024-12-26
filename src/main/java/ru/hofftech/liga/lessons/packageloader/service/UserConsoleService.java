@@ -27,13 +27,9 @@ public class UserConsoleService {
 
     public Command getUserCommand() {
         log.info("Введите команду:");
-        String command = null;
-        if (scanner.hasNextLine()) {
-            command = scanner.nextLine();
-        }
+        var command = scanner.nextLine();
 
-        if (command == null || command.isEmpty()) {
-            log.error("Вы не ввели команду. Попробуйте ещё раз.");
+        if (checkCommandNullOrEmpty(command)) {
             return Command.Retry;
         }
 
@@ -46,20 +42,6 @@ public class UserConsoleService {
         }
 
         return parseRestCommand(command);
-    }
-
-    private Command parseRestCommand(String command) {
-        var packagesMatcher = PACKAGES_PATTERN.matcher(command);
-        var trucksMatcher = TRUCKS_PATTERN.matcher(command);
-
-        var packagesMatches = packagesMatcher.matches();
-        var trucksMatches = trucksMatcher.matches();
-        if (!packagesMatches && !trucksMatches) {
-            return Command.Retry;
-        }
-
-        fileName = packagesMatches ? packagesMatcher.group(FILENAME_ORDINAL_NUMBER) : trucksMatcher.group(FILENAME_ORDINAL_NUMBER);
-        return packagesMatches ? Command.ProceedPackages : Command.ProceedTrucks;
     }
 
     public PlacingAlgorithm getAlgorithm() {
@@ -76,12 +58,9 @@ public class UserConsoleService {
 
             String userCommand = null;
             try {
-                if (scanner.hasNextLine()) {
-                    userCommand = scanner.nextLine();
-                }
+                userCommand = scanner.nextLine();
 
-                if (userCommand == null || userCommand.isEmpty()) {
-                    log.error("Вы ничего не ввели. Попробуйте ещё раз.");
+                if (checkCommandNullOrEmpty(userCommand)) {
                     continue;
                 }
 
@@ -111,13 +90,9 @@ public class UserConsoleService {
                         Введите максимальное количество грузовиков:
                     """);
 
-            String truckCountString = null;
-            if (scanner.hasNextLine()) {
-                truckCountString = scanner.nextLine();
-            }
+            var truckCountString = scanner.nextLine();
 
-            if (truckCountString == null || truckCountString.isEmpty()) {
-                log.error("Вы ничего не ввели. Попробуйте ещё раз.");
+            if (checkCommandNullOrEmpty(truckCountString)) {
                 continue;
             }
 
@@ -147,12 +122,9 @@ public class UserConsoleService {
             log.info("""
                         Вы хотите сохранить результат работы в файл? Введите + или -
                     """);
-            if (scanner.hasNextLine()) {
-                command = scanner.nextLine();
-            }
+            command = scanner.nextLine();
 
-            if (command == null || command.isEmpty()) {
-                log.error("Вы ничего не ввели. Попробуйте ещё раз.");
+            if (checkCommandNullOrEmpty(command)) {
                 continue;
             }
 
@@ -177,12 +149,9 @@ public class UserConsoleService {
                             Введите название файла. Можно указать абсолютный путь, в противном случае файл будет сохранён в директорию приложения.
                             Лучше указывайте название файла с расширением.
                         """);
-                if (scanner.hasNextLine()) {
-                    fileName = scanner.nextLine();
-                }
+                fileName = scanner.nextLine();
 
-                if (fileName == null || fileName.isEmpty()) {
-                    log.error("Вы ничего не ввели. Попробуйте ещё раз.");
+                if (checkCommandNullOrEmpty(fileName)) {
                     continue;
                 }
 
@@ -195,5 +164,27 @@ public class UserConsoleService {
         }
 
         return fileName;
+    }
+
+    private boolean checkCommandNullOrEmpty(String command) {
+        if (command == null || command.isEmpty()) {
+            log.error("Вы ничего не ввели. Попробуйте ещё раз.");
+            return true;
+        }
+        return false;
+    }
+
+    private Command parseRestCommand(String command) {
+        var packagesMatcher = PACKAGES_PATTERN.matcher(command);
+        var trucksMatcher = TRUCKS_PATTERN.matcher(command);
+
+        var packagesMatches = packagesMatcher.matches();
+        var trucksMatches = trucksMatcher.matches();
+        if (!packagesMatches && !trucksMatches) {
+            return Command.Retry;
+        }
+
+        fileName = packagesMatches ? packagesMatcher.group(FILENAME_ORDINAL_NUMBER) : trucksMatcher.group(FILENAME_ORDINAL_NUMBER);
+        return packagesMatches ? Command.ProceedPackages : Command.ProceedTrucks;
     }
 }
