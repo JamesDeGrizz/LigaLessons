@@ -1,0 +1,66 @@
+package ru.hofftech.liga.lessons.packageloader.service.factory;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import ru.hofftech.liga.lessons.packageloader.model.enums.Command;
+import ru.hofftech.liga.lessons.packageloader.service.command.ExitUserCommandService;
+import ru.hofftech.liga.lessons.packageloader.service.FileLoaderService;
+import ru.hofftech.liga.lessons.packageloader.service.command.HelpUserCommandService;
+import ru.hofftech.liga.lessons.packageloader.service.ReportService;
+import ru.hofftech.liga.lessons.packageloader.service.command.RetryUserCommandService;
+import ru.hofftech.liga.lessons.packageloader.service.UserConsoleService;
+import ru.hofftech.liga.lessons.packageloader.service.command.ProceedPackagesUserCommandService;
+import ru.hofftech.liga.lessons.packageloader.service.command.ProceedTrucksUserCommandService;
+
+import java.util.Scanner;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+class UserCommandServiceFactoryTest {
+    UserCommandServiceFactory userCommandServiceFactory;
+
+    @BeforeEach
+    void setUpOnce() {
+        userCommandServiceFactory = new UserCommandServiceFactory(
+                new UserConsoleService(new Scanner(System.in)),
+                new FileLoaderService(),
+                new ReportService(),
+                new LogisticServiceFactory(new TruckServiceFactory()),
+                new TruckServiceFactory());
+    }
+
+    @Test
+    void getUserCommandService_givenExitCommand_returnsExitUserCommandService() {
+        var userCommandService = userCommandServiceFactory.getUserCommandService(Command.Exit);
+        assertThat(userCommandService)
+                .isInstanceOf(ExitUserCommandService.class);
+    }
+
+    @Test
+    void getUserCommandService_givenHelpCommand_returnsHelpUserCommandService() {
+        var userCommandService = userCommandServiceFactory.getUserCommandService(Command.Help);
+        assertThat(userCommandService)
+                .isInstanceOf(HelpUserCommandService.class);
+    }
+
+    @Test
+    void getUserCommandService_givenRetryCommand_returnsRetryUserCommandService() {
+        var userCommandService = userCommandServiceFactory.getUserCommandService(Command.Retry);
+        assertThat(userCommandService)
+                .isInstanceOf(RetryUserCommandService.class);
+    }
+
+    @Test
+    void getUserCommandService_givenProceedPackagesCommand_returnsProceedPackagesUserCommandService() {
+        var userCommandService = userCommandServiceFactory.getUserCommandService(Command.ProceedPackages);
+        assertThat(userCommandService)
+                .isInstanceOf(ProceedPackagesUserCommandService.class);
+    }
+
+    @Test
+    void getUserCommandService_givenProceedTrucksCommand_returnsProceedTrucksUserCommandService() {
+        var userCommandService = userCommandServiceFactory.getUserCommandService(Command.ProceedTrucks);
+        assertThat(userCommandService)
+                .isInstanceOf(ProceedTrucksUserCommandService.class);
+    }
+}

@@ -30,7 +30,6 @@ public class Package {
     @Override
     public String toString() {
         var builder = new StringBuilder();
-        builder.append("\r\n");
         for (var line : content) {
             builder.append(line).append("\r\n");
         }
