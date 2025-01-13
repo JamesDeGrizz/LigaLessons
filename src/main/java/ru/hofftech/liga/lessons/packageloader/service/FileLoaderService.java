@@ -16,10 +16,20 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Сервис для загрузки данных из файлов.
+ * Этот класс предоставляет методы для чтения имен посылок и информации о грузовиках из файлов.
+ */
 @Slf4j
 @RequiredArgsConstructor
 public class FileLoaderService {
 
+    /**
+     * Получает имена посылок из указанного файла.
+     *
+     * @param fileName имя файла, содержащего имена посылок
+     * @return массив имен посылок или null, если произошла ошибка
+     */
     public String[] getPackageNames(String fileName) {
         try {
             log.debug("Начинается чтение посылок из файла {}", fileName);
@@ -37,6 +47,13 @@ public class FileLoaderService {
         }
     }
 
+    /**
+     * Получает полный путь к файлу.
+     *
+     * @param fileName имя файла
+     * @return полный путь к файлу или null, если файл не найден
+     * @throws URISyntaxException если URI синтаксически неверен
+     */
     private Path getFileFullPath(String fileName) throws URISyntaxException {
         var filePath = new File(getClass().getClassLoader().getResource(fileName).toURI()).toPath();
 
@@ -48,6 +65,12 @@ public class FileLoaderService {
         return filePath;
     }
 
+    /**
+     * Загружает имена посылок из файла.
+     *
+     * @param filePath путь к файлу
+     * @return массив имен посылок или null, если произошла ошибка
+     */
     private String[] loadPackageNamesFromFile(Path filePath) {
         var packages = new ArrayList<String>();
 
@@ -66,6 +89,12 @@ public class FileLoaderService {
         }
     }
 
+    /**
+     * Получает список грузовиков из указанного файла.
+     *
+     * @param fileName имя файла, содержащего информацию о грузовиках
+     * @return список грузовиков или пустой список, если произошла ошибка
+     */
     public List<Truck> getTrucks(String fileName) {
         try {
             log.debug("Начинается чтение грузовиков из файла {}", fileName);

@@ -18,6 +18,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * Сервис для загрузки посылок на основе команд пользователя.
+ * Этот класс реализует интерфейс {@link UserCommandService} и предоставляет методы для обработки команд загрузки посылок.
+ */
 @Slf4j
 @AllArgsConstructor
 public class LoadPackagesUserCommandService implements UserCommandService {
@@ -34,6 +38,12 @@ public class LoadPackagesUserCommandService implements UserCommandService {
     private final PackageRepository packageRepository;
     private final List<String> errors = new ArrayList<>();
 
+    /**
+     * Выполняет команду загрузки посылок на основе переданных аргументов.
+     *
+     * @param arguments аргументы команды
+     * @return сообщение о результате выполнения команды
+     */
     @Override
     public String execute(Map<String, String> arguments) {
         var algorithm = getPlacingAlgorithm(arguments);

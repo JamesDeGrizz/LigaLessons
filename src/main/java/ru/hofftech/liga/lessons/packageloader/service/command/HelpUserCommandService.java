@@ -5,8 +5,18 @@ import ru.hofftech.liga.lessons.packageloader.service.interfaces.UserCommandServ
 
 import java.util.Map;
 
+/**
+ * Сервис для вывода справки по доступным командам.
+ * Этот класс реализует интерфейс {@link UserCommandService} и предоставляет метод для вывода информации о доступных командах и их использовании.
+ */
 @AllArgsConstructor
 public class HelpUserCommandService implements UserCommandService {
+    /**
+     * Выполняет команду вывода справки.
+     *
+     * @param arguments аргументы команды (не используются в данном методе)
+     * @return строка с информацией о доступных командах и их использовании
+     */
     @Override
     public String execute(Map<String, String> arguments) {
         return """

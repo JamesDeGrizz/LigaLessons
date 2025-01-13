@@ -13,11 +13,26 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Сервис для заполнения грузовиков методом "один грузовик = одна посылка".
+ * Этот класс реализует интерфейс {@link LogisticService} и предоставляет методы для размещения одной посылки в одном грузовике.
+ */
 @Slf4j
 @AllArgsConstructor
 public class FullFillTruckLogisticService implements LogisticService {
+    /**
+     * Фабрика сервисов для работы с грузовиками.
+     */
     private final TruckServiceFactory truckServiceFactory;
 
+    /**
+     * Размещает посылки в грузовиках методом "один грузовик = одна посылка".
+     *
+     * @param packages список посылок для размещения
+     * @param truckSizes список размеров грузовиков
+     * @return список грузовиков с размещенными посылками
+     * @throws IllegalArgumentException если количество посылок превышает количество грузовиков
+     */
     @Override
     public List<Truck> placePackagesToTrucks(List<Package> packages, List<TruckSize> truckSizes) {
         log.info("Начинаем заполнение грузовиков методом \"один грузовик = максимум посылок\"");
@@ -31,6 +46,12 @@ public class FullFillTruckLogisticService implements LogisticService {
                 .collect(Collectors.toUnmodifiableList());
     }
 
+    /**
+     * Получает список сервисов для работы с грузовиками на основе их размеров, отсортированных по возрастанию площади.
+     *
+     * @param truckSizes список размеров грузовиков
+     * @return список сервисов для работы с грузовиками
+     */
     private List<TruckService> getTruckServices(List<TruckSize> truckSizes) {
         var truckServices = new ArrayList<TruckService>();
         for (var truckSize : truckSizes) {
@@ -39,6 +60,13 @@ public class FullFillTruckLogisticService implements LogisticService {
         return truckServices;
     }
 
+    /**
+     * Размещает посылки в грузовиках, один грузовик на одну посылку.
+     *
+     * @param packages список посылок для размещения
+     * @param truckServices список сервисов для работы с грузовиками
+     * @return список грузовиков с размещенными посылками
+     */
     private void fillTrucks(List<Package> packages, List<TruckService> truckServices) {
         for (var pkg : packages) {
             var placed = false;

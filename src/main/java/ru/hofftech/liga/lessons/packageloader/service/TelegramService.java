@@ -13,15 +13,37 @@ import ru.hofftech.liga.lessons.packageloader.model.enums.CommandSource;
 
 import java.util.concurrent.BlockingQueue;
 
+/**
+ * Сервис для взаимодействия с Telegram ботом.
+ * Этот класс расширяет {@link TelegramLongPollingBot} и предоставляет методы для обработки сообщений и команд,
+ * поступающих от пользователей через Telegram.
+ */
 @Slf4j
 @RequiredArgsConstructor
 public class TelegramService extends TelegramLongPollingBot {
+    /**
+     * Очередь команд пользователя для обработки.
+     */
     private final BlockingQueue<UserCommand> queue;
+
+    /**
+     * Имя пользователя Telegram бота.
+     */
     private final String username;
+
+    /**
+     * Токен Telegram бота.
+     */
     private final String token;
 
+    /**
+     * Идентификатор последнего чата.
+     */
     private long lastChatId = -1;
 
+    /**
+     * Инициализирует Telegram бота и регистрирует его в Telegram API.
+     */
     public void initialize() {
         try {
             TelegramBotsApi telegramBotsApi = new TelegramBotsApi(DefaultBotSession.class);
@@ -41,6 +63,11 @@ public class TelegramService extends TelegramLongPollingBot {
         return token;
     }
 
+    /**
+     * Обрабатывает полученные обновления от Telegram.
+     *
+     * @param update обновление от Telegram
+     */
     @Override
     public void onUpdateReceived(Update update) {
         if (update.hasMessage() && update.getMessage().hasText()) {
@@ -62,6 +89,11 @@ public class TelegramService extends TelegramLongPollingBot {
         }
     }
 
+    /**
+     * Отправляет сообщение в чат Telegram.
+     *
+     * @param textToSend текст сообщения для отправки
+     */
     public void sendMessage(String textToSend) {
         var message = new SendMessage();
         message.setChatId(String.valueOf(lastChatId));

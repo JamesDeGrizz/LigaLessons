@@ -1,6 +1,5 @@
 package ru.hofftech.liga.lessons.packageloader.repository;
 
-import lombok.extern.slf4j.Slf4j;
 import ru.hofftech.liga.lessons.packageloader.model.Package;
 
 import java.util.HashMap;
@@ -8,10 +7,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-@Slf4j
+/**
+ * Репозиторий посылок, который управляет хранением и доступом к посылкам.
+ * Этот класс предоставляет методы для добавления, поиска, обновления и удаления посылок.
+ */
 public class PackageRepository {
+    /**
+     * Хранилище посылок, где ключом является имя посылки, а значением - сама посылка.
+     */
     private Map<String, Package> packages;
 
+    /**
+     * Конструктор по умолчанию, инициализирующий репозиторий с заранее определенными посылками.
+     */
     public PackageRepository() {
         packages = new HashMap<>();
         packages.put("Посылка тип 1", new Package(List.of("1"), "Посылка тип 1", '1'));
@@ -25,6 +33,11 @@ public class PackageRepository {
         packages.put("Посылка тип 9", new Package(List.of("999", "999", "999"), "Посылка тип 9", '9'));
     }
 
+    /**
+     * Конструктор, инициализирующий репозиторий с дополнительными посылками.
+     *
+     * @param additionalValues дополнительные посылки для инициализации репозитория
+     */
     public PackageRepository(Map<String, Package> additionalValues) {
         this();
         for (var additionalPackage : additionalValues.entrySet()) {
@@ -32,6 +45,12 @@ public class PackageRepository {
         }
     }
 
+    /**
+     * Добавляет новую посылку в репозиторий.
+     *
+     * @param pkg посылка для добавления
+     * @return true, если посылка была успешно добавлена, false, если посылка с таким именем уже существует
+     */
     public boolean add(Package pkg) {
         if (packages.containsKey(pkg.getName())) {
             return false;
@@ -41,6 +60,12 @@ public class PackageRepository {
         return true;
     }
 
+    /**
+     * Находит посылку по имени.
+     *
+     * @param name имя посылки
+     * @return найденная посылка или null, если посылка с таким именем не найдена
+     */
     public Package find(String name) {
         if (!packages.containsKey(name)) {
             return null;
@@ -49,10 +74,22 @@ public class PackageRepository {
         return packages.get(name);
     }
 
+    /**
+     * Возвращает список всех посылок в репозитории.
+     *
+     * @return список всех посылок
+     */
     public List<Package> findAll() {
         return packages.values().stream().collect(Collectors.toList());
     }
 
+    /**
+     * Обновляет существующую посылку в репозитории.
+     *
+     * @param packageSourceId имя существующей посылки
+     * @param pkg новая посылка для обновления
+     * @return true, если посылка была успешно обновлена, false, если посылка с таким именем не найдена
+     */
     public boolean update(String packageSourceId, Package pkg) {
         if (!packages.containsKey(packageSourceId)) {
             return false;
@@ -63,6 +100,12 @@ public class PackageRepository {
         return true;
     }
 
+    /**
+     * Удаляет посылку из репозитория по имени.
+     *
+     * @param name имя посылки для удаления
+     * @return true, если посылка была успешно удалена, false, если посылка с таким именем не найдена
+     */
     public boolean delete(String name) {
         if (!packages.containsKey(name)) {
             return false;

@@ -12,12 +12,21 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+/**
+ * Сервис для создания отчетов и сохранения данных о посылках и грузовиках.
+ * Этот класс предоставляет методы для вывода содержимого грузовиков, создания отчетов о посылках и сохранения данных в файлы.
+ */
 @Slf4j
 public class ReportService {
     private static final String PACKAGES_UNLOAD_MESSAGE = "Из грузовиков извлечены следующие посылки:";
     private static final String TRUCKS_SAVED_TO_FILE_MESSAGE = "Грузовики успешно сохранены в файл ";
     private static final String PACKAGES_SAVED_TO_FILE_MESSAGE = "Посылки успешно сохранены в файл ";
 
+    /**
+     * Выводит содержимое грузовика в виде отчета.
+     *
+     * @param content содержимое грузовика в виде двумерного массива символов
+     */
     public void reportTruckContent(char[][] content) {
         var builder = new StringBuilder();
         builder.append("\n");
@@ -35,6 +44,12 @@ public class ReportService {
         log.info(builder.toString());
     }
 
+    /**
+     * Выводит отчет о посылках.
+     *
+     * @param packages список посылок
+     * @param withCount флаг, указывающий, нужно ли включать количество посылок
+     */
     public void reportPackages(List<Package> packages, boolean withCount) {
         log.info(PACKAGES_UNLOAD_MESSAGE);
         if (withCount) {
@@ -51,6 +66,12 @@ public class ReportService {
         }
     }
 
+    /**
+     * Сохраняет информацию о грузовиках в файл.
+     *
+     * @param fileName имя файла для сохранения
+     * @param trucks список грузовиков
+     */
     public void saveTrucksToFile(String fileName, List<Truck> trucks) {
         var objectMapper = new ObjectMapper();
         try {
@@ -61,6 +82,13 @@ public class ReportService {
         }
     }
 
+    /**
+     * Сохраняет информацию о посылках в файл.
+     *
+     * @param fileName имя файла для сохранения
+     * @param packages список посылок
+     * @param withCount флаг, указывающий, нужно ли включать количество посылок
+     */
     public void savePackagesToFile(String fileName, List<Package> packages, boolean withCount) {
         var sb = new StringBuilder();
         if (withCount) {

@@ -13,11 +13,26 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Сервис для заполнения грузовиков методом "один грузовик = максимум посылок".
+ * Этот класс реализует интерфейс {@link LogisticService} и предоставляет методы для заполнения грузовиков посылками,
+ * стараясь разместить максимальное количество посылок в каждом грузовике.
+ */
 @Slf4j
 @AllArgsConstructor
 public class OnePerTruckLogisticService implements LogisticService {
+    /**
+     * Фабрика сервисов для работы с грузовиками.
+     */
     private final TruckServiceFactory truckServiceFactory;
 
+    /**
+     * Размещает посылки в грузовиках методом "один грузовик = максимум посылок".
+     *
+     * @param packages список посылок для размещения
+     * @param truckSizes список размеров грузовиков
+     * @return список грузовиков с размещенными посылками
+     */
     @Override
     public List<Truck> placePackagesToTrucks(List<Package> packages, List<TruckSize> truckSizes) {
         if (packages.size() > truckSizes.size()) {
@@ -34,6 +49,12 @@ public class OnePerTruckLogisticService implements LogisticService {
         return trucks;
     }
 
+    /**
+     * Получает список сервисов для работы с грузовиками на основе их размеров.
+     *
+     * @param truckSizes список размеров грузовиков
+     * @return список сервисов для работы с грузовиками
+     */
     private List<TruckService> getTruckServices(List<TruckSize> truckSizes) {
         var sortedSizes = truckSizes.stream()
                 .sorted((p1, p2) -> p1.getWidth() * p1.getHeight() - p2.getWidth() * p2.getHeight())
@@ -46,6 +67,12 @@ public class OnePerTruckLogisticService implements LogisticService {
         return truckServices;
     }
 
+    /**
+     * Заполняет грузовики посылками, стараясь разместить максимальное количество посылок в каждом грузовике.
+     *
+     * @param packages список посылок для размещения
+     * @param truckServices список сервисов для работы с грузовиками
+     */
     private List<Truck> placePackages(List<Package> packages, List<TruckService> truckServices) {
         var trucks = new ArrayList<Truck>();
 

@@ -6,10 +6,23 @@ import ru.hofftech.liga.lessons.packageloader.service.interfaces.UserCommandServ
 
 import java.util.Map;
 
+/**
+ * Сервис для поиска посылок на основе команд пользователя.
+ * Этот класс реализует интерфейс {@link UserCommandService} и предоставляет методы для обработки команд поиска посылок.
+ */
 @AllArgsConstructor
 public class FindPackageUserCommandService implements UserCommandService {
+    /**
+     * Репозиторий посылок, используемый для хранения и управления посылками.
+     */
     private final PackageRepository packageRepository;
 
+    /**
+     * Выполняет команду поиска посылок на основе переданных аргументов.
+     *
+     * @param arguments аргументы команды
+     * @return строковое представление найденных посылок или сообщение об ошибке
+     */
     @Override
     public String execute(Map<String, String> arguments) {
         if (arguments == null || arguments.isEmpty()) {

@@ -8,6 +8,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+/**
+ * Сервис для парсинга команд пользователя и их аргументов.
+ * Этот класс предоставляет методы для разбора команд и аргументов, введенных пользователем, и преобразования их в удобный для обработки формат.
+ */
 @Slf4j
 public class UserCommandParserService {
     private static final int COMMAND_GROUP_NUMBER = 1;
@@ -34,6 +38,12 @@ public class UserCommandParserService {
     private final Pattern oneArgumentPattern = Pattern.compile(ONE_ARGUMENT_REGEX);
     private final Pattern flagsArgumentPattern = Pattern.compile(FLAGS_ARGUMENT_REGEX);
 
+    /**
+     * Разбирает команду пользователя и возвращает соответствующую команду.
+     *
+     * @param userCommand команда пользователя
+     * @return команда, соответствующая введенной пользователем команде
+     */
     public Command parseCommand(String userCommand) {
         var commandMatcher = commandPattern.matcher(userCommand);
 
@@ -54,6 +64,12 @@ public class UserCommandParserService {
         };
     }
 
+    /**
+     * Разбирает аргументы команды пользователя и возвращает их в виде HashMap.
+     *
+     * @param userCommand команда пользователя
+     * @return HashMap аргументов команды
+     */
     public Map<String, String> parseArguments(String userCommand) {
         var commandMatcher = commandPattern.matcher(userCommand);
 

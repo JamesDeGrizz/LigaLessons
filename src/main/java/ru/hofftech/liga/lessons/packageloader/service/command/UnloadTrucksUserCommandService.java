@@ -1,7 +1,6 @@
 package ru.hofftech.liga.lessons.packageloader.service.command;
 
 import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import ru.hofftech.liga.lessons.packageloader.model.Package;
 import ru.hofftech.liga.lessons.packageloader.model.Truck;
 import ru.hofftech.liga.lessons.packageloader.service.FileLoaderService;
@@ -14,7 +13,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-@Slf4j
+/**
+ * Сервис для разгрузки грузовиков на основе команд пользователя.
+ * Этот класс реализует интерфейс {@link UserCommandService} и предоставляет методы для обработки команд разгрузки грузовиков.
+ */
 @AllArgsConstructor
 public class UnloadTrucksUserCommandService implements UserCommandService {
     private static final String ARGUMENT_IN_FILE = "-infile";
@@ -27,6 +29,12 @@ public class UnloadTrucksUserCommandService implements UserCommandService {
 
     private final List<String> errors = new ArrayList<>();
 
+    /**
+     * Выполняет команду разгрузки грузовиков на основе переданных аргументов.
+     *
+     * @param arguments аргументы команды
+     * @return сообщение о результате выполнения команды
+     */
     @Override
     public String execute(Map<String, String> arguments) {
         var reportFileName = getReportFileName(arguments);
