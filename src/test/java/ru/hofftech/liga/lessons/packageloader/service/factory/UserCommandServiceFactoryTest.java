@@ -9,8 +9,8 @@ import ru.hofftech.liga.lessons.packageloader.service.command.HelpUserCommandSer
 import ru.hofftech.liga.lessons.packageloader.service.ReportService;
 import ru.hofftech.liga.lessons.packageloader.service.command.RetryUserCommandService;
 import ru.hofftech.liga.lessons.packageloader.service.UserConsoleService;
-import ru.hofftech.liga.lessons.packageloader.service.command.ProceedPackagesUserCommandService;
-import ru.hofftech.liga.lessons.packageloader.service.command.ProceedTrucksUserCommandService;
+import ru.hofftech.liga.lessons.packageloader.service.command.LoadPackagesUserCommandService;
+import ru.hofftech.liga.lessons.packageloader.service.command.UnloadTrucksUserCommandService;
 
 import java.util.Scanner;
 
@@ -52,15 +52,15 @@ class UserCommandServiceFactoryTest {
 
     @Test
     void getUserCommandService_givenProceedPackagesCommand_returnsProceedPackagesUserCommandService() {
-        var userCommandService = userCommandServiceFactory.getUserCommandService(Command.ProceedPackages);
+        var userCommandService = userCommandServiceFactory.getUserCommandService(Command.LoadPackages);
         assertThat(userCommandService)
-                .isInstanceOf(ProceedPackagesUserCommandService.class);
+                .isInstanceOf(LoadPackagesUserCommandService.class);
     }
 
     @Test
     void getUserCommandService_givenProceedTrucksCommand_returnsProceedTrucksUserCommandService() {
-        var userCommandService = userCommandServiceFactory.getUserCommandService(Command.ProceedTrucks);
+        var userCommandService = userCommandServiceFactory.getUserCommandService(Command.Unload);
         assertThat(userCommandService)
-                .isInstanceOf(ProceedTrucksUserCommandService.class);
+                .isInstanceOf(UnloadTrucksUserCommandService.class);
     }
 }

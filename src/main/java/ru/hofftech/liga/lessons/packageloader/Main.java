@@ -11,6 +11,7 @@ public class Main {
 
         ApplicationContext context = new ApplicationContext();
         context.getConsoleController().listen();
+        context.getUserCommandProcessorService().getAndProcessUserCommand();
 
         log.info("Завершение работы");
     }

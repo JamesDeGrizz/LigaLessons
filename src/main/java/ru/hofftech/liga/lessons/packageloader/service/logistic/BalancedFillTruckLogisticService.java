@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ru.hofftech.liga.lessons.packageloader.model.Package;
 import ru.hofftech.liga.lessons.packageloader.model.Truck;
+import ru.hofftech.liga.lessons.packageloader.model.TruckSize;
 import ru.hofftech.liga.lessons.packageloader.service.TruckService;
 import ru.hofftech.liga.lessons.packageloader.service.factory.TruckServiceFactory;
 import ru.hofftech.liga.lessons.packageloader.service.interfaces.LogisticService;
@@ -19,9 +20,9 @@ public class BalancedFillTruckLogisticService implements LogisticService {
     private final TruckServiceFactory truckServiceFactory;
 
     @Override
-    public List<Truck> placePackagesToTrucks(List<Package> packages, int trucksCount) {
+    public List<Truck> placePackagesToTrucks(List<Package> packages, List<TruckSize> truckSizes) {
         log.info("Начинаем заполнение грузовиков методом \"равномерная погрузка по машинам\"");
-        var truckServices = getTruckServices(trucksCount);
+        var truckServices = getTruckServices(truckSizes);
 
         distributePackagesToTrucks(packages, truckServices);
 
@@ -31,10 +32,10 @@ public class BalancedFillTruckLogisticService implements LogisticService {
                 .collect(Collectors.toUnmodifiableList());
     }
 
-    private List<TruckService> getTruckServices(int trucksCount) {
+    private List<TruckService> getTruckServices(List<TruckSize> truckSizes) {
         var truckServices = new ArrayList<TruckService>();
-        for (var i = 0; i < trucksCount; i++) {
-            truckServices.add(truckServiceFactory.getTruckService(Truck.TRUCK_MAX_WIDTH, Truck.TRUCK_MAX_HEIGHT));
+        for (var truckSize : truckSizes) {
+            truckServices.add(truckServiceFactory.getTruckService(truckSize));
         }
         return truckServices;
     }
@@ -46,12 +47,12 @@ public class BalancedFillTruckLogisticService implements LogisticService {
                     .get();
 
             var placed = false;
-            for (int i = 0; i <= Truck.TRUCK_MAX_HEIGHT - pkg.getHeight(); i++) {
+            for (int i = 0; i <= mostFreeTruckService.getTruck().getSize().getHeight() - pkg.getHeight(); i++) {
                 if (placed) {
                     break;
                 }
 
-                for (int j = 0; j <= Truck.TRUCK_MAX_WIDTH - pkg.getWidth(); j++) {
+                for (int j = 0; j <= mostFreeTruckService.getTruck().getSize().getHeight() - pkg.getWidth(); j++) {
                     if (mostFreeTruckService.canPlacePackage(pkg, i, j)) {
                         mostFreeTruckService.placePackage(pkg, i, j);
                         placed = true;

@@ -70,7 +70,7 @@ class UserConsoleServiceTest {
         var command = userConsoleService.getUserCommand();
 
         assertThat(command)
-                .isEqualTo(Command.ProceedPackages);
+                .isEqualTo(Command.LoadPackages);
 
         assertThat(outputStream.toString())
                 .contains("Введите команду");
@@ -88,7 +88,7 @@ class UserConsoleServiceTest {
         var command = userConsoleService.getUserCommand();
 
         assertThat(command)
-                .isEqualTo(Command.ProceedTrucks);
+                .isEqualTo(Command.Unload);
 
         assertThat(outputStream.toString())
                 .contains("Введите команду");

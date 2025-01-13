@@ -23,14 +23,14 @@ class BalancedFillTruckLogisticServiceTest {
     @Test
     void placePackagesToTrucks_given8Packages2Trucks_returns2Trucks() {
         var packages = Arrays.asList(
-                new Package(Arrays.asList("999", "999", "999")),
-                new Package(Arrays.asList("999", "999", "999")),
-                new Package(Arrays.asList("666", "666")),
-                new Package(Arrays.asList("666", "666")),
-                new Package(Arrays.asList("333")),
-                new Package(Arrays.asList("333")),
-                new Package(Arrays.asList("1")),
-                new Package(Arrays.asList("1"))
+                new Package(Arrays.asList("999", "999", "999"), "test", '9'),
+                new Package(Arrays.asList("999", "999", "999"), "test", '9'),
+                new Package(Arrays.asList("666", "666"), "test", '9'),
+                new Package(Arrays.asList("666", "666"), "test", '9'),
+                new Package(Arrays.asList("333"), "test", '9'),
+                new Package(Arrays.asList("333"), "test", '9'),
+                new Package(Arrays.asList("1"), "test", '9'),
+                new Package(Arrays.asList("1"), "test", '9')
         );
 
         var trucks = balancedFillTruckLogisticService.placePackagesToTrucks(packages, 2);
@@ -57,14 +57,14 @@ class BalancedFillTruckLogisticServiceTest {
     @Test
     void placePackagesToTrucks_given8Packages1Truck_returnsException() {
         var packages = Arrays.asList(
-                new Package(Arrays.asList("999", "999", "999")),
-                new Package(Arrays.asList("999", "999", "999")),
-                new Package(Arrays.asList("666", "666")),
-                new Package(Arrays.asList("666", "666")),
-                new Package(Arrays.asList("333")),
-                new Package(Arrays.asList("333")),
-                new Package(Arrays.asList("1")),
-                new Package(Arrays.asList("1"))
+                new Package(Arrays.asList("999", "999", "999"), "test", '9'),
+                new Package(Arrays.asList("999", "999", "999"), "test", '9'),
+                new Package(Arrays.asList("666", "666"), "test", '9'),
+                new Package(Arrays.asList("666", "666"), "test", '9'),
+                new Package(Arrays.asList("333"), "test", '9'),
+                new Package(Arrays.asList("333"), "test", '9'),
+                new Package(Arrays.asList("1"), "test", '9'),
+                new Package(Arrays.asList("1"), "test", '9')
         );
 
         assertThatThrownBy(() -> balancedFillTruckLogisticService.placePackagesToTrucks(packages, 1))

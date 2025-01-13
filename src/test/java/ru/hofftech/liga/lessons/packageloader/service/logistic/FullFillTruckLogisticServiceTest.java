@@ -23,12 +23,12 @@ class FullFillTruckLogisticServiceTest {
     @Test
     void placePackagesToTrucks_given6Packages2Trucks_returns2Trucks() {
         var packages = Arrays.asList(
-                new Package(Arrays.asList("999", "999", "999")),
-                new Package(Arrays.asList("999", "999", "999")),
-                new Package(Arrays.asList("666", "666")),
-                new Package(Arrays.asList("666", "666")),
-                new Package(Arrays.asList("333")),
-                new Package(Arrays.asList("333"))
+                new Package(Arrays.asList("999", "999", "999"), "test", '9'),
+                new Package(Arrays.asList("999", "999", "999"), "test", '9'),
+                new Package(Arrays.asList("666", "666"), "test", '6'),
+                new Package(Arrays.asList("666", "666"), "test", '6'),
+                new Package(Arrays.asList("333"), "test", '3'),
+                new Package(Arrays.asList("333"), "test", '3')
         );
 
         var trucks = fullFillTruckLogisticService.placePackagesToTrucks(packages, 2);
@@ -65,14 +65,14 @@ class FullFillTruckLogisticServiceTest {
     @Test
     void placePackagesToTrucks_given8Packages1Truck_returnsException() {
         var packages = Arrays.asList(
-                new ru.hofftech.liga.lessons.packageloader.model.Package(Arrays.asList("999", "999", "999")),
-                new ru.hofftech.liga.lessons.packageloader.model.Package(Arrays.asList("999", "999", "999")),
-                new ru.hofftech.liga.lessons.packageloader.model.Package(Arrays.asList("666", "666")),
-                new ru.hofftech.liga.lessons.packageloader.model.Package(Arrays.asList("666", "666")),
-                new ru.hofftech.liga.lessons.packageloader.model.Package(Arrays.asList("333")),
-                new ru.hofftech.liga.lessons.packageloader.model.Package(Arrays.asList("333")),
-                new ru.hofftech.liga.lessons.packageloader.model.Package(Arrays.asList("1")),
-                new Package(Arrays.asList("1"))
+                new Package(Arrays.asList("999", "999", "999"), "test", '9'),
+                new Package(Arrays.asList("999", "999", "999"), "test", '9'),
+                new Package(Arrays.asList("666", "666"), "test", '9'),
+                new Package(Arrays.asList("666", "666"), "test", '9'),
+                new Package(Arrays.asList("333"), "test", '9'),
+                new Package(Arrays.asList("333"), "test", '9'),
+                new Package(Arrays.asList("1"), "test", '9'),
+                new Package(Arrays.asList("1"), "test", '9')
         );
 
         assertThatThrownBy(() -> fullFillTruckLogisticService.placePackagesToTrucks(packages, 1))

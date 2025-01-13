@@ -2,13 +2,14 @@ package ru.hofftech.liga.lessons.packageloader.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
-import ru.hofftech.liga.lessons.packageloader.model.Truck;
 import ru.hofftech.liga.lessons.packageloader.model.Package;
+import ru.hofftech.liga.lessons.packageloader.model.Truck;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @Slf4j
@@ -34,10 +35,19 @@ public class ReportService {
         log.info(builder.toString());
     }
 
-    public void reportPackages(List<Package> packages) {
+    public void reportPackages(List<Package> packages, boolean withCount) {
         log.info(PACKAGES_UNLOAD_MESSAGE);
-        for (var pkg : packages) {
-            log.info("\n" + pkg.toString());
+        if (withCount) {
+            var countedPackages = packages.stream()
+                    .collect(Collectors.groupingBy(pkg -> pkg.getName(), Collectors.counting()));
+            for (var packageGroup : countedPackages.entrySet()) {
+                log.info("\n" + packageGroup.getKey() + ";" + packageGroup.getValue());
+            }
+        }
+        else {
+            for (var pkg : packages) {
+                log.info("\n" + pkg.getName());
+            }
         }
     }
 
@@ -51,10 +61,19 @@ public class ReportService {
         }
     }
 
-    public void savePackagesToFile(String fileName, List<Package> packages) {
+    public void savePackagesToFile(String fileName, List<Package> packages, boolean withCount) {
         var sb = new StringBuilder();
-        for (var pkg : packages) {
-            sb.append(pkg).append("\n");
+        if (withCount) {
+            var countedPackages = packages.stream()
+                    .collect(Collectors.groupingBy(pkg -> pkg.getName(), Collectors.counting()));
+            for (var packageGroup : countedPackages.entrySet()) {
+                sb.append(packageGroup.getKey()).append(";").append(packageGroup.getValue()).append("\n");
+            }
+        }
+        else {
+            for (var pkg : packages) {
+                sb.append(pkg.getName()).append("\n");
+            }
         }
 
         try {
