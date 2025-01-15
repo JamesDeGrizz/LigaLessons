@@ -1,14 +1,13 @@
 package ru.hofftech.liga.lessons.packageloader.service;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ru.hofftech.liga.lessons.packageloader.model.Package;
 import ru.hofftech.liga.lessons.packageloader.model.PlacingPoint;
 import ru.hofftech.liga.lessons.packageloader.model.Truck;
-import ru.hofftech.liga.lessons.packageloader.model.TruckSize;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Сервис для управления грузовиком и размещения посылок в нем.
@@ -16,20 +15,8 @@ import java.util.List;
  */
 @Slf4j
 @Getter
+@NoArgsConstructor
 public class TruckService {
-    /**
-     * Грузовик, в котором размещаются посылки.
-     */
-    private final Truck truck;
-
-    public TruckService(TruckSize truckSize) {
-        truck = new Truck(truckSize);
-    }
-
-    public TruckService(Truck truck) {
-        this.truck = truck;
-    }
-
     /**
      * Проверяет, можно ли разместить посылку в грузовике на заданной позиции.
      *
@@ -38,7 +25,7 @@ public class TruckService {
      * @param startCol начальный столбец для размещения
      * @return true, если посылка может быть размещена, иначе false
      */
-    public boolean canPlacePackage(Package pkg, int startRow, int startCol) {
+    public boolean canPlacePackage(Truck truck, Package pkg, int startRow, int startCol) {
         for (var i = 0; i < pkg.getHeight(); i++) {
             for (var j = 0; j < pkg.getWidth(); j++) {
                 if (truck.getContent()[startRow + i][startCol + j] != ' ') {
@@ -58,7 +45,7 @@ public class TruckService {
      * @param startRow начальная строка для размещения
      * @param startCol начальный столбец для размещения
      */
-    public void placePackage(Package pkg, int startRow, int startCol) {
+    public void placePackage(Truck truck, Package pkg, int startRow, int startCol) {
         log.debug("Размещаем посылку \n{} на позиции ({}, {})", pkg, startRow, startCol);
 
         var placingPoints = new ArrayList<PlacingPoint>();
@@ -78,7 +65,7 @@ public class TruckService {
      *
      * @return количество свободного места
      */
-    public int getFreeSpaceCount() {
+    public int getFreeSpaceCount(Truck truck) {
         var freeSpaceCount = 0;
         for (var i = 0; i < truck.getContent().length; i++) {
             for (var j = 0; j < truck.getContent()[i].length; j++) {
@@ -88,14 +75,5 @@ public class TruckService {
             }
         }
         return freeSpaceCount;
-    }
-
-    /**
-     * Возвращает список всех посылок, находящихся в грузовике.
-     *
-     * @return список посылок
-     */
-    public List<Package> getPackages() {
-        return truck.getPackages();
     }
 }

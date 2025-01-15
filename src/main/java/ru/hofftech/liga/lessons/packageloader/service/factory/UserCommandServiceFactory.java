@@ -27,7 +27,6 @@ public class UserCommandServiceFactory {
     private final ReportPackageService reportPackageService;
     private final ReportTruckService reportTruckService;
     private final LogisticServiceFactory logisticServiceFactory;
-    private final TruckServiceFactory truckServiceFactory;
     private final PackageRepository packageRepository;
 
     private final CreatePackageUserCommandValidator createPackageUserCommandValidator;
@@ -41,7 +40,7 @@ public class UserCommandServiceFactory {
             case RETRY -> new RetryUserCommandService();
             case HELP -> new HelpUserCommandService();
             case LOAD_PACKAGES -> new LoadPackagesUserCommandService(fileLoaderService, reportTruckService, logisticServiceFactory, packageRepository, loadPackagesUserCommandValidator);
-            case UNLOAD_TRUCKS -> new UnloadTrucksUserCommandService(fileLoaderService, reportPackageService, truckServiceFactory, unloadTrucksUserCommandValidator);
+            case UNLOAD_TRUCKS -> new UnloadTrucksUserCommandService(fileLoaderService, reportPackageService, unloadTrucksUserCommandValidator);
             case CREATE_PACKAGE -> new CreatePackageUserCommandService(packageRepository, createPackageUserCommandValidator);
             case FIND_PACKAGE -> new FindPackageUserCommandService(packageRepository);
             case EDIT_PACKAGE -> new EditPackageUserCommandService(packageRepository, editPackageUserCommandValidator);

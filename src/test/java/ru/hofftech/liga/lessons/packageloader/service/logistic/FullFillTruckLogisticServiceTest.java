@@ -3,7 +3,6 @@ package ru.hofftech.liga.lessons.packageloader.service.logistic;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.hofftech.liga.lessons.packageloader.model.Package;
-import ru.hofftech.liga.lessons.packageloader.service.factory.TruckServiceFactory;
 
 import java.util.Arrays;
 

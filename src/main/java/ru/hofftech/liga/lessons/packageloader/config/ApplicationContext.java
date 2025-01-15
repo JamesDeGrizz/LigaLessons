@@ -9,11 +9,11 @@ import ru.hofftech.liga.lessons.packageloader.service.FileLoaderService;
 import ru.hofftech.liga.lessons.packageloader.service.ReportPackageService;
 import ru.hofftech.liga.lessons.packageloader.service.ReportTruckService;
 import ru.hofftech.liga.lessons.packageloader.service.TelegramService;
+import ru.hofftech.liga.lessons.packageloader.service.TruckService;
 import ru.hofftech.liga.lessons.packageloader.service.UserCommandParserService;
 import ru.hofftech.liga.lessons.packageloader.service.UserCommandProcessorService;
 import ru.hofftech.liga.lessons.packageloader.service.UserConsoleService;
 import ru.hofftech.liga.lessons.packageloader.service.factory.LogisticServiceFactory;
-import ru.hofftech.liga.lessons.packageloader.service.factory.TruckServiceFactory;
 import ru.hofftech.liga.lessons.packageloader.service.factory.UserCommandServiceFactory;
 import ru.hofftech.liga.lessons.packageloader.validator.CreatePackageUserCommandValidator;
 import ru.hofftech.liga.lessons.packageloader.validator.EditPackageUserCommandValidator;
@@ -74,9 +74,9 @@ public class ApplicationContext {
         var userCommandParserService = new UserCommandParserService();
 
         var packageRepository = new PackageRepository();
+        var truckService = new TruckService();
 
-        var truckServiceFactory = new TruckServiceFactory();
-        var logisticServiceFactory = new LogisticServiceFactory(truckServiceFactory);
+        var logisticServiceFactory = new LogisticServiceFactory(truckService);
 
         var userConsoleService = new UserConsoleService(new Scanner(System.in), queue);
         var userCommandServiceFactory = new UserCommandServiceFactory(
@@ -84,7 +84,6 @@ public class ApplicationContext {
                 reportPackageService,
                 reportTruckService,
                 logisticServiceFactory,
-                truckServiceFactory,
                 packageRepository,
                 createPackageUserCommandValidator,
                 editPackageUserCommandValidator,

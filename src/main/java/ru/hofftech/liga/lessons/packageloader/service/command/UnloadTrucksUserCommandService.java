@@ -6,7 +6,6 @@ import ru.hofftech.liga.lessons.packageloader.model.Truck;
 import ru.hofftech.liga.lessons.packageloader.model.enums.UnloadCommandFlag;
 import ru.hofftech.liga.lessons.packageloader.service.FileLoaderService;
 import ru.hofftech.liga.lessons.packageloader.service.ReportPackageService;
-import ru.hofftech.liga.lessons.packageloader.service.factory.TruckServiceFactory;
 import ru.hofftech.liga.lessons.packageloader.service.interfaces.UserCommandService;
 import ru.hofftech.liga.lessons.packageloader.validator.UnloadTrucksUserCommandValidator;
 
@@ -26,7 +25,6 @@ public class UnloadTrucksUserCommandService implements UserCommandService {
 
     private final FileLoaderService fileLoaderService;
     private final ReportPackageService reportPackageService;
-    private final TruckServiceFactory truckServiceFactory;
     private final UnloadTrucksUserCommandValidator commandValidator;
 
     /**
@@ -75,10 +73,9 @@ public class UnloadTrucksUserCommandService implements UserCommandService {
 
     private List<Package> getPackagesFromTrucks(List<Truck> trucks) {
         var packages = new ArrayList<Package>();
-        for (var truck : trucks) {
-            var truckService = truckServiceFactory.getTruckService(truck);
-            packages.addAll(truckService.getPackages());
-        }
+        trucks.forEach(truck -> {
+            packages.addAll(truck.getPackages());
+        });
         return packages;
     }
 }
