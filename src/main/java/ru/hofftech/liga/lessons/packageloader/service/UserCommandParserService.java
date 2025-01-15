@@ -45,23 +45,23 @@ public class UserCommandParserService {
      * @param userCommand команда пользователя
      * @return команда, соответствующая введенной пользователем команде
      */
-    public ParsedUserCommand parseCommandAndArguments(String userCommand) {
+    public ParsedUserCommand parse(String userCommand) {
         var commandMatcher = commandPattern.matcher(userCommand);
 
         if (!commandMatcher.find()) {
-            return new ParsedUserCommand(Command.Retry, null);
+            return new ParsedUserCommand(Command.RETRY, null);
         }
 
         var command = switch (commandMatcher.group(COMMAND_GROUP_NUMBER)) {
-            case CREATE_COMMAND -> Command.CreatePackage;
-            case FIND_COMMAND -> Command.FindPackage;
-            case EDIT_COMMAND -> Command.EditPackage;
-            case DELETE_COMMAND -> Command.DeletePackage;
-            case LOAD_COMMAND -> Command.LoadPackages;
-            case UNLOAD_COMMAND -> Command.UnloadTrucks;
-            case EXIT_COMMAND -> Command.Exit;
-            case HELP_COMMAND -> Command.Help;
-            default -> Command.Retry;
+            case CREATE_COMMAND -> Command.CREATE_PACKAGE;
+            case FIND_COMMAND -> Command.FIND_PACKAGE;
+            case EDIT_COMMAND -> Command.EDIT_PACKAGE;
+            case DELETE_COMMAND -> Command.DELETE_PACKAGE;
+            case LOAD_COMMAND -> Command.LOAD_PACKAGES;
+            case UNLOAD_COMMAND -> Command.UNLOAD_TRUCKS;
+            case EXIT_COMMAND -> Command.EXIT;
+            case HELP_COMMAND -> Command.HELP;
+            default -> Command.RETRY;
         };
 
         return new ParsedUserCommand(command, parseArguments(userCommand));

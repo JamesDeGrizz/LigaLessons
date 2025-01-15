@@ -20,28 +20,28 @@ class LogisticServiceFactoryTest {
 
     @Test
     void getLogisticService_givenOnePerTruckPlacingAlgorithm_returnsOnePerTruckLogisticService() {
-        var logisticService = logisticServiceFactory.getLogisticService(PlacingAlgorithm.OnePerTruck);
+        var logisticService = logisticServiceFactory.getLogisticService(PlacingAlgorithm.ONE_PER_TRUCK);
         assertThat(logisticService)
                 .isInstanceOf(OnePerTruckLogisticService.class);
     }
 
     @Test
     void getLogisticService_givenFillTruckPlacingAlgorithm_returnsFullFillTruckLogisticService() {
-        var logisticService = logisticServiceFactory.getLogisticService(PlacingAlgorithm.FillTruck);
+        var logisticService = logisticServiceFactory.getLogisticService(PlacingAlgorithm.FILL_TRUCK);
         assertThat(logisticService)
                 .isInstanceOf(FullFillTruckLogisticService.class);
     }
 
     @Test
     void getLogisticService_givenBalancedPlacingAlgorithm_returnsBalancedFillTruckLogisticService() {
-        var logisticService = logisticServiceFactory.getLogisticService(PlacingAlgorithm.Balanced);
+        var logisticService = logisticServiceFactory.getLogisticService(PlacingAlgorithm.BALANCED);
         assertThat(logisticService)
                 .isInstanceOf(BalancedFillTruckLogisticService.class);
     }
 
     @Test
     void getLogisticService_givenNoneOfPlacingAlgorithm_returnsIllegalArgumentException() {
-        assertThatThrownBy(() -> logisticServiceFactory.getLogisticService(PlacingAlgorithm.NoneOf))
+        assertThatThrownBy(() -> logisticServiceFactory.getLogisticService(PlacingAlgorithm.NONE_OF))
                 .isInstanceOf(IllegalArgumentException.class);
 
     }

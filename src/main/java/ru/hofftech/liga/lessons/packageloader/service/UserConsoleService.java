@@ -33,7 +33,7 @@ public class UserConsoleService extends Thread {
         while (true) {
             log.info("Введите команду:");
             try {
-                queue.put(new UserCommand(CommandSource.Console, scanner.nextLine()));
+                queue.put(new UserCommand(CommandSource.CONSOLE, scanner.nextLine()));
             } catch (InterruptedException e) {
                 log.error("Не получилось обработать вашу команду, попробуйте ещё раз");
             }

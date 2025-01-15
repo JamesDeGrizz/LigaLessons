@@ -1,26 +1,26 @@
 package ru.hofftech.liga.lessons.packageloader.repository;
 
+import lombok.NoArgsConstructor;
 import ru.hofftech.liga.lessons.packageloader.model.Package;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
  * Репозиторий посылок, который управляет хранением и доступом к посылкам.
  * Этот класс предоставляет методы для добавления, поиска, обновления и удаления посылок.
  */
+@NoArgsConstructor
 public class PackageRepository {
     /**
      * Хранилище посылок, где ключом является имя посылки, а значением - сама посылка.
      */
-    private Map<String, Package> packages;
+    private static Map<String, Package> packages;
 
-    /**
-     * Конструктор по умолчанию, инициализирующий репозиторий с заранее определенными посылками.
-     */
-    public PackageRepository() {
+    static {
         packages = new HashMap<>();
         packages.put("Посылка тип 1", new Package(List.of("1"), "Посылка тип 1", '1'));
         packages.put("Посылка тип 2", new Package(List.of("22"), "Посылка тип 2", '2'));
@@ -39,10 +39,7 @@ public class PackageRepository {
      * @param additionalValues дополнительные посылки для инициализации репозитория
      */
     public PackageRepository(Map<String, Package> additionalValues) {
-        this();
-        for (var additionalPackage : additionalValues.entrySet()) {
-            packages.put(additionalPackage.getKey(), additionalPackage.getValue());
-        }
+        packages.putAll(additionalValues);
     }
 
     /**
@@ -66,12 +63,12 @@ public class PackageRepository {
      * @param name имя посылки
      * @return найденная посылка или null, если посылка с таким именем не найдена
      */
-    public Package find(String name) {
+    public Optional<Package> find(String name) {
         if (!packages.containsKey(name)) {
             return null;
         }
 
-        return packages.get(name);
+        return Optional.ofNullable(packages.get(name));
     }
 
     /**

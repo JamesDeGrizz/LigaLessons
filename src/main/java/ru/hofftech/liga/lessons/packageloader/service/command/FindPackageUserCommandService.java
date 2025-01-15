@@ -27,11 +27,11 @@ public class FindPackageUserCommandService implements UserCommandService {
     public String execute(Map<String, String> arguments) {
         if (arguments == null || arguments.isEmpty()) {
             var packages = packageRepository.findAll();
-            var sb = new StringBuilder();
+            var stringBuilder = new StringBuilder();
             for (var pkg : packages) {
-                sb.append(pkg.toString());
+                stringBuilder.append(pkg.toString());
             }
-            return sb.toString();
+            return stringBuilder.toString();
         }
 
         var packageName = getPackageName(arguments);

@@ -39,6 +39,12 @@ public class DeletePackageUserCommandService implements UserCommandService {
     }
 
     private String getPackageName(Map<String, String> arguments) {
-        return arguments.keySet().stream().findFirst().get();
+        if (arguments == null || arguments.isEmpty()) {
+            return null;
+        }
+        return arguments.keySet()
+                .stream()
+                .findFirst()
+                .get();
     }
 }

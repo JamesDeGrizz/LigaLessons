@@ -8,7 +8,7 @@ import ru.hofftech.liga.lessons.packageloader.model.TruckSize;
 import ru.hofftech.liga.lessons.packageloader.model.enums.PlacingAlgorithm;
 import ru.hofftech.liga.lessons.packageloader.repository.PackageRepository;
 import ru.hofftech.liga.lessons.packageloader.service.FileLoaderService;
-import ru.hofftech.liga.lessons.packageloader.service.ReportService;
+import ru.hofftech.liga.lessons.packageloader.service.ReportTruckService;
 import ru.hofftech.liga.lessons.packageloader.service.factory.LogisticServiceFactory;
 import ru.hofftech.liga.lessons.packageloader.service.interfaces.UserCommandService;
 
@@ -33,7 +33,7 @@ public class LoadPackagesUserCommandService implements UserCommandService {
     private static final String ARGUMENT_TRUCKS = "-trucks";
 
     private final FileLoaderService fileLoaderService;
-    private final ReportService reportService;
+    private final ReportTruckService reportTruckService;
     private final LogisticServiceFactory logisticServiceFactory;
     private final PackageRepository packageRepository;
     private final List<String> errors = new ArrayList<>();
@@ -115,22 +115,22 @@ public class LoadPackagesUserCommandService implements UserCommandService {
 
         for (var packageName : packageNames) {
             var found = packageRepository.find(packageName);
-            if (found == null) {
+            if (!found.isPresent()) {
                 errors.add("Посылки с названием \"" + packageName + "\" не существует");
                 continue;
             }
-            packages.add(found);
+            packages.add(found.get());
         }
 
         return packages.stream()
                 .sorted((p1, p2) -> p1.getWidth() * p1.getHeight() - p2.getWidth() * p2.getHeight())
-                .collect(Collectors.toUnmodifiableList());
+                .collect(Collectors.toList());
     }
 
     private PlacingAlgorithm getPlacingAlgorithm(Map<String, String> arguments) {
         if (!arguments.containsKey(ARGUMENT_ALGORITHM_TYPE)) {
             errors.add("Не хватает аргумента \"" + ARGUMENT_ALGORITHM_TYPE + "\"");
-            return PlacingAlgorithm.NoneOf;
+            return PlacingAlgorithm.NONE_OF;
         }
 
         var algorithmString = arguments.get(ARGUMENT_ALGORITHM_TYPE);
@@ -139,14 +139,14 @@ public class LoadPackagesUserCommandService implements UserCommandService {
 
             if (algorithm < 0 || algorithm > 2) {
                 errors.add("Неправильное значение типа алгоритма: " + algorithmString);
-                return PlacingAlgorithm.NoneOf;
+                return PlacingAlgorithm.NONE_OF;
             }
 
             return PlacingAlgorithm.valueOf(algorithm);
         }
         catch (Exception e) {
             errors.add("Введённое значение нельзя привести к числу: " + algorithmString);
-            return PlacingAlgorithm.NoneOf;
+            return PlacingAlgorithm.NONE_OF;
         }
     }
 
@@ -206,13 +206,13 @@ public class LoadPackagesUserCommandService implements UserCommandService {
     private void reportTruckContent(List<Truck> trucks) {
         log.debug("Получено {} грузовиков", trucks.size());
         for (var truck : trucks) {
-            reportService.reportTruckContent(truck.getContent());
+            reportTruckService.reportTruckContent(truck.getContent());
         }
     }
 
     private void saveReportToFileIfNeed(boolean needToSaveReport, String reportFileName, List<Truck> trucks) {
         if (needToSaveReport) {
-            reportService.saveTrucksToFile(reportFileName, trucks);
+            reportTruckService.saveTrucksToFile(reportFileName, trucks);
         }
     }
 }

@@ -81,7 +81,7 @@ public class TelegramService extends TelegramLongPollingBot {
                     break;
                 default:
                     try {
-                        queue.put(new UserCommand(CommandSource.Telegram, messageText));
+                        queue.put(new UserCommand(CommandSource.TELEGRAM, messageText));
                     } catch (InterruptedException e) {
                         sendMessage("Не получилось обработать вашу команду, попробуйте ещё раз");
                     }

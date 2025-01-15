@@ -7,45 +7,45 @@ public enum Command {
     /**
      * Разгрузка грузовиков
      */
-    UnloadTrucks,
+    UNLOAD_TRUCKS,
 
     /**
      * Погрузка посылок
      */
-    LoadPackages,
+    LOAD_PACKAGES,
 
     /**
      * Завершение работы приложения
      */
-    Exit,
+    EXIT,
 
     /**
      * Неправильный ввод
      */
-    Retry,
+    RETRY,
 
     /**
      * Вывод справки
      */
-    Help,
+    HELP,
 
     /**
      * Создание новой посылки
      */
-    CreatePackage,
+    CREATE_PACKAGE,
 
     /**
      * Поиск посыл(ки/ок)
      */
-    FindPackage,
+    FIND_PACKAGE,
 
     /**
      * Редактирование посылки
      */
-    EditPackage,
+    EDIT_PACKAGE,
 
     /**
      * Кдаление посылки
      */
-    DeletePackage,
+    DELETE_PACKAGE,
 }

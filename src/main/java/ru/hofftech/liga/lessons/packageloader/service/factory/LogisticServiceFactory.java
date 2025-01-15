@@ -13,10 +13,10 @@ public class LogisticServiceFactory {
 
     public LogisticService getLogisticService(PlacingAlgorithm algorithm) {
         return switch (algorithm) {
-            case OnePerTruck -> new OnePerTruckLogisticService(truckServiceFactory);
-            case FillTruck -> new FullFillTruckLogisticService(truckServiceFactory);
-            case Balanced -> new BalancedFillTruckLogisticService(truckServiceFactory);
-            case NoneOf -> throw new IllegalArgumentException("Не выбран ни один алгоритм");
+            case ONE_PER_TRUCK -> new OnePerTruckLogisticService(truckServiceFactory);
+            case FILL_TRUCK -> new FullFillTruckLogisticService(truckServiceFactory);
+            case BALANCED -> new BalancedFillTruckLogisticService(truckServiceFactory);
+            case NONE_OF -> throw new IllegalArgumentException("Не выбран ни один алгоритм");
         };
     }
 }

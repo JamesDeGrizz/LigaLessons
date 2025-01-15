@@ -7,26 +7,26 @@ public enum PlacingAlgorithm {
     /**
      * 1 посылка -> 1 грузовик
      */
-    OnePerTruck,
+    ONE_PER_TRUCK,
 
     /**
      * Максимальная загрузка грузовика
      */
-    FillTruck,
+    FILL_TRUCK,
 
     /**
      * Сбалансированная загрузка доступных грузовиков
      */
-    Balanced,
+    BALANCED,
 
     /**
      * Заглушка для некорректного ввода
      */
-    NoneOf;
+    NONE_OF;
 
-    private static final int ONE_PER_TRUCK = 0;
-    private static final int FILL_TRUCK = 1;
-    private static final int BALANCED = 2;
+    private static final int ONE_PER_TRUCK_NUMBER = 0;
+    private static final int FILL_TRUCK_NUMBER = 1;
+    private static final int BALANCED_NUMBER = 2;
 
     /**
      * Приведение числового значения к {@code PlacingAlgorithm}
@@ -35,10 +35,10 @@ public enum PlacingAlgorithm {
      */
     public static PlacingAlgorithm valueOf(int algorithm) {
         return switch(algorithm) {
-            case ONE_PER_TRUCK -> PlacingAlgorithm.OnePerTruck;
-            case FILL_TRUCK -> PlacingAlgorithm.FillTruck;
-            case BALANCED -> PlacingAlgorithm.Balanced;
-            default -> PlacingAlgorithm.NoneOf;
+            case ONE_PER_TRUCK_NUMBER -> PlacingAlgorithm.ONE_PER_TRUCK;
+            case FILL_TRUCK_NUMBER -> PlacingAlgorithm.FILL_TRUCK;
+            case BALANCED_NUMBER -> PlacingAlgorithm.BALANCED;
+            default -> PlacingAlgorithm.NONE_OF;
         };
     }
 }

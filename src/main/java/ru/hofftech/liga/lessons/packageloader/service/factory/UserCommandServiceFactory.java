@@ -4,7 +4,8 @@ import lombok.AllArgsConstructor;
 import ru.hofftech.liga.lessons.packageloader.model.enums.Command;
 import ru.hofftech.liga.lessons.packageloader.repository.PackageRepository;
 import ru.hofftech.liga.lessons.packageloader.service.FileLoaderService;
-import ru.hofftech.liga.lessons.packageloader.service.ReportService;
+import ru.hofftech.liga.lessons.packageloader.service.ReportPackageService;
+import ru.hofftech.liga.lessons.packageloader.service.ReportTruckService;
 import ru.hofftech.liga.lessons.packageloader.service.command.CreatePackageUserCommandService;
 import ru.hofftech.liga.lessons.packageloader.service.command.DeletePackageUserCommandService;
 import ru.hofftech.liga.lessons.packageloader.service.command.EditPackageUserCommandService;
@@ -19,22 +20,23 @@ import ru.hofftech.liga.lessons.packageloader.service.interfaces.UserCommandServ
 @AllArgsConstructor
 public class UserCommandServiceFactory {
     private final FileLoaderService fileLoaderService;
-    private final ReportService reportService;
+    private final ReportPackageService reportPackageService;
+    private final ReportTruckService reportTruckService;
     private final LogisticServiceFactory logisticServiceFactory;
     private final TruckServiceFactory truckServiceFactory;
     private final PackageRepository packageRepository;
 
     public UserCommandService getUserCommandService(Command command) {
         return switch (command) {
-            case Exit -> new ExitUserCommandService();
-            case Retry -> new RetryUserCommandService();
-            case Help -> new HelpUserCommandService();
-            case LoadPackages -> new LoadPackagesUserCommandService(fileLoaderService, reportService, logisticServiceFactory, packageRepository);
-            case UnloadTrucks -> new UnloadTrucksUserCommandService(fileLoaderService, reportService, truckServiceFactory);
-            case CreatePackage -> new CreatePackageUserCommandService(packageRepository);
-            case FindPackage -> new FindPackageUserCommandService(packageRepository);
-            case EditPackage -> new EditPackageUserCommandService(packageRepository);
-            case DeletePackage -> new DeletePackageUserCommandService(packageRepository);
+            case EXIT -> new ExitUserCommandService();
+            case RETRY -> new RetryUserCommandService();
+            case HELP -> new HelpUserCommandService();
+            case LOAD_PACKAGES -> new LoadPackagesUserCommandService(fileLoaderService, reportTruckService, logisticServiceFactory, packageRepository);
+            case UNLOAD_TRUCKS -> new UnloadTrucksUserCommandService(fileLoaderService, reportPackageService, truckServiceFactory);
+            case CREATE_PACKAGE -> new CreatePackageUserCommandService(packageRepository);
+            case FIND_PACKAGE -> new FindPackageUserCommandService(packageRepository);
+            case EDIT_PACKAGE -> new EditPackageUserCommandService(packageRepository);
+            case DELETE_PACKAGE -> new DeletePackageUserCommandService(packageRepository);
         };
     }
 }

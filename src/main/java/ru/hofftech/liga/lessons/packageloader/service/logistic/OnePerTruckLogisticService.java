@@ -58,7 +58,7 @@ public class OnePerTruckLogisticService implements LogisticService {
     private List<TruckService> getTruckServices(List<TruckSize> truckSizes) {
         var sortedSizes = truckSizes.stream()
                 .sorted((p1, p2) -> p1.getWidth() * p1.getHeight() - p2.getWidth() * p2.getHeight())
-                .collect(Collectors.toUnmodifiableList());
+                .collect(Collectors.toList());
 
         var truckServices = new ArrayList<TruckService>();
         for (var truckSize : sortedSizes) {

@@ -3,8 +3,9 @@ package ru.hofftech.liga.lessons.packageloader.service.command;
 import lombok.AllArgsConstructor;
 import ru.hofftech.liga.lessons.packageloader.model.Package;
 import ru.hofftech.liga.lessons.packageloader.model.Truck;
+import ru.hofftech.liga.lessons.packageloader.model.enums.UnloadCommandFlag;
 import ru.hofftech.liga.lessons.packageloader.service.FileLoaderService;
-import ru.hofftech.liga.lessons.packageloader.service.ReportService;
+import ru.hofftech.liga.lessons.packageloader.service.ReportPackageService;
 import ru.hofftech.liga.lessons.packageloader.service.factory.TruckServiceFactory;
 import ru.hofftech.liga.lessons.packageloader.service.interfaces.UserCommandService;
 
@@ -24,7 +25,7 @@ public class UnloadTrucksUserCommandService implements UserCommandService {
     private static final String ARGUMENT_WITH_COUNT = "--withcount";
 
     private final FileLoaderService fileLoaderService;
-    private final ReportService reportService;
+    private final ReportPackageService reportPackageService;
     private final TruckServiceFactory truckServiceFactory;
 
     private final List<String> errors = new ArrayList<>();
@@ -48,8 +49,8 @@ public class UnloadTrucksUserCommandService implements UserCommandService {
 
         var packages = getPackagesFromTrucks(trucks);
 
-        reportService.reportPackages(packages, withCount);
-        reportService.savePackagesToFile(reportFileName, packages, withCount);
+        reportPackageService.reportPackages(packages, withCount);
+        reportPackageService.savePackagesToFile(reportFileName, packages, withCount);
 
         return "Посылки успешно погружены";
     }
@@ -79,8 +80,8 @@ public class UnloadTrucksUserCommandService implements UserCommandService {
         return trucks;
     }
 
-    private boolean getWithCount(Map<String, String> arguments) {
-        return arguments.containsKey(ARGUMENT_WITH_COUNT);
+    private UnloadCommandFlag getWithCount(Map<String, String> arguments) {
+        return arguments.containsKey(ARGUMENT_WITH_COUNT) ? UnloadCommandFlag.WITH_COUNT : UnloadCommandFlag.WITHOUT_COUNT;
     }
 
     private List<Package> getPackagesFromTrucks(List<Truck> trucks) {

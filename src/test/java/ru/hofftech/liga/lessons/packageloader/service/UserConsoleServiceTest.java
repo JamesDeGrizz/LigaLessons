@@ -34,7 +34,7 @@ class UserConsoleServiceTest {
         var command = userConsoleService.getUserCommand();
 
         assertThat(command)
-                .isEqualTo(Command.Exit);
+                .isEqualTo(Command.EXIT);
 
         assertThat(outputStream.toString())
                 .contains("Введите команду");
@@ -52,7 +52,7 @@ class UserConsoleServiceTest {
         var command = userConsoleService.getUserCommand();
 
         assertThat(command)
-                .isEqualTo(Command.Retry);
+                .isEqualTo(Command.RETRY);
 
         assertThat(outputStream.toString())
                 .contains("Введите команду");
@@ -70,7 +70,7 @@ class UserConsoleServiceTest {
         var command = userConsoleService.getUserCommand();
 
         assertThat(command)
-                .isEqualTo(Command.LoadPackages);
+                .isEqualTo(Command.LOAD_PACKAGES);
 
         assertThat(outputStream.toString())
                 .contains("Введите команду");
@@ -106,7 +106,7 @@ class UserConsoleServiceTest {
         var command = userConsoleService.getUserCommand();
 
         assertThat(command)
-                .isEqualTo(Command.Help);
+                .isEqualTo(Command.HELP);
 
         assertThat(outputStream.toString())
                 .contains("Введите команду");
@@ -124,7 +124,7 @@ class UserConsoleServiceTest {
         var algorithm = userConsoleService.getAlgorithm();
 
         assertThat(algorithm)
-                .isEqualTo(PlacingAlgorithm.OnePerTruck);
+                .isEqualTo(PlacingAlgorithm.ONE_PER_TRUCK);
 
         assertThat(outputStream.toString())
                 .contains("""
@@ -147,7 +147,7 @@ class UserConsoleServiceTest {
         var algorithm = userConsoleService.getAlgorithm();
 
         assertThat(algorithm)
-                .isEqualTo(PlacingAlgorithm.FillTruck);
+                .isEqualTo(PlacingAlgorithm.FILL_TRUCK);
 
         assertThat(outputStream.toString())
                 .contains("""
@@ -170,7 +170,7 @@ class UserConsoleServiceTest {
         var algorithm = userConsoleService.getAlgorithm();
 
         assertThat(algorithm)
-                .isEqualTo(PlacingAlgorithm.Balanced);
+                .isEqualTo(PlacingAlgorithm.BALANCED);
 
         assertThat(outputStream.toString())
                 .contains("""

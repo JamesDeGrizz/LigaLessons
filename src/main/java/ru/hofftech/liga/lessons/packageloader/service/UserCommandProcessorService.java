@@ -28,7 +28,7 @@ public class UserCommandProcessorService {
      * Получает и обрабатывает команды пользователя из очереди.
      * Метод бесконечно ожидает команды от пользователя и выполняет их, отправляя результаты в соответствующий источник (консоль или Telegram).
      */
-    public void getAndProcessUserCommand() {
+    public void process() {
         log.info("Для ознакомления с функционалом введите команду help");
 
         while (true) {
@@ -36,15 +36,16 @@ public class UserCommandProcessorService {
             try {
                 input = queue.take();
             } catch (Exception e) {
+                log.error(e.getMessage(), e);
                 continue;
             }
 
-            var command = userCommandParserService.parseCommandAndArguments(input.command());
+            var command = userCommandParserService.parse(input.command());
 
             var service = userCommandServiceFactory.getUserCommandService(command.command());
             var executionLog = service.execute(command.arguments());
 
-            if (input.commandSource() == CommandSource.Console) {
+            if (input.commandSource() == CommandSource.CONSOLE) {
                 log.info(executionLog);
             }
             else {

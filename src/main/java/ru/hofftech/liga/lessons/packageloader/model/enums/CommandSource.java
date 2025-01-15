@@ -7,10 +7,10 @@ public enum CommandSource {
     /**
      * Команда пришла из консоли
      */
-    Console,
+    CONSOLE,
 
     /**
      * Команда пришла из телеграм бота
      */
-    Telegram
+    TELEGRAM
 }

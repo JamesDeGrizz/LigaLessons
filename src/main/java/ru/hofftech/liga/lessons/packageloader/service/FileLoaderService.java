@@ -104,7 +104,7 @@ public class FileLoaderService {
             var trucks = objectMapper.readValue(trucksFile, Truck[].class);
             return Arrays.stream(trucks).toList();
         } catch (Exception e) {
-            log.error(e.getMessage());
+            log.error(e.getMessage(), e);
             return Collections.emptyList();
         }
     }

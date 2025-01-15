@@ -40,7 +40,7 @@ public class BalancedFillTruckLogisticService implements LogisticService {
         log.info("Заполнение грузовиков методом \"равномерная погрузка по машинам\" успешно завершено");
         return truckServices.stream()
                 .map(x -> x.getTruck())
-                .collect(Collectors.toUnmodifiableList());
+                .collect(Collectors.toList());
     }
 
     /**

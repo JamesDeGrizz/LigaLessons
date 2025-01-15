@@ -43,7 +43,7 @@ public class FullFillTruckLogisticService implements LogisticService {
         log.info("Заполнение грузовиков методом \"один грузовик = максимум посылок\" успешно завершено");
         return truckServices.stream()
                 .map(x -> x.getTruck())
-                .collect(Collectors.toUnmodifiableList());
+                .collect(Collectors.toList());
     }
 
     /**
