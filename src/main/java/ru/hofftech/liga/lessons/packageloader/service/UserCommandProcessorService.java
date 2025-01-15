@@ -39,11 +39,10 @@ public class UserCommandProcessorService {
                 continue;
             }
 
-            var command = userCommandParserService.parseCommand(input.command());
-            var commandArguments = userCommandParserService.parseArguments(input.command());
+            var command = userCommandParserService.parseCommandAndArguments(input.command());
 
-            var service = userCommandServiceFactory.getUserCommandService(command);
-            var executionLog = service.execute(commandArguments);
+            var service = userCommandServiceFactory.getUserCommandService(command.command());
+            var executionLog = service.execute(command.arguments());
 
             if (input.commandSource() == CommandSource.Console) {
                 log.info(executionLog);

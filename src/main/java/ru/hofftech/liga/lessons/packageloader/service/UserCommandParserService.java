@@ -1,6 +1,7 @@
 package ru.hofftech.liga.lessons.packageloader.service;
 
 import lombok.extern.slf4j.Slf4j;
+import ru.hofftech.liga.lessons.packageloader.model.ParsedUserCommand;
 import ru.hofftech.liga.lessons.packageloader.model.enums.Command;
 
 import java.util.Collections;
@@ -44,14 +45,14 @@ public class UserCommandParserService {
      * @param userCommand команда пользователя
      * @return команда, соответствующая введенной пользователем команде
      */
-    public Command parseCommand(String userCommand) {
+    public ParsedUserCommand parseCommandAndArguments(String userCommand) {
         var commandMatcher = commandPattern.matcher(userCommand);
 
         if (!commandMatcher.find()) {
-            return Command.Retry;
+            return new ParsedUserCommand(Command.Retry, null);
         }
 
-        return switch (commandMatcher.group(COMMAND_GROUP_NUMBER)) {
+        var command = switch (commandMatcher.group(COMMAND_GROUP_NUMBER)) {
             case CREATE_COMMAND -> Command.CreatePackage;
             case FIND_COMMAND -> Command.FindPackage;
             case EDIT_COMMAND -> Command.EditPackage;
@@ -62,6 +63,8 @@ public class UserCommandParserService {
             case HELP_COMMAND -> Command.Help;
             default -> Command.Retry;
         };
+
+        return new ParsedUserCommand(command, parseArguments(userCommand));
     }
 
     /**
@@ -70,7 +73,7 @@ public class UserCommandParserService {
      * @param userCommand команда пользователя
      * @return HashMap аргументов команды
      */
-    public Map<String, String> parseArguments(String userCommand) {
+    private Map<String, String> parseArguments(String userCommand) {
         var commandMatcher = commandPattern.matcher(userCommand);
 
         if (!commandMatcher.find()) {
