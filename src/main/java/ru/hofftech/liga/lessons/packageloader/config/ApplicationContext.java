@@ -1,6 +1,7 @@
 package ru.hofftech.liga.lessons.packageloader.config;
 
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import ru.hofftech.liga.lessons.packageloader.controller.ConsoleController;
 import ru.hofftech.liga.lessons.packageloader.controller.TelegramController;
 import ru.hofftech.liga.lessons.packageloader.repository.PackageRepository;
@@ -14,6 +15,10 @@ import ru.hofftech.liga.lessons.packageloader.service.UserConsoleService;
 import ru.hofftech.liga.lessons.packageloader.service.factory.LogisticServiceFactory;
 import ru.hofftech.liga.lessons.packageloader.service.factory.TruckServiceFactory;
 import ru.hofftech.liga.lessons.packageloader.service.factory.UserCommandServiceFactory;
+import ru.hofftech.liga.lessons.packageloader.validator.CreatePackageUserCommandValidator;
+import ru.hofftech.liga.lessons.packageloader.validator.EditPackageUserCommandValidator;
+import ru.hofftech.liga.lessons.packageloader.validator.LoadPackagesUserCommandValidator;
+import ru.hofftech.liga.lessons.packageloader.validator.UnloadTrucksUserCommandValidator;
 
 import java.util.Scanner;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -24,6 +29,7 @@ import java.util.concurrent.LinkedBlockingQueue;
  * необходимых для работы с посылками.
  */
 @Getter
+@Slf4j
 public class ApplicationContext {
     /**
      * Контроллер консоли для взаимодействия с пользователем через консоль.
@@ -41,22 +47,24 @@ public class ApplicationContext {
     private final UserCommandProcessorService userCommandProcessorService;
 
     /**
-     * Имя пользователя бота Telegram.
-     */
-    private final String botUsername;
-
-    /**
-     * Токен бота Telegram.
-     */
-    private final String botToken;
-
-    /**
      * Конструктор, инициализирующий контекст приложения.
      * Создает и настраивает все необходимые компоненты для работы с посылками.
      */
     public ApplicationContext() {
-        botUsername = System.getenv("bot_username");
-        botToken = System.getenv("bot_token");
+        var botUsername = "";
+        var botToken = "";
+        try {
+            botUsername = System.getenv("bot_username");
+            botToken = System.getenv("bot_token");
+        }
+        catch (Exception e) {
+            log.error(e.getMessage(), e);
+        }
+
+        var createPackageUserCommandValidator = new CreatePackageUserCommandValidator();
+        var editPackageUserCommandValidator = new EditPackageUserCommandValidator();
+        var loadPackagesUserCommandValidator = new LoadPackagesUserCommandValidator();
+        var unloadTrucksUserCommandValidator = new UnloadTrucksUserCommandValidator();
 
         var queue = new LinkedBlockingQueue();
 
@@ -71,7 +79,17 @@ public class ApplicationContext {
         var logisticServiceFactory = new LogisticServiceFactory(truckServiceFactory);
 
         var userConsoleService = new UserConsoleService(new Scanner(System.in), queue);
-        var userCommandServiceFactory = new UserCommandServiceFactory(fileLoaderService, reportPackageService, reportTruckService, logisticServiceFactory, truckServiceFactory, packageRepository);
+        var userCommandServiceFactory = new UserCommandServiceFactory(
+                fileLoaderService,
+                reportPackageService,
+                reportTruckService,
+                logisticServiceFactory,
+                truckServiceFactory,
+                packageRepository,
+                createPackageUserCommandValidator,
+                editPackageUserCommandValidator,
+                loadPackagesUserCommandValidator,
+                unloadTrucksUserCommandValidator);
 
         var telegramService = new TelegramService(queue, botUsername, botToken);
 

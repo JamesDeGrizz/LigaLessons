@@ -31,4 +31,9 @@ public class TruckSize {
      * Высота грузовика.
      */
     private final int height;
+
+    @Override
+    public String toString() {
+        return width + "x" + height;
+    }
 }

@@ -11,6 +11,7 @@ import ru.hofftech.liga.lessons.packageloader.service.FileLoaderService;
 import ru.hofftech.liga.lessons.packageloader.service.ReportTruckService;
 import ru.hofftech.liga.lessons.packageloader.service.factory.LogisticServiceFactory;
 import ru.hofftech.liga.lessons.packageloader.service.interfaces.UserCommandService;
+import ru.hofftech.liga.lessons.packageloader.validator.LoadPackagesUserCommandValidator;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -26,6 +27,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class LoadPackagesUserCommandService implements UserCommandService {
     private static final String ARGUMENT_OUT_TYPE = "-out";
+    private static final String ARGUMENT_OUT_TYPE_JSON = "json-file";
     private static final String ARGUMENT_OUT_FILENAME = "-out-filename";
     private static final String ARGUMENT_PACKAGES_TEXT = "-parcels-text";
     private static final String ARGUMENT_PACKAGES_FILE = "-parcels-file";
@@ -36,7 +38,7 @@ public class LoadPackagesUserCommandService implements UserCommandService {
     private final ReportTruckService reportTruckService;
     private final LogisticServiceFactory logisticServiceFactory;
     private final PackageRepository packageRepository;
-    private final List<String> errors = new ArrayList<>();
+    private final LoadPackagesUserCommandValidator commandValidator;
 
     /**
      * Выполняет команду загрузки посылок на основе переданных аргументов.
@@ -46,38 +48,39 @@ public class LoadPackagesUserCommandService implements UserCommandService {
      */
     @Override
     public String execute(Map<String, String> arguments) {
+        if (arguments == null || arguments.isEmpty()) {
+            return "Посылки не могут быть погружены: \nПередан пустой список аргументов";
+        }
+        var validationErrors = commandValidator.validate(arguments);
+        if (!validationErrors.isEmpty()) {
+            return "Посылки не могут быть погружены: \n" + String.join("\n", validationErrors);
+        }
+
         var algorithm = getPlacingAlgorithm(arguments);
         var truckSizes = getTruckSizes(arguments);
         var needToSaveReport = getNeedSaveToFile(arguments);
         var reportFileName = getReportFileName(arguments, needToSaveReport);
-        var packages = getPackages(arguments);
+
+        var errors = new ArrayList<String>();
+        var packages = getPackages(arguments, errors);
         if (!errors.isEmpty()) {
-            var errorMessage = "Посылки не могут быть погружены: \n" + String.join("\n", errors);
-            errors.clear();
-            return errorMessage;
+            return "Посылки не могут быть погружены: \n" + String.join("\n", errors);
         }
 
-        var trucks = placePackagesToTrucks(packages, algorithm, truckSizes);
+        var trucks = placePackagesToTrucks(packages, algorithm, truckSizes, errors);
         if (!errors.isEmpty()) {
-            var errorMessage = "Посылки не могут быть погружены: \n" + String.join("\n", errors);
-            errors.clear();
-            return errorMessage;
+            return "Посылки не могут быть погружены: \n" + String.join("\n", errors);
         }
 
         reportTruckContent(trucks);
-
         saveReportToFileIfNeed(needToSaveReport, reportFileName, trucks);
 
         return "Посылки успешно погружены";
     }
 
     private boolean getNeedSaveToFile(Map<String, String> arguments) {
-        if (!arguments.containsKey(ARGUMENT_OUT_TYPE)) {
-            errors.add("Не хватает аргумента \"" + ARGUMENT_OUT_TYPE + "\"");
-            return false;
-        }
-
-        return arguments.get(ARGUMENT_OUT_TYPE).equals("json-file");
+        return arguments.get(ARGUMENT_OUT_TYPE)
+                .equals(ARGUMENT_OUT_TYPE_JSON);
     }
 
     private String getReportFileName(Map<String, String> arguments, boolean needToSaveReport) {
@@ -85,15 +88,10 @@ public class LoadPackagesUserCommandService implements UserCommandService {
             return null;
         }
 
-        if (!arguments.containsKey(ARGUMENT_OUT_FILENAME)) {
-            errors.add("Не хватает аргумента \"" + ARGUMENT_OUT_FILENAME + "\"");
-            return null;
-        }
-
         return arguments.get(ARGUMENT_OUT_FILENAME);
     }
 
-    private List<Package> getPackages(Map<String, String> arguments) {
+    private List<Package> getPackages(Map<String, String> arguments, List<String> errors) {
         var packages = new ArrayList<Package>();
         String[] packageNames = null;
 
@@ -102,10 +100,6 @@ public class LoadPackagesUserCommandService implements UserCommandService {
         }
         else if (arguments.containsKey(ARGUMENT_PACKAGES_FILE)) {
             packageNames = fileLoaderService.getPackageNames(arguments.get(ARGUMENT_PACKAGES_FILE));
-        }
-        else {
-            errors.add("Не хватает аргументов \"" + ARGUMENT_PACKAGES_TEXT + "\" или \"" + ARGUMENT_PACKAGES_FILE + "\"");
-            return Collections.emptyList();
         }
 
         if (packageNames == null) {
@@ -128,69 +122,26 @@ public class LoadPackagesUserCommandService implements UserCommandService {
     }
 
     private PlacingAlgorithm getPlacingAlgorithm(Map<String, String> arguments) {
-        if (!arguments.containsKey(ARGUMENT_ALGORITHM_TYPE)) {
-            errors.add("Не хватает аргумента \"" + ARGUMENT_ALGORITHM_TYPE + "\"");
-            return PlacingAlgorithm.NONE_OF;
-        }
-
         var algorithmString = arguments.get(ARGUMENT_ALGORITHM_TYPE);
-        try {
-            var algorithm = Integer.parseInt(algorithmString);
-
-            if (algorithm < 0 || algorithm > 2) {
-                errors.add("Неправильное значение типа алгоритма: " + algorithmString);
-                return PlacingAlgorithm.NONE_OF;
-            }
-
-            return PlacingAlgorithm.valueOf(algorithm);
-        }
-        catch (Exception e) {
-            errors.add("Введённое значение нельзя привести к числу: " + algorithmString);
-            return PlacingAlgorithm.NONE_OF;
-        }
+        var algorithm = Integer.parseInt(algorithmString);
+        return PlacingAlgorithm.valueOf(algorithm);
     }
 
     private List<TruckSize> getTruckSizes(Map<String, String> arguments) {
-        if (!arguments.containsKey(ARGUMENT_TRUCKS)) {
-            errors.add("Не хватает аргумента \"" + ARGUMENT_TRUCKS + "\"");
-            return Collections.emptyList();
-        }
-
         var truckSizeList = arguments.get(ARGUMENT_TRUCKS).split("\\\\n");
 
         var result = new ArrayList<TruckSize>();
         for (var truckSize : truckSizeList) {
             var widthAndHeight = truckSize.split("x");
-            if (widthAndHeight.length != 2) {
-                errors.add("Неправильный формат размера кузова грузовика: " + truckSize);
-                continue;
-            }
-
-            try {
-                var width = Integer.parseInt(widthAndHeight[0]);
-                var height = Integer.parseInt(widthAndHeight[1]);
-
-                if (width < 0 || width > TruckSize.TRUCK_MAX_WIDTH) {
-                    errors.add("Неправильное значение ширины грузовика: " + width);
-                    continue;
-                }
-
-                if (height < 0 || height > TruckSize.TRUCK_MAX_HEIGHT) {
-                    errors.add("Неправильное значение высоты грузовика: " + height);
-                    continue;
-                }
-
-                result.add(new TruckSize(width, height));
-            }
-            catch (Exception e) {
-                errors.add("Неправильный формат размера кузова грузовика: " + truckSize);
-            }
+            var width = Integer.parseInt(widthAndHeight[0]);
+            var height = Integer.parseInt(widthAndHeight[1]);
+            result.add(new TruckSize(width, height));
         }
 
         return result;
     }
 
-    private List<Truck> placePackagesToTrucks(List<Package> packages, PlacingAlgorithm algorithm, List<TruckSize> truckSizes) {
+    private List<Truck> placePackagesToTrucks(List<Package> packages, PlacingAlgorithm algorithm, List<TruckSize> truckSizes, List<String> errors) {
         List<Truck> trucks;
         try {
             var logisticService = logisticServiceFactory.getLogisticService(algorithm);
