@@ -9,21 +9,33 @@ repositories {
     mavenCentral()
 }
 
+object Versions {
+    const val SLF4J = "2.0.16"
+    const val LOGBACK = "1.5.12"
+    const val JACKSON = "2.18.2"
+    const val LOMBOK = "1.18.36"
+    const val TELEGRAM_BOT = "6.9.7.1"
+    const val JUNIT_BOM = "5.10.0"
+    const val ASSERTJ_CORE = "3.26.3"
+}
+
 dependencies {
-    implementation("org.slf4j:slf4j-api:2.0.16")
-    implementation("ch.qos.logback:logback-core:1.5.12")
-    implementation("ch.qos.logback:logback-classic:1.5.12")
+    implementation("org.slf4j:slf4j-api:${Versions.SLF4J}")
+    implementation("ch.qos.logback:logback-core:${Versions.LOGBACK}")
+    implementation("ch.qos.logback:logback-classic:${Versions.LOGBACK}")
 
-    implementation("com.fasterxml.jackson.core:jackson-core:2.18.2")
-    implementation("com.fasterxml.jackson.core:jackson-databind:2.18.2")
+    implementation("com.fasterxml.jackson.core:jackson-core:${Versions.JACKSON}")
+    implementation("com.fasterxml.jackson.core:jackson-databind:${Versions.JACKSON}")
 
-    implementation("org.projectlombok:lombok:1.18.36")
-    compileOnly("org.projectlombok:lombok:1.18.36")
-    annotationProcessor("org.projectlombok:lombok:1.18.36")
+    implementation("org.telegram:telegrambots:${Versions.TELEGRAM_BOT}")
 
-    testImplementation(platform("org.junit:junit-bom:5.10.0"))
+    implementation("org.projectlombok:lombok:${Versions.LOMBOK}")
+    compileOnly("org.projectlombok:lombok:${Versions.LOMBOK}")
+    annotationProcessor("org.projectlombok:lombok:${Versions.LOMBOK}")
+
+    testImplementation(platform("org.junit:junit-bom:${Versions.JUNIT_BOM}"))
     testImplementation("org.junit.jupiter:junit-jupiter")
-    testImplementation("org.assertj:assertj-core:3.26.3")
+    testImplementation("org.assertj:assertj-core:${Versions.ASSERTJ_CORE}")
 }
 
 tasks.test {

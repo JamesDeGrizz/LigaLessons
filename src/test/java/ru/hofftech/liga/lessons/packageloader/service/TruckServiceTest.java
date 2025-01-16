@@ -13,7 +13,7 @@ class TruckServiceTest {
     @Test
     void canPlacePackage_givenEmptyTruck_returnsTrue() {
         var truckService = new TruckService(6, 6);
-        var pkg = new Package(List.of("333"));
+        var pkg = new Package(List.of("333"), "test", '9');
 
         assertThat(truckService.canPlacePackage(pkg, 0, 0))
                 .isTrue();
@@ -22,12 +22,12 @@ class TruckServiceTest {
     @Test
     void canPlacePackage_givenFullTruck_returnsFalse() {
         var truckService = new TruckService(6, 6);
-        truckService.placePackage(new Package(List.of("999", "999", "999")), 0, 0);
-        truckService.placePackage(new Package(List.of("999", "999", "999")), 0, 3);
-        truckService.placePackage(new Package(List.of("999", "999", "999")), 3, 0);
-        truckService.placePackage(new Package(List.of("999", "999", "999")), 3, 3);
+        truckService.placePackage(new Package(List.of("999", "999", "999"), "test", '9'), 0, 0);
+        truckService.placePackage(new Package(List.of("999", "999", "999"), "test", '9'), 0, 3);
+        truckService.placePackage(new Package(List.of("999", "999", "999"), "test", '9'), 3, 0);
+        truckService.placePackage(new Package(List.of("999", "999", "999"), "test", '9'), 3, 3);
 
-        var pkg = new Package(List.of("1"));
+        var pkg = new Package(List.of("1"), "test", '9');
 
         IntStream.range(0, 6)
                 .forEach(i -> IntStream.range(0, 6)
@@ -41,7 +41,7 @@ class TruckServiceTest {
     @Test
     void placePackage_givenBigPackage_returnsCorrectlyPlacedPackage() {
         var truckService = new TruckService(6, 6);
-        truckService.placePackage(new Package(List.of("999", "999", "999")), 2, 2);
+        truckService.placePackage(new Package(List.of("999", "999", "999"), "test", '9'), 2, 2);
 
         assertThat(truckService.getTruck().getContent()[2][2])
                 .isEqualTo('9');
@@ -67,7 +67,7 @@ class TruckServiceTest {
     @Test
     void getFreeSpaceCount_givenSemiFilledTruck_returnsCorrectFreeSpaceCount() {
         var truckService = new TruckService(6, 6);
-        truckService.placePackage(new Package(List.of("999", "999", "999")), 0, 0);
+        truckService.placePackage(new Package(List.of("999", "999", "999"), "test", '9'), 0, 0);
 
         assertThat(truckService.getFreeSpaceCount())
                 .isEqualTo(27);
@@ -76,7 +76,7 @@ class TruckServiceTest {
     @Test
     void getFreeSpaceCount_givenFullFilledTruck_returnsCorrectFreeSpaceCount() {
         var truckService = new TruckService(3, 3);
-        truckService.placePackage(new Package(List.of("999", "999", "999")), 0, 0);
+        truckService.placePackage(new Package(List.of("999", "999", "999"), "test", '9'), 0, 0);
 
         assertThat(truckService.getFreeSpaceCount())
                 .isEqualTo(0);
@@ -85,7 +85,7 @@ class TruckServiceTest {
     @Test
     void getPackages_givenFullFilledTruck_returnsCorrectPackageList() {
         var truckService = new TruckService(3, 3);
-        truckService.placePackage(new Package(List.of("999", "999", "999")), 0, 0);
+        truckService.placePackage(new Package(List.of("999", "999", "999"), "test", '9'), 0, 0);
 
         assertThat(truckService.getPackages().size())
                 .isEqualTo(1);

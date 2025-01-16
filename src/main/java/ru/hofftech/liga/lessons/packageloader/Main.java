@@ -9,8 +9,7 @@ public class Main {
 
         log.info("Приложение запущено");
 
-        ApplicationContext context = new ApplicationContext();
-        context.getConsoleController().listen();
+        new ApplicationContext().run();
 
         log.info("Завершение работы");
     }
