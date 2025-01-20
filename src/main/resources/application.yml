@@ -1,0 +1,9 @@
+spring:
+  shell:
+    interactive:
+      enabled: true
+
+billing:
+  pricing:
+    load: 80
+    unload: 50

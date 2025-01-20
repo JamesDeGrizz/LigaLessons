@@ -2,21 +2,27 @@ package ru.hofftech.liga.lessons.packageloader.service.command;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationContext;
 import ru.hofftech.liga.lessons.packageloader.model.Package;
 import ru.hofftech.liga.lessons.packageloader.model.Truck;
 import ru.hofftech.liga.lessons.packageloader.model.TruckSize;
+import ru.hofftech.liga.lessons.packageloader.model.dto.BaseUserCommandDto;
+import ru.hofftech.liga.lessons.packageloader.model.dto.LoadPackagesUserCommandDto;
+import ru.hofftech.liga.lessons.packageloader.model.enums.Command;
 import ru.hofftech.liga.lessons.packageloader.model.enums.PlacingAlgorithm;
 import ru.hofftech.liga.lessons.packageloader.repository.PackageRepository;
+import ru.hofftech.liga.lessons.packageloader.service.BillingService;
 import ru.hofftech.liga.lessons.packageloader.service.FileLoaderService;
 import ru.hofftech.liga.lessons.packageloader.service.ReportTruckService;
-import ru.hofftech.liga.lessons.packageloader.service.factory.LogisticServiceFactory;
 import ru.hofftech.liga.lessons.packageloader.service.interfaces.UserCommandService;
+import ru.hofftech.liga.lessons.packageloader.service.logistic.BalancedFillTruckLogisticService;
+import ru.hofftech.liga.lessons.packageloader.service.logistic.FullFillTruckLogisticService;
+import ru.hofftech.liga.lessons.packageloader.service.logistic.OnePerTruckLogisticService;
 import ru.hofftech.liga.lessons.packageloader.validator.LoadPackagesUserCommandValidator;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -26,43 +32,35 @@ import java.util.stream.Collectors;
 @Slf4j
 @AllArgsConstructor
 public class LoadPackagesUserCommandService implements UserCommandService {
-    private static final String ARGUMENT_OUT_TYPE = "-out";
-    private static final String ARGUMENT_OUT_TYPE_JSON = "json-file";
-    private static final String ARGUMENT_OUT_FILENAME = "-out-filename";
-    private static final String ARGUMENT_PACKAGES_TEXT = "-parcels-text";
-    private static final String ARGUMENT_PACKAGES_FILE = "-parcels-file";
-    private static final String ARGUMENT_ALGORITHM_TYPE = "-type";
-    private static final String ARGUMENT_TRUCKS = "-trucks";
-
     private final FileLoaderService fileLoaderService;
     private final ReportTruckService reportTruckService;
-    private final LogisticServiceFactory logisticServiceFactory;
     private final PackageRepository packageRepository;
     private final LoadPackagesUserCommandValidator commandValidator;
+    private final ApplicationContext applicationContext;
+    private final BillingService billingService;
 
-    /**
-     * Выполняет команду загрузки посылок на основе переданных аргументов.
-     *
-     * @param arguments аргументы команды
-     * @return сообщение о результате выполнения команды
-     */
     @Override
-    public String execute(Map<String, String> arguments) {
-        if (arguments == null || arguments.isEmpty()) {
+    public String execute(BaseUserCommandDto command) {
+        if (command == null) {
             return "Посылки не могут быть погружены: \nПередан пустой список аргументов";
         }
-        var validationErrors = commandValidator.validate(arguments);
+        if (!(command instanceof LoadPackagesUserCommandDto)) {
+            return "Посылки не могут быть погружены: \nПередана команда неправильного типа";
+        }
+
+        var castedCommand = (LoadPackagesUserCommandDto) command;
+
+        var validationErrors = commandValidator.validate(castedCommand);
         if (!validationErrors.isEmpty()) {
             return "Посылки не могут быть погружены: \n" + String.join("\n", validationErrors);
         }
 
-        var algorithm = getPlacingAlgorithm(arguments);
-        var truckSizes = getTruckSizes(arguments);
-        var needToSaveReport = getNeedSaveToFile(arguments);
-        var reportFileName = getReportFileName(arguments, needToSaveReport);
+        var algorithm = getPlacingAlgorithm(castedCommand.type());
+        var truckSizes = getTruckSizes(castedCommand.trucks());
+        var needToSaveReport = castedCommand.outFilename() != null && !castedCommand.outFilename().isEmpty();
 
         var errors = new ArrayList<String>();
-        var packages = getPackages(arguments, errors);
+        var packages = getPackages(castedCommand, errors);
         if (!errors.isEmpty()) {
             return "Посылки не могут быть погружены: \n" + String.join("\n", errors);
         }
@@ -73,33 +71,22 @@ public class LoadPackagesUserCommandService implements UserCommandService {
         }
 
         reportTruckContent(trucks);
-        saveReportToFileIfNeed(needToSaveReport, reportFileName, trucks);
+        saveReportToFileIfNeed(needToSaveReport, castedCommand.outFilename(), trucks);
+
+        billingService.saveOrder(castedCommand.userId(), Command.LOAD_PACKAGES, trucks.size(), packages);
 
         return "Посылки успешно погружены";
     }
 
-    private boolean getNeedSaveToFile(Map<String, String> arguments) {
-        return arguments.get(ARGUMENT_OUT_TYPE)
-                .equals(ARGUMENT_OUT_TYPE_JSON);
-    }
-
-    private String getReportFileName(Map<String, String> arguments, boolean needToSaveReport) {
-        if (!needToSaveReport) {
-            return null;
-        }
-
-        return arguments.get(ARGUMENT_OUT_FILENAME);
-    }
-
-    private List<Package> getPackages(Map<String, String> arguments, List<String> errors) {
+    private List<Package> getPackages(LoadPackagesUserCommandDto command, List<String> errors) {
         var packages = new ArrayList<Package>();
         String[] packageNames = null;
 
-        if (arguments.containsKey(ARGUMENT_PACKAGES_TEXT)) {
-            packageNames = arguments.get(ARGUMENT_PACKAGES_TEXT).split("\\\\n");
+        if (command.parcelsText() != null && !command.parcelsText().isEmpty()) {
+            packageNames = command.parcelsText().split(",");
         }
-        else if (arguments.containsKey(ARGUMENT_PACKAGES_FILE)) {
-            packageNames = fileLoaderService.getPackageNames(arguments.get(ARGUMENT_PACKAGES_FILE));
+        else if (command.parcelsFile() != null && !command.parcelsFile().isEmpty()) {
+            packageNames = fileLoaderService.getPackageNames(command.parcelsFile());
         }
 
         if (packageNames == null) {
@@ -121,14 +108,13 @@ public class LoadPackagesUserCommandService implements UserCommandService {
                 .collect(Collectors.toList());
     }
 
-    private PlacingAlgorithm getPlacingAlgorithm(Map<String, String> arguments) {
-        var algorithmString = arguments.get(ARGUMENT_ALGORITHM_TYPE);
+    private PlacingAlgorithm getPlacingAlgorithm(String algorithmString) {
         var algorithm = Integer.parseInt(algorithmString);
         return PlacingAlgorithm.valueOf(algorithm);
     }
 
-    private List<TruckSize> getTruckSizes(Map<String, String> arguments) {
-        var truckSizeList = arguments.get(ARGUMENT_TRUCKS).split("\\\\n");
+    private List<TruckSize> getTruckSizes(String trucks) {
+        var truckSizeList = trucks.split(",");
 
         var result = new ArrayList<TruckSize>();
         for (var truckSize : truckSizeList) {
@@ -144,7 +130,13 @@ public class LoadPackagesUserCommandService implements UserCommandService {
     private List<Truck> placePackagesToTrucks(List<Package> packages, PlacingAlgorithm algorithm, List<TruckSize> truckSizes, List<String> errors) {
         List<Truck> trucks;
         try {
-            var logisticService = logisticServiceFactory.getLogisticService(algorithm);
+            var logisticService = switch (algorithm) {
+                case ONE_PER_TRUCK -> applicationContext.getBean(OnePerTruckLogisticService.class);
+                case FILL_TRUCK -> applicationContext.getBean(FullFillTruckLogisticService.class);
+                case BALANCED -> applicationContext.getBean(BalancedFillTruckLogisticService.class);
+                case NONE_OF -> throw new IllegalArgumentException("Не выбран ни один алгоритм");
+
+            };
             trucks = logisticService.placePackagesToTrucks(packages, truckSizes);
         } catch (Exception e) {
             errors.add(e.getMessage());

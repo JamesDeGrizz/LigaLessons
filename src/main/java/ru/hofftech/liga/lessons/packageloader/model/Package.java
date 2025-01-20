@@ -30,7 +30,7 @@ public class Package {
     /**
      * Возвращает символ в указанной строке и столбце содержимого посылки.
      *
-     * @param row индекс строки
+     * @param row    индекс строки
      * @param column индекс столбца
      * @return символ в указанной позиции
      */
@@ -62,6 +62,17 @@ public class Package {
      */
     public int getHeight() {
         return content.size();
+    }
+
+    /**
+     * Возвращает размер посылки.
+     *
+     * @return размер посылки
+     */
+    public int getSize() {
+        return content.stream()
+                .mapToInt(x -> x.length())
+                .sum();
     }
 
     /**

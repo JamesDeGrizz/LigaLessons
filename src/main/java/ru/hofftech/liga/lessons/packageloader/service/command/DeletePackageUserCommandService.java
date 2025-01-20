@@ -1,10 +1,11 @@
 package ru.hofftech.liga.lessons.packageloader.service.command;
 
 import lombok.AllArgsConstructor;
+import ru.hofftech.liga.lessons.packageloader.model.dto.BaseUserCommandDto;
+import ru.hofftech.liga.lessons.packageloader.model.dto.DeletePackageUserCommandDto;
 import ru.hofftech.liga.lessons.packageloader.repository.PackageRepository;
 import ru.hofftech.liga.lessons.packageloader.service.interfaces.UserCommandService;
-
-import java.util.Map;
+import ru.hofftech.liga.lessons.packageloader.validator.DeletePackageUserCommandValidator;
 
 /**
  * Сервис для удаления посылок на основе команд пользователя.
@@ -12,39 +13,28 @@ import java.util.Map;
  */
 @AllArgsConstructor
 public class DeletePackageUserCommandService implements UserCommandService {
-    /**
-     * Репозиторий посылок, используемый для хранения и управления посылками.
-     */
     private final PackageRepository packageRepository;
+    private final DeletePackageUserCommandValidator commandValidator;
 
-    /**
-     * Выполняет команду удаления посылки на основе переданных аргументов.
-     *
-     * @param arguments аргументы команды
-     * @return сообщение о результате выполнения команды
-     */
     @Override
-    public String execute(Map<String, String> arguments) {
-        if (arguments == null || arguments.isEmpty()) {
+    public String execute(BaseUserCommandDto command) {
+        if (command == null) {
             return "Посылка не может быть удалена: \nПередан пустой список аргументов";
         }
+        if (!(command instanceof DeletePackageUserCommandDto)) {
+            return "Посылка не может быть удалена: \nПередана команда неправильного типа";
+        }
 
-        var packageName = getPackageName(arguments);
+        var castedCommand = (DeletePackageUserCommandDto) command;
+        var validationErrors = commandValidator.validate(castedCommand);
+        if (!validationErrors.isEmpty()) {
+            return "Посылка не может быть удалена: \n" + String.join("\n", validationErrors);
+        }
 
-        if (!packageRepository.delete(packageName)) {
-            return "Посылка не может быть удалена: \nпосылка с названием \"{}\" не существует" + packageName;
+        if (!packageRepository.delete(castedCommand.packageId())) {
+            return "Посылка не может быть удалена: \nпосылка с названием \"{}\" не существует" + castedCommand.packageId();
         }
 
         return "Посылка успешно удалена";
-    }
-
-    private String getPackageName(Map<String, String> arguments) {
-        if (arguments == null || arguments.isEmpty()) {
-            return null;
-        }
-        return arguments.keySet()
-                .stream()
-                .findFirst()
-                .get();
     }
 }

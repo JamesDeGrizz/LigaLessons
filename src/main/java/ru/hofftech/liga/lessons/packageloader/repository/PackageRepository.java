@@ -22,15 +22,15 @@ public class PackageRepository {
 
     static {
         packages = new HashMap<>();
-        packages.put("Посылка тип 1", new Package(List.of("1"), "Посылка тип 1", '1'));
-        packages.put("Посылка тип 2", new Package(List.of("22"), "Посылка тип 2", '2'));
-        packages.put("Посылка тип 3", new Package(List.of("333"), "Посылка тип 3", '3'));
-        packages.put("Посылка тип 4", new Package(List.of("4444"), "Посылка тип 4", '4'));
-        packages.put("Посылка тип 5", new Package(List.of("55555"), "Посылка тип 5", '5'));
-        packages.put("Посылка тип 6", new Package(List.of("666", "666"), "Посылка тип 6", '6'));
-        packages.put("Посылка тип 7", new Package(List.of("777", "7777"), "Посылка тип 7", '7'));
-        packages.put("Посылка тип 8", new Package(List.of("8888", "8888"), "Посылка тип 8", '8'));
-        packages.put("Посылка тип 9", new Package(List.of("999", "999", "999"), "Посылка тип 9", '9'));
+        packages.put("тип 1", new Package(List.of("1"), "тип 1", '1'));
+        packages.put("тип 2", new Package(List.of("22"), "тип 2", '2'));
+        packages.put("тип 3", new Package(List.of("333"), "тип 3", '3'));
+        packages.put("тип 4", new Package(List.of("4444"), "тип 4", '4'));
+        packages.put("тип 5", new Package(List.of("55555"), "тип 5", '5'));
+        packages.put("тип 6", new Package(List.of("666", "666"), "тип 6", '6'));
+        packages.put("тип 7", new Package(List.of("777", "7777"), "тип 7", '7'));
+        packages.put("тип 8", new Package(List.of("8888", "8888"), "тип 8", '8'));
+        packages.put("тип 9", new Package(List.of("999", "999", "999"), "тип 9", '9'));
     }
 
     /**

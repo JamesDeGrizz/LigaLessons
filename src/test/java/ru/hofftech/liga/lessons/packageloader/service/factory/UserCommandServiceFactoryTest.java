@@ -3,12 +3,8 @@ package ru.hofftech.liga.lessons.packageloader.service.factory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.hofftech.liga.lessons.packageloader.model.enums.Command;
-import ru.hofftech.liga.lessons.packageloader.service.command.ExitUserCommandService;
 import ru.hofftech.liga.lessons.packageloader.service.FileLoaderService;
-import ru.hofftech.liga.lessons.packageloader.service.command.HelpUserCommandService;
 import ru.hofftech.liga.lessons.packageloader.service.ReportPackageService;
-import ru.hofftech.liga.lessons.packageloader.service.command.RetryUserCommandService;
-import ru.hofftech.liga.lessons.packageloader.service.UserConsoleService;
 import ru.hofftech.liga.lessons.packageloader.service.command.LoadPackagesUserCommandService;
 import ru.hofftech.liga.lessons.packageloader.service.command.UnloadTrucksUserCommandService;
 

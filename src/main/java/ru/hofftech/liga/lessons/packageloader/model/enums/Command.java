@@ -15,21 +15,6 @@ public enum Command {
     LOAD_PACKAGES,
 
     /**
-     * Завершение работы приложения
-     */
-    EXIT,
-
-    /**
-     * Неправильный ввод
-     */
-    RETRY,
-
-    /**
-     * Вывод справки
-     */
-    HELP,
-
-    /**
      * Создание новой посылки
      */
     CREATE_PACKAGE,
@@ -48,4 +33,6 @@ public enum Command {
      * Кдаление посылки
      */
     DELETE_PACKAGE,
+
+    SHOW_ORDERS,
 }

@@ -2,7 +2,6 @@ package ru.hofftech.liga.lessons.packageloader.service;
 
 import lombok.extern.slf4j.Slf4j;
 import ru.hofftech.liga.lessons.packageloader.model.Package;
-import ru.hofftech.liga.lessons.packageloader.model.enums.UnloadCommandFlag;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -24,9 +23,9 @@ public class ReportPackageService {
      * @param packages список посылок
      * @param withCount флаг, указывающий, нужно ли включать количество посылок
      */
-    public void reportPackages(List<Package> packages, UnloadCommandFlag withCount) {
+    public void reportPackages(List<Package> packages, boolean withCount) {
         log.info(PACKAGES_UNLOAD_MESSAGE);
-        if (withCount == UnloadCommandFlag.WITH_COUNT) {
+        if (withCount) {
             packages.stream()
                 .collect(Collectors.groupingBy(pkg -> pkg.getName(), Collectors.counting()))
                 .forEach((name, count) -> log.info("\n" + name + ";" + count));
@@ -45,9 +44,9 @@ public class ReportPackageService {
      * @param packages список посылок
      * @param withCount флаг, указывающий, нужно ли включать количество посылок
      */
-    public void savePackagesToFile(String fileName, List<Package> packages, UnloadCommandFlag withCount) {
+    public void savePackagesToFile(String fileName, List<Package> packages, boolean withCount) {
         var stringBuilder = new StringBuilder();
-        if (withCount == UnloadCommandFlag.WITH_COUNT) {
+        if (withCount) {
             packages.stream()
                     .collect(Collectors.groupingBy(pkg -> pkg.getName(), Collectors.counting()))
                     .forEach((name, count) -> stringBuilder

@@ -1,10 +1,10 @@
 package ru.hofftech.liga.lessons.packageloader.service.command;
 
 import lombok.AllArgsConstructor;
+import ru.hofftech.liga.lessons.packageloader.model.dto.BaseUserCommandDto;
+import ru.hofftech.liga.lessons.packageloader.model.dto.FindPackageUserCommandDto;
 import ru.hofftech.liga.lessons.packageloader.repository.PackageRepository;
 import ru.hofftech.liga.lessons.packageloader.service.interfaces.UserCommandService;
-
-import java.util.Map;
 
 /**
  * Сервис для поиска посылок на основе команд пользователя.
@@ -12,20 +12,17 @@ import java.util.Map;
  */
 @AllArgsConstructor
 public class FindPackageUserCommandService implements UserCommandService {
-    /**
-     * Репозиторий посылок, используемый для хранения и управления посылками.
-     */
     private final PackageRepository packageRepository;
 
-    /**
-     * Выполняет команду поиска посылок на основе переданных аргументов.
-     *
-     * @param arguments аргументы команды
-     * @return строковое представление найденных посылок или сообщение об ошибке
-     */
     @Override
-    public String execute(Map<String, String> arguments) {
-        if (arguments == null || arguments.isEmpty()) {
+    public String execute(BaseUserCommandDto command) {
+        if (!(command instanceof FindPackageUserCommandDto)) {
+            return "Посылка не может быть выведена: \nПередана команда неправильного типа";
+        }
+
+        var castedCommand = (FindPackageUserCommandDto) command;
+
+        if (castedCommand.packageId() == null || castedCommand.packageId().isEmpty()) {
             var packages = packageRepository.findAll();
             var stringBuilder = new StringBuilder();
             for (var pkg : packages) {
@@ -34,17 +31,11 @@ public class FindPackageUserCommandService implements UserCommandService {
             return stringBuilder.toString();
         }
 
-        var packageName = getPackageName(arguments);
-
-        var pkg = packageRepository.find(packageName);
-        if (pkg == null) {
-            return "Посылка не может быть выведена: \nпосылка с названием " + packageName + " не существует";
+        var pkg = packageRepository.find(castedCommand.packageId());
+        if (pkg == null || !pkg.isPresent()) {
+            return "Посылка не может быть выведена: \nпосылка с названием " + castedCommand.packageId() + " не существует";
         }
 
-        return pkg.toString();
-    }
-
-    private String getPackageName(Map<String, String> arguments) {
-        return arguments.keySet().stream().findFirst().get();
+        return pkg.get().toString();
     }
 }

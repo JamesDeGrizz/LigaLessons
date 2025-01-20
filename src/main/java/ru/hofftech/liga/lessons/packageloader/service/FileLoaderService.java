@@ -78,7 +78,7 @@ public class FileLoaderService {
             String line;
 
             while ((line = reader.readLine()) != null) {
-                packages.addAll(Arrays.stream(line.split("\\\\n")).toList());
+                packages.addAll(Arrays.stream(line.split(",")).toList());
             }
 
             log.debug("Чтение посылок из файла {} успешно завершено, загружено {} посылок", filePath.getFileName(), packages.size());
