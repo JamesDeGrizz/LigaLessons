@@ -5,43 +5,43 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 import ru.hofftech.liga.lessons.packageloader.controller.TelegramController;
-import ru.hofftech.liga.lessons.packageloader.model.configuration.BillingConfiguration;
 import ru.hofftech.liga.lessons.packageloader.repository.OrderRepository;
-import ru.hofftech.liga.lessons.packageloader.repository.PackageRepository;
+import ru.hofftech.liga.lessons.packageloader.repository.ParcelRepository;
 import ru.hofftech.liga.lessons.packageloader.service.BillingService;
 import ru.hofftech.liga.lessons.packageloader.service.FileLoaderService;
-import ru.hofftech.liga.lessons.packageloader.service.ReportPackageService;
+import ru.hofftech.liga.lessons.packageloader.service.ReportParcelService;
 import ru.hofftech.liga.lessons.packageloader.service.ReportTruckService;
 import ru.hofftech.liga.lessons.packageloader.service.TelegramService;
 import ru.hofftech.liga.lessons.packageloader.service.TruckService;
 import ru.hofftech.liga.lessons.packageloader.service.UserCommandParserService;
 import ru.hofftech.liga.lessons.packageloader.service.UserCommandProcessorService;
-import ru.hofftech.liga.lessons.packageloader.service.command.CreatePackageUserCommandService;
-import ru.hofftech.liga.lessons.packageloader.service.command.DeletePackageUserCommandService;
-import ru.hofftech.liga.lessons.packageloader.service.command.EditPackageUserCommandService;
-import ru.hofftech.liga.lessons.packageloader.service.command.FindPackageUserCommandService;
+import ru.hofftech.liga.lessons.packageloader.service.command.CreateParcelUserCommandService;
+import ru.hofftech.liga.lessons.packageloader.service.command.DeleteParcelUserCommandService;
+import ru.hofftech.liga.lessons.packageloader.service.command.EditParcelUserCommandService;
+import ru.hofftech.liga.lessons.packageloader.service.command.FindParcelUserCommandService;
 import ru.hofftech.liga.lessons.packageloader.service.command.FindUserOrdersCommandService;
-import ru.hofftech.liga.lessons.packageloader.service.command.LoadPackagesUserCommandService;
+import ru.hofftech.liga.lessons.packageloader.service.command.LoadParcelsUserCommandService;
 import ru.hofftech.liga.lessons.packageloader.service.command.UnloadTrucksUserCommandService;
 import ru.hofftech.liga.lessons.packageloader.service.logistic.BalancedFillTruckLogisticService;
 import ru.hofftech.liga.lessons.packageloader.service.logistic.FullFillTruckLogisticService;
 import ru.hofftech.liga.lessons.packageloader.service.logistic.OnePerTruckLogisticService;
-import ru.hofftech.liga.lessons.packageloader.validator.CreatePackageUserCommandValidator;
-import ru.hofftech.liga.lessons.packageloader.validator.DeletePackageUserCommandValidator;
-import ru.hofftech.liga.lessons.packageloader.validator.EditPackageUserCommandValidator;
+import ru.hofftech.liga.lessons.packageloader.validator.CreateParcelUserCommandValidator;
+import ru.hofftech.liga.lessons.packageloader.validator.DeleteParcelUserCommandValidator;
+import ru.hofftech.liga.lessons.packageloader.validator.EditParcelUserCommandValidator;
 import ru.hofftech.liga.lessons.packageloader.validator.FindUserOrdersUserCommandValidator;
-import ru.hofftech.liga.lessons.packageloader.validator.LoadPackagesUserCommandValidator;
+import ru.hofftech.liga.lessons.packageloader.validator.LoadParcelsUserCommandValidator;
 import ru.hofftech.liga.lessons.packageloader.validator.UnloadTrucksUserCommandValidator;
 
 @Slf4j
 @Configuration
 @EnableConfigurationProperties(BillingConfiguration.class)
-public class Context {
+public class AppConfig {
     // Repos
     @Bean
-    public PackageRepository packageRepository() {
-        return new PackageRepository();
+    public ParcelRepository parcelRepository() {
+        return new ParcelRepository();
     }
 
     @Bean
@@ -57,11 +57,10 @@ public class Context {
     }
 
     @Bean
-    public TelegramService telegramService(UserCommandProcessorService userCommandProcessorService) {
+    public TelegramService telegramService(UserCommandProcessorService userCommandProcessorService, Environment environment) {
         try {
-            var botUsername = System.getenv("bot_username");
-            var botToken = System.getenv("bot_token");
-            // todo
+            var botUsername = environment.getProperty("telegram.credentials.username");
+            var botToken = environment.getProperty("telegram.credentials.token");
             return new TelegramService(botUsername, botToken, userCommandProcessorService);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
@@ -72,18 +71,18 @@ public class Context {
 
     // Validators
     @Bean
-    public CreatePackageUserCommandValidator createPackageUserCommandValidator() {
-        return new CreatePackageUserCommandValidator();
+    public CreateParcelUserCommandValidator createParcelUserCommandValidator() {
+        return new CreateParcelUserCommandValidator();
     }
 
     @Bean
-    public EditPackageUserCommandValidator editPackageUserCommandValidator() {
-        return new EditPackageUserCommandValidator();
+    public EditParcelUserCommandValidator editParcelUserCommandValidator() {
+        return new EditParcelUserCommandValidator();
     }
 
     @Bean
-    public LoadPackagesUserCommandValidator loadPackagesUserCommandValidator() {
-        return new LoadPackagesUserCommandValidator();
+    public LoadParcelsUserCommandValidator loadParcelsUserCommandValidator() {
+        return new LoadParcelsUserCommandValidator();
     }
 
     @Bean
@@ -92,8 +91,8 @@ public class Context {
     }
 
     @Bean
-    public DeletePackageUserCommandValidator deletePackageUserCommandValidator() {
-        return new DeletePackageUserCommandValidator();
+    public DeleteParcelUserCommandValidator deleteParcelUserCommandValidator() {
+        return new DeleteParcelUserCommandValidator();
     }
 
     @Bean
@@ -109,8 +108,8 @@ public class Context {
     }
 
     @Bean
-    public ReportPackageService reportPackageService() {
-        return new ReportPackageService();
+    public ReportParcelService reportParcelService() {
+        return new ReportParcelService();
     }
 
     @Bean
@@ -162,44 +161,44 @@ public class Context {
 
     // Commands
     @Bean
-    public CreatePackageUserCommandService createPackageUserCommandService(
-            PackageRepository packageRepository,
-            CreatePackageUserCommandValidator commandValidator) {
-        return new CreatePackageUserCommandService(packageRepository, commandValidator);
+    public CreateParcelUserCommandService createParcelUserCommandService(
+            ParcelRepository parcelRepository,
+            CreateParcelUserCommandValidator commandValidator) {
+        return new CreateParcelUserCommandService(parcelRepository, commandValidator);
     }
 
     @Bean
-    public DeletePackageUserCommandService deletePackageUserCommandService(
-            PackageRepository packageRepository,
-            DeletePackageUserCommandValidator deletePackageUserCommandValidator) {
-        return new DeletePackageUserCommandService(packageRepository, deletePackageUserCommandValidator);
+    public DeleteParcelUserCommandService deleteParcelUserCommandService(
+            ParcelRepository parcelRepository,
+            DeleteParcelUserCommandValidator deleteParcelUserCommandValidator) {
+        return new DeleteParcelUserCommandService(parcelRepository, deleteParcelUserCommandValidator);
     }
 
     @Bean
-    public EditPackageUserCommandService editPackageUserCommandService(
-            PackageRepository packageRepository,
-            EditPackageUserCommandValidator commandValidator) {
-        return new EditPackageUserCommandService(packageRepository, commandValidator);
+    public EditParcelUserCommandService editParcelUserCommandService(
+            ParcelRepository parcelRepository,
+            EditParcelUserCommandValidator commandValidator) {
+        return new EditParcelUserCommandService(parcelRepository, commandValidator);
     }
 
     @Bean
-    public FindPackageUserCommandService findPackageUserCommandService(
-            PackageRepository packageRepository) {
-        return new FindPackageUserCommandService(packageRepository);
+    public FindParcelUserCommandService findParcelUserCommandService(
+            ParcelRepository parcelRepository) {
+        return new FindParcelUserCommandService(parcelRepository);
     }
 
     @Bean
-    public LoadPackagesUserCommandService loadPackagesUserCommandService(
+    public LoadParcelsUserCommandService loadParcelsUserCommandService(
             FileLoaderService fileLoaderService,
             ReportTruckService reportTruckService,
-            PackageRepository packageRepository,
-            LoadPackagesUserCommandValidator commandValidator,
+            ParcelRepository parcelRepository,
+            LoadParcelsUserCommandValidator commandValidator,
             BillingService billingService,
             ApplicationContext applicationContext) {
-        return new LoadPackagesUserCommandService(
+        return new LoadParcelsUserCommandService(
                 fileLoaderService,
                 reportTruckService,
-                packageRepository,
+                parcelRepository,
                 commandValidator,
                 applicationContext,
                 billingService);
@@ -208,12 +207,12 @@ public class Context {
     @Bean
     public UnloadTrucksUserCommandService unloadTrucksUserCommandService(
             FileLoaderService fileLoaderService,
-            ReportPackageService reportPackageService,
+            ReportParcelService reportParcelService,
             BillingService billingService,
             UnloadTrucksUserCommandValidator commandValidator) {
         return new UnloadTrucksUserCommandService(
                 fileLoaderService,
-                reportPackageService,
+                reportParcelService,
                 commandValidator,
                 billingService);
     }

@@ -3,6 +3,11 @@ spring:
     interactive:
       enabled: true
 
+telegram:
+  credentials:
+    username: ${BOT_USERNAME}
+    token: ${BOT_TOKEN}
+
 billing:
   pricing:
     load: 80

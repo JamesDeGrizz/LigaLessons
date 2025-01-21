@@ -2,22 +2,22 @@ package ru.hofftech.liga.lessons.packageloader.model.dto;
 
 import java.util.Map;
 
-public record LoadPackagesUserCommandDto(String out,
-                                         String type,
-                                         String trucks,
-                                         String userId,
-                                         String outFilename,
-                                         String parcelsText,
-                                         String parcelsFile) implements BaseUserCommandDto {
+public record LoadParcelsUserCommandDto(String out,
+                                        String type,
+                                        String trucks,
+                                        String userId,
+                                        String outFilename,
+                                        String parcelsText,
+                                        String parcelsFile) implements BaseUserCommandDto {
     private static final String ARGUMENT_OUT_TYPE = "-out";
     private static final String ARGUMENT_OUT_FILENAME = "-out-filename";
-    private static final String ARGUMENT_PACKAGES_TEXT = "-parcels-text";
-    private static final String ARGUMENT_PACKAGES_FILE = "-parcels-file";
+    private static final String ARGUMENT_PARCELS_TEXT = "-parcels-text";
+    private static final String ARGUMENT_PARCELS_FILE = "-parcels-file";
     private static final String ARGUMENT_ALGORITHM_TYPE = "-type";
     private static final String ARGUMENT_TRUCKS = "-trucks";
     private static final String ARGUMENT_USER_ID = "-user-id";
 
-    public static LoadPackagesUserCommandDto fromArgsMap(Map<String, String> args) {
+    public static LoadParcelsUserCommandDto fromArgsMap(Map<String, String> args) {
         if (args == null || args.isEmpty()) {
             return null;
         }
@@ -45,13 +45,13 @@ public record LoadPackagesUserCommandDto(String out,
         if (args.containsKey(ARGUMENT_OUT_FILENAME)) {
             outFilename = args.get(ARGUMENT_OUT_FILENAME);
         }
-        if (args.containsKey(ARGUMENT_PACKAGES_TEXT)) {
-            parcelsText = args.get(ARGUMENT_PACKAGES_TEXT);
+        if (args.containsKey(ARGUMENT_PARCELS_TEXT)) {
+            parcelsText = args.get(ARGUMENT_PARCELS_TEXT);
         }
-        if (args.containsKey(ARGUMENT_PACKAGES_FILE)) {
-            parcelsFile = args.get(ARGUMENT_PACKAGES_FILE);
+        if (args.containsKey(ARGUMENT_PARCELS_FILE)) {
+            parcelsFile = args.get(ARGUMENT_PARCELS_FILE);
         }
 
-        return new LoadPackagesUserCommandDto(out, type, trucks, userId, outFilename, parcelsText, parcelsFile);
+        return new LoadParcelsUserCommandDto(out, type, trucks, userId, outFilename, parcelsText, parcelsFile);
     }
 }

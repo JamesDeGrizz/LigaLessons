@@ -23,6 +23,7 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 public class FileLoaderService {
+    private static String PARCEL_NAME_DELIMITER = ",";
 
     /**
      * Получает имена посылок из указанного файла.
@@ -30,7 +31,7 @@ public class FileLoaderService {
      * @param fileName имя файла, содержащего имена посылок
      * @return массив имен посылок или null, если произошла ошибка
      */
-    public String[] getPackageNames(String fileName) {
+    public String[] getParcelNames(String fileName) {
         try {
             log.debug("Начинается чтение посылок из файла {}", fileName);
 
@@ -39,7 +40,7 @@ public class FileLoaderService {
                 return null;
             }
 
-            return loadPackageNamesFromFile(filePath);
+            return loadParcelNamesFromFile(filePath);
 
         } catch (Exception e) {
             log.error(e.getMessage(), e);
@@ -71,18 +72,18 @@ public class FileLoaderService {
      * @param filePath путь к файлу
      * @return массив имен посылок или null, если произошла ошибка
      */
-    private String[] loadPackageNamesFromFile(Path filePath) {
-        var packages = new ArrayList<String>();
+    private String[] loadParcelNamesFromFile(Path filePath) {
+        var parcels = new ArrayList<String>();
 
         try (var reader = new BufferedReader(new FileReader(filePath.toString()))) {
             String line;
 
             while ((line = reader.readLine()) != null) {
-                packages.addAll(Arrays.stream(line.split(",")).toList());
+                parcels.addAll(Arrays.stream(line.split(PARCEL_NAME_DELIMITER)).toList());
             }
 
-            log.debug("Чтение посылок из файла {} успешно завершено, загружено {} посылок", filePath.getFileName(), packages.size());
-            return packages.toArray(new String[packages.size()]);
+            log.debug("Чтение посылок из файла {} успешно завершено, загружено {} посылок", filePath.getFileName(), parcels.size());
+            return parcels.toArray(new String[parcels.size()]);
         } catch (Exception e) {
             log.error("Ошибка заполнения списка посылок из файла {}", filePath.getFileName(), e);
             return null;

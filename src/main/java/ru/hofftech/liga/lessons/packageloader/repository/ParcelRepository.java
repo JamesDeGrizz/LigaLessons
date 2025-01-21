@@ -1,7 +1,7 @@
 package ru.hofftech.liga.lessons.packageloader.repository;
 
 import lombok.NoArgsConstructor;
-import ru.hofftech.liga.lessons.packageloader.model.Package;
+import ru.hofftech.liga.lessons.packageloader.model.Parcel;
 
 import java.util.HashMap;
 import java.util.List;
@@ -14,46 +14,44 @@ import java.util.stream.Collectors;
  * Этот класс предоставляет методы для добавления, поиска, обновления и удаления посылок.
  */
 @NoArgsConstructor
-public class PackageRepository {
+public class ParcelRepository {
     /**
      * Хранилище посылок, где ключом является имя посылки, а значением - сама посылка.
      */
-    private static Map<String, Package> packages;
-
-    static {
-        packages = new HashMap<>();
-        packages.put("тип 1", new Package(List.of("1"), "тип 1", '1'));
-        packages.put("тип 2", new Package(List.of("22"), "тип 2", '2'));
-        packages.put("тип 3", new Package(List.of("333"), "тип 3", '3'));
-        packages.put("тип 4", new Package(List.of("4444"), "тип 4", '4'));
-        packages.put("тип 5", new Package(List.of("55555"), "тип 5", '5'));
-        packages.put("тип 6", new Package(List.of("666", "666"), "тип 6", '6'));
-        packages.put("тип 7", new Package(List.of("777", "7777"), "тип 7", '7'));
-        packages.put("тип 8", new Package(List.of("8888", "8888"), "тип 8", '8'));
-        packages.put("тип 9", new Package(List.of("999", "999", "999"), "тип 9", '9'));
-    }
+    private Map<String, Parcel> parcels = new HashMap<>() {{
+            put("тип 1", new Parcel(List.of("1"), "тип 1", '1'));
+            put("тип 2", new Parcel(List.of("22"), "тип 2", '2'));
+            put("тип 3", new Parcel(List.of("333"), "тип 3", '3'));
+            put("тип 4", new Parcel(List.of("4444"), "тип 4", '4'));
+            put("тип 5", new Parcel(List.of("55555"), "тип 5", '5'));
+            put("тип 6", new Parcel(List.of("666", "666"), "тип 6", '6'));
+            put("тип 7", new Parcel(List.of("777", "7777"), "тип 7", '7'));
+            put("тип 8", new Parcel(List.of("8888", "8888"), "тип 8", '8'));
+            put("тип 9", new Parcel(List.of("999", "999", "999"), "тип 9", '9'));
+    }};
 
     /**
      * Конструктор, инициализирующий репозиторий с дополнительными посылками.
      *
      * @param additionalValues дополнительные посылки для инициализации репозитория
      */
-    public PackageRepository(Map<String, Package> additionalValues) {
-        packages.putAll(additionalValues);
+    public ParcelRepository(Map<String, Parcel> additionalValues) {
+        parcels = new HashMap<>();
+        parcels.putAll(additionalValues);
     }
 
     /**
      * Добавляет новую посылку в репозиторий.
      *
-     * @param pkg посылка для добавления
+     * @param parcel посылка для добавления
      * @return true, если посылка была успешно добавлена, false, если посылка с таким именем уже существует
      */
-    public boolean add(Package pkg) {
-        if (packages.containsKey(pkg.getName())) {
+    public boolean add(Parcel parcel) {
+        if (parcels.containsKey(parcel.getName())) {
             return false;
         }
 
-        packages.put(pkg.getName(), pkg);
+        parcels.put(parcel.getName(), parcel);
         return true;
     }
 
@@ -63,12 +61,12 @@ public class PackageRepository {
      * @param name имя посылки
      * @return найденная посылка или null, если посылка с таким именем не найдена
      */
-    public Optional<Package> find(String name) {
-        if (!packages.containsKey(name)) {
+    public Optional<Parcel> find(String name) {
+        if (!parcels.containsKey(name)) {
             return null;
         }
 
-        return Optional.ofNullable(packages.get(name));
+        return Optional.ofNullable(parcels.get(name));
     }
 
     /**
@@ -76,24 +74,24 @@ public class PackageRepository {
      *
      * @return список всех посылок
      */
-    public List<Package> findAll() {
-        return packages.values().stream().collect(Collectors.toList());
+    public List<Parcel> findAll() {
+        return parcels.values().stream().collect(Collectors.toList());
     }
 
     /**
      * Обновляет существующую посылку в репозитории.
      *
-     * @param packageSourceId имя существующей посылки
-     * @param pkg новая посылка для обновления
+     * @param parcelSourceId имя существующей посылки
+     * @param parcel новая посылка для обновления
      * @return true, если посылка была успешно обновлена, false, если посылка с таким именем не найдена
      */
-    public boolean update(String packageSourceId, Package pkg) {
-        if (!packages.containsKey(packageSourceId)) {
+    public boolean update(String parcelSourceId, Parcel parcel) {
+        if (!parcels.containsKey(parcelSourceId)) {
             return false;
         }
 
-        packages.remove(packageSourceId);
-        packages.put(pkg.getName(), pkg);
+        parcels.remove(parcelSourceId);
+        parcels.put(parcel.getName(), parcel);
         return true;
     }
 
@@ -104,11 +102,11 @@ public class PackageRepository {
      * @return true, если посылка была успешно удалена, false, если посылка с таким именем не найдена
      */
     public boolean delete(String name) {
-        if (!packages.containsKey(name)) {
+        if (!parcels.containsKey(name)) {
             return false;
         }
 
-        packages.remove(name);
+        parcels.remove(name);
         return true;
     }
 }

@@ -9,6 +9,7 @@ import lombok.Setter;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Представляет посылку с его содержимым, именем, символом и точками размещения.
@@ -20,7 +21,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor(force = true)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Package {
+public class Parcel {
     private final List<String> content;
     private final String name;
     private final char symbol;
@@ -70,9 +71,10 @@ public class Package {
      * @return размер посылки
      */
     public int getSize() {
-        return content.stream()
-                .mapToInt(x -> x.length())
-                .sum();
+        return Optional.of(content.stream()
+                .mapToInt(contentString -> contentString.length())
+                .sum())
+                .orElse(0);
     }
 
     /**
@@ -89,7 +91,7 @@ public class Package {
      *
      * @param placingPoints список точек размещения
      */
-    public void placePackage(List<PlacingPoint> placingPoints) {
+    public void placeParcel(List<PlacingPoint> placingPoints) {
         this.placingPoints = placingPoints;
     }
 

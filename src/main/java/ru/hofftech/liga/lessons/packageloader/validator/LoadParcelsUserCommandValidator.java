@@ -2,17 +2,17 @@ package ru.hofftech.liga.lessons.packageloader.validator;
 
 import lombok.NoArgsConstructor;
 import ru.hofftech.liga.lessons.packageloader.model.TruckSize;
-import ru.hofftech.liga.lessons.packageloader.model.dto.LoadPackagesUserCommandDto;
+import ru.hofftech.liga.lessons.packageloader.model.dto.LoadParcelsUserCommandDto;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @NoArgsConstructor
-public class LoadPackagesUserCommandValidator {
+public class LoadParcelsUserCommandValidator {
     private static final String ARGUMENT_OUT_TYPE_JSON = "json-file";
     private static final String ARGUMENT_OUT_TYPE_TEXT = "text";
 
-    public List<String> validate(LoadPackagesUserCommandDto command) {
+    public List<String> validate(LoadParcelsUserCommandDto command) {
         List<String> errors = new ArrayList<String>();
         validateOut(command, errors);
         validateReportFileName(command, errors);
@@ -23,13 +23,13 @@ public class LoadPackagesUserCommandValidator {
         return errors;
     }
 
-    private void validateUserId(LoadPackagesUserCommandDto command, List<String> errors) {
+    private void validateUserId(LoadParcelsUserCommandDto command, List<String> errors) {
         if (command.userId() == null || command.userId().isEmpty()) {
             errors.add("Не хватает аргумента \"user-id\"");
         }
     }
 
-    private void validateOut(LoadPackagesUserCommandDto command, List<String> errors) {
+    private void validateOut(LoadParcelsUserCommandDto command, List<String> errors) {
         if (command.out() == null || command.out().isEmpty()) {
             errors.add("Не хватает аргумента \"out\"");
         }
@@ -38,7 +38,7 @@ public class LoadPackagesUserCommandValidator {
         }
     }
 
-    private void validateReportFileName(LoadPackagesUserCommandDto command, List<String> errors) {
+    private void validateReportFileName(LoadParcelsUserCommandDto command, List<String> errors) {
         if (command.out() != null || !command.out().equals(ARGUMENT_OUT_TYPE_JSON)) {
             return;
         }
@@ -48,14 +48,14 @@ public class LoadPackagesUserCommandValidator {
         }
     }
 
-    private void validatePackages(LoadPackagesUserCommandDto command, List<String> errors) {
+    private void validatePackages(LoadParcelsUserCommandDto command, List<String> errors) {
         if ((command.parcelsText() == null || command.parcelsText().isEmpty())
                 && (command.parcelsFile() == null || command.parcelsFile().isEmpty())) {
             errors.add("Должен быть указан 1 из параметров: \"parcels-text\" или \"parcels-file\"");
         }
     }
 
-    private void validatePlacingAlgorithm(LoadPackagesUserCommandDto command, List<String> errors) {
+    private void validatePlacingAlgorithm(LoadParcelsUserCommandDto command, List<String> errors) {
         if (command.type() == null || command.type().isEmpty()) {
             errors.add("Не хватает аргумента \"type\"");
             return;
@@ -73,7 +73,7 @@ public class LoadPackagesUserCommandValidator {
         }
     }
 
-    private void validateTruckSizes(LoadPackagesUserCommandDto command, List<String> errors) {
+    private void validateTruckSizes(LoadParcelsUserCommandDto command, List<String> errors) {
         if (command.trucks() == null || command.trucks().isEmpty()) {
             errors.add("Не хватает аргумента \"trucks\"");
             return;

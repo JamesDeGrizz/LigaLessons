@@ -2,7 +2,7 @@ package ru.hofftech.liga.lessons.packageloader.service.logistic;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import ru.hofftech.liga.lessons.packageloader.model.Package;
+import ru.hofftech.liga.lessons.packageloader.model.Parcel;
 import ru.hofftech.liga.lessons.packageloader.model.Truck;
 import ru.hofftech.liga.lessons.packageloader.model.TruckSize;
 import ru.hofftech.liga.lessons.packageloader.service.TruckService;
@@ -25,20 +25,20 @@ public class OnePerTruckLogisticService implements LogisticService {
     /**
      * Размещает посылки в грузовиках методом "один грузовик = максимум посылок".
      *
-     * @param packages список посылок для размещения
+     * @param parcels список посылок для размещения
      * @param truckSizes список размеров грузовиков
      * @return список грузовиков с размещенными посылками
      */
     @Override
-    public List<Truck> placePackagesToTrucks(List<Package> packages, List<TruckSize> truckSizes) {
-        if (packages.size() > truckSizes.size()) {
+    public List<Truck> placeParcelsToTrucks(List<Parcel> parcels, List<TruckSize> truckSizes) {
+        if (parcels.size() > truckSizes.size()) {
             throw new IllegalArgumentException("Посылки невозможно отправить заданным алгоритмом, количество посылок превышает количество грузовиков.");
         }
 
         log.info("Начинаем заполнение грузовиков методом \"один грузовик = одна посылка\"");
 
         var trucks = getTrucks(truckSizes);
-        placePackages(packages, trucks);
+        placePackages(parcels, trucks);
 
         log.info("Заполнение грузовиков методом \"один грузовик = одна посылка\" успешно завершено");
         return trucks;
@@ -65,15 +65,15 @@ public class OnePerTruckLogisticService implements LogisticService {
     /**
      * Заполняет грузовики посылками, по одной на грузовик.
      *
-     * @param packages список посылок для размещения
+     * @param parcels список посылок для размещения
      * @param trucks список грузовиков
      */
-    private void placePackages(List<Package> packages, List<Truck> trucks) {
+    private void placePackages(List<Parcel> parcels, List<Truck> trucks) {
         var trucksArray = trucks.toArray(new Truck[trucks.size()]);
-        var packagesArray = packages.toArray(new Package[packages.size()]);
+        var packagesArray = parcels.toArray(new Parcel[parcels.size()]);
 
-        for (var i = 0; i < packages.size(); i++) {
-            truckService.placePackage(trucksArray[i], packagesArray[i], 0, 0);
+        for (var i = 0; i < parcels.size(); i++) {
+            truckService.placeParcel(trucksArray[i], packagesArray[i], 0, 0);
             log.info("Посылка \n{} успешно погружена в грузовик", packagesArray[i]);
         }
     }

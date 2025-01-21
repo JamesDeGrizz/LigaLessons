@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
-import ru.hofftech.liga.lessons.packageloader.model.dto.LoadPackagesUserCommandDto;
+import ru.hofftech.liga.lessons.packageloader.model.dto.LoadParcelsUserCommandDto;
 import ru.hofftech.liga.lessons.packageloader.model.dto.UnloadTrucksUserCommandDto;
 import ru.hofftech.liga.lessons.packageloader.service.UserCommandProcessorService;
 
@@ -21,7 +21,7 @@ public class LogisticController {
                        @ShellOption(value = "out-filename", defaultValue = "") String outFilename,
                        @ShellOption(value = "parcels-text", defaultValue = "") String parcelsText,
                        @ShellOption(value = "parcels-file", defaultValue = "") String parcelsFile) {
-        return userCommandProcessorService.processCommand(new LoadPackagesUserCommandDto(out, type, trucks, userId, outFilename, parcelsText, parcelsFile));
+        return userCommandProcessorService.processCommand(new LoadParcelsUserCommandDto(out, type, trucks, userId, outFilename, parcelsText, parcelsFile));
     }
 
     @ShellMethod("Разгрузка грузовиков")

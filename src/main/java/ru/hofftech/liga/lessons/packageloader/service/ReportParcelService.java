@@ -1,7 +1,7 @@
 package ru.hofftech.liga.lessons.packageloader.service;
 
 import lombok.extern.slf4j.Slf4j;
-import ru.hofftech.liga.lessons.packageloader.model.Package;
+import ru.hofftech.liga.lessons.packageloader.model.Parcel;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -13,26 +13,26 @@ import java.util.stream.Collectors;
  * Этот класс предоставляет методы для вывода содержимого посылок, создания отчетов о посылках и сохранения данных в файлы.
  */
 @Slf4j
-public class ReportPackageService {
-    private static final String PACKAGES_UNLOAD_MESSAGE = "Из грузовиков извлечены следующие посылки:";
-    private static final String PACKAGES_SAVED_TO_FILE_MESSAGE = "Посылки успешно сохранены в файл ";
+public class ReportParcelService {
+    private static final String PARCELS_UNLOAD_MESSAGE = "Из грузовиков извлечены следующие посылки:";
+    private static final String PARCELS_SAVED_TO_FILE_MESSAGE = "Посылки успешно сохранены в файл ";
 
     /**
      * Выводит отчет о посылках.
      *
-     * @param packages список посылок
+     * @param parcels список посылок
      * @param withCount флаг, указывающий, нужно ли включать количество посылок
      */
-    public void reportPackages(List<Package> packages, boolean withCount) {
-        log.info(PACKAGES_UNLOAD_MESSAGE);
+    public void reportParcels(List<Parcel> parcels, boolean withCount) {
+        log.info(PARCELS_UNLOAD_MESSAGE);
         if (withCount) {
-            packages.stream()
-                .collect(Collectors.groupingBy(pkg -> pkg.getName(), Collectors.counting()))
+            parcels.stream()
+                .collect(Collectors.groupingBy(parcel -> parcel.getName(), Collectors.counting()))
                 .forEach((name, count) -> log.info("\n" + name + ";" + count));
         }
         else {
-            for (var pkg : packages) {
-                log.info("\n" + pkg.getName());
+            for (var parcel : parcels) {
+                log.info("\n" + parcel.getName());
             }
         }
     }
@@ -41,14 +41,14 @@ public class ReportPackageService {
      * Сохраняет информацию о посылках в файл.
      *
      * @param fileName имя файла для сохранения
-     * @param packages список посылок
+     * @param parcels список посылок
      * @param withCount флаг, указывающий, нужно ли включать количество посылок
      */
-    public void savePackagesToFile(String fileName, List<Package> packages, boolean withCount) {
+    public void saveParcelsToFile(String fileName, List<Parcel> parcels, boolean withCount) {
         var stringBuilder = new StringBuilder();
         if (withCount) {
-            packages.stream()
-                    .collect(Collectors.groupingBy(pkg -> pkg.getName(), Collectors.counting()))
+            parcels.stream()
+                    .collect(Collectors.groupingBy(parcel -> parcel.getName(), Collectors.counting()))
                     .forEach((name, count) -> stringBuilder
                             .append(name)
                             .append(";")
@@ -56,9 +56,9 @@ public class ReportPackageService {
                             .append("\n"));
         }
         else {
-            for (var pkg : packages) {
+            for (var parcel : parcels) {
                 stringBuilder
-                        .append(pkg.getName())
+                        .append(parcel.getName())
                         .append("\n");
             }
         }
@@ -68,7 +68,7 @@ public class ReportPackageService {
             outputStream.write(strToBytes);
 
             outputStream.close();
-            log.info(PACKAGES_SAVED_TO_FILE_MESSAGE + fileName);
+            log.info(PARCELS_SAVED_TO_FILE_MESSAGE + fileName);
         } catch (IOException e) {
             log.error(e.getMessage(), e);
         }

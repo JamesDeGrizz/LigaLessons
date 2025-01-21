@@ -1,4 +1,4 @@
-package ru.hofftech.liga.lessons.packageloader.model.configuration;
+package ru.hofftech.liga.lessons.packageloader.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 

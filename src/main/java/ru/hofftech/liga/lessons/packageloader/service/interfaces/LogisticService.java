@@ -1,6 +1,6 @@
 package ru.hofftech.liga.lessons.packageloader.service.interfaces;
 
-import ru.hofftech.liga.lessons.packageloader.model.Package;
+import ru.hofftech.liga.lessons.packageloader.model.Parcel;
 import ru.hofftech.liga.lessons.packageloader.model.Truck;
 import ru.hofftech.liga.lessons.packageloader.model.TruckSize;
 
@@ -14,9 +14,9 @@ public interface LogisticService {
     /**
      * Размещает посылки на грузовиках в соответствии с заданными размерами грузовиков.
      *
-     * @param packages список посылок для размещения
+     * @param parcels список посылок для размещения
      * @param truckSizes список размеров грузовиков
      * @return список грузовиков с размещенными посылками
      */
-    List<Truck> placePackagesToTrucks(List<Package> packages, List<TruckSize> truckSizes);
+    List<Truck> placeParcelsToTrucks(List<Parcel> parcels, List<TruckSize> truckSizes);
 }

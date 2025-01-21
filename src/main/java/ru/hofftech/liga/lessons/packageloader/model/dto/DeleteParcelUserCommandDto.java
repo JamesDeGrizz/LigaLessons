@@ -2,10 +2,10 @@ package ru.hofftech.liga.lessons.packageloader.model.dto;
 
 import java.util.Map;
 
-public record DeletePackageUserCommandDto(String packageId) implements BaseUserCommandDto {
-    private static final String ARGUMENT_NAME = "-name";
+public record DeleteParcelUserCommandDto(String parcelId) implements BaseUserCommandDto {
+    private static final String ARGUMENT_NAME = "--name";
 
-    public static DeletePackageUserCommandDto fromArgsMap(Map<String, String> args) {
+    public static DeleteParcelUserCommandDto fromArgsMap(Map<String, String> args) {
         if (args == null || args.isEmpty()) {
             return null;
         }
@@ -16,6 +16,6 @@ public record DeletePackageUserCommandDto(String packageId) implements BaseUserC
             name = args.get(ARGUMENT_NAME);
         }
 
-        return new DeletePackageUserCommandDto(name);
+        return new DeleteParcelUserCommandDto(name);
     }
 }

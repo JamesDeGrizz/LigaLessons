@@ -2,7 +2,7 @@ package ru.hofftech.liga.lessons.packageloader.service.logistic;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import ru.hofftech.liga.lessons.packageloader.model.Package;
+import ru.hofftech.liga.lessons.packageloader.model.Parcel;
 import ru.hofftech.liga.lessons.packageloader.model.Truck;
 import ru.hofftech.liga.lessons.packageloader.model.TruckSize;
 import ru.hofftech.liga.lessons.packageloader.service.TruckService;
@@ -23,17 +23,17 @@ public class FullFillTruckLogisticService implements LogisticService {
     /**
      * Размещает посылки в грузовиках методом "один грузовик = одна посылка".
      *
-     * @param packages список посылок для размещения
+     * @param parcels список посылок для размещения
      * @param truckSizes список размеров грузовиков
      * @return список грузовиков с размещенными посылками
      * @throws IllegalArgumentException если количество посылок превышает количество грузовиков
      */
     @Override
-    public List<Truck> placePackagesToTrucks(List<Package> packages, List<TruckSize> truckSizes) {
+    public List<Truck> placeParcelsToTrucks(List<Parcel> parcels, List<TruckSize> truckSizes) {
         log.info("Начинаем заполнение грузовиков методом \"один грузовик = максимум посылок\"");
         var trucks = getTrucks(truckSizes);
 
-        fillTrucks(packages, trucks);
+        fillTrucks(parcels, trucks);
 
         log.info("Заполнение грузовиков методом \"один грузовик = максимум посылок\" успешно завершено");
         return trucks;
@@ -56,26 +56,26 @@ public class FullFillTruckLogisticService implements LogisticService {
     /**
      * Размещает посылки в грузовиках, один грузовик на одну посылку.
      *
-     * @param packages список посылок для размещения
+     * @param parcels список посылок для размещения
      * @param trucks список грузовиков
      * @return список грузовиков с размещенными посылками
      */
-    private void fillTrucks(List<Package> packages, List<Truck> trucks) {
-        for (var pkg : packages) {
+    private void fillTrucks(List<Parcel> parcels, List<Truck> trucks) {
+        for (var parcel : parcels) {
             var placed = false;
             for (var truck : trucks) {
                 if (placed) {
                     break;
                 }
 
-                for (int i = 0; i <= truck.getSize().getHeight() - pkg.getHeight(); i++) {
+                for (int i = 0; i <= truck.getSize().getHeight() - parcel.getHeight(); i++) {
                     if (placed) {
                         break;
                     }
 
-                    for (int j = 0; j <= truck.getSize().getWidth() - pkg.getWidth(); j++) {
-                        if (truckService.canPlacePackage(truck, pkg, i, j)) {
-                            truckService.placePackage(truck, pkg, i, j);
+                    for (int j = 0; j <= truck.getSize().getWidth() - parcel.getWidth(); j++) {
+                        if (truckService.canPlaceParcel(truck, parcel, i, j)) {
+                            truckService.placeParcel(truck, parcel, i, j);
                             placed = true;
                             break;
                         }

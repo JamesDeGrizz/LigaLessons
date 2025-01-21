@@ -3,19 +3,19 @@ package ru.hofftech.liga.lessons.packageloader.service;
 import lombok.AllArgsConstructor;
 import org.springframework.context.ApplicationContext;
 import ru.hofftech.liga.lessons.packageloader.model.dto.BaseUserCommandDto;
-import ru.hofftech.liga.lessons.packageloader.model.dto.CreatePackageUserCommandDto;
-import ru.hofftech.liga.lessons.packageloader.model.dto.DeletePackageUserCommandDto;
-import ru.hofftech.liga.lessons.packageloader.model.dto.EditPackageUserCommandDto;
-import ru.hofftech.liga.lessons.packageloader.model.dto.FindPackageUserCommandDto;
+import ru.hofftech.liga.lessons.packageloader.model.dto.CreateParcelUserCommandDto;
+import ru.hofftech.liga.lessons.packageloader.model.dto.DeleteParcelUserCommandDto;
+import ru.hofftech.liga.lessons.packageloader.model.dto.EditParcelUserCommandDto;
+import ru.hofftech.liga.lessons.packageloader.model.dto.FindParcelUserCommandDto;
 import ru.hofftech.liga.lessons.packageloader.model.dto.FindUserOrdersUserCommandDto;
-import ru.hofftech.liga.lessons.packageloader.model.dto.LoadPackagesUserCommandDto;
+import ru.hofftech.liga.lessons.packageloader.model.dto.LoadParcelsUserCommandDto;
 import ru.hofftech.liga.lessons.packageloader.model.dto.UnloadTrucksUserCommandDto;
-import ru.hofftech.liga.lessons.packageloader.service.command.CreatePackageUserCommandService;
-import ru.hofftech.liga.lessons.packageloader.service.command.DeletePackageUserCommandService;
-import ru.hofftech.liga.lessons.packageloader.service.command.EditPackageUserCommandService;
-import ru.hofftech.liga.lessons.packageloader.service.command.FindPackageUserCommandService;
+import ru.hofftech.liga.lessons.packageloader.service.command.CreateParcelUserCommandService;
+import ru.hofftech.liga.lessons.packageloader.service.command.DeleteParcelUserCommandService;
+import ru.hofftech.liga.lessons.packageloader.service.command.EditParcelUserCommandService;
+import ru.hofftech.liga.lessons.packageloader.service.command.FindParcelUserCommandService;
 import ru.hofftech.liga.lessons.packageloader.service.command.FindUserOrdersCommandService;
-import ru.hofftech.liga.lessons.packageloader.service.command.LoadPackagesUserCommandService;
+import ru.hofftech.liga.lessons.packageloader.service.command.LoadParcelsUserCommandService;
 import ru.hofftech.liga.lessons.packageloader.service.command.UnloadTrucksUserCommandService;
 
 @AllArgsConstructor
@@ -33,14 +33,12 @@ public class UserCommandProcessorService {
     }
 
     public String processCommand(BaseUserCommandDto command) {
-        var qwe = command instanceof CreatePackageUserCommandDto;
-
         var service = switch (command) {
-            case CreatePackageUserCommandDto create -> applicationContext.getBean(CreatePackageUserCommandService.class);
-            case FindPackageUserCommandDto find -> applicationContext.getBean(FindPackageUserCommandService.class);
-            case EditPackageUserCommandDto edit -> applicationContext.getBean(EditPackageUserCommandService.class);
-            case DeletePackageUserCommandDto delete -> applicationContext.getBean(DeletePackageUserCommandService.class);
-            case LoadPackagesUserCommandDto load -> applicationContext.getBean(LoadPackagesUserCommandService.class);
+            case CreateParcelUserCommandDto create -> applicationContext.getBean(CreateParcelUserCommandService.class);
+            case FindParcelUserCommandDto find -> applicationContext.getBean(FindParcelUserCommandService.class);
+            case EditParcelUserCommandDto edit -> applicationContext.getBean(EditParcelUserCommandService.class);
+            case DeleteParcelUserCommandDto delete -> applicationContext.getBean(DeleteParcelUserCommandService.class);
+            case LoadParcelsUserCommandDto load -> applicationContext.getBean(LoadParcelsUserCommandService.class);
             case UnloadTrucksUserCommandDto unload -> applicationContext.getBean(UnloadTrucksUserCommandService.class);
             case FindUserOrdersUserCommandDto orders -> applicationContext.getBean(FindUserOrdersCommandService.class);
             default -> null;

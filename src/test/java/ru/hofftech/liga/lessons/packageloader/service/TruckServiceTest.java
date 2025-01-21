@@ -1,7 +1,9 @@
 package ru.hofftech.liga.lessons.packageloader.service;
 
 import org.junit.jupiter.api.Test;
-import ru.hofftech.liga.lessons.packageloader.model.Package;
+import ru.hofftech.liga.lessons.packageloader.model.Parcel;
+import ru.hofftech.liga.lessons.packageloader.model.Truck;
+import ru.hofftech.liga.lessons.packageloader.model.TruckSize;
 
 import java.util.List;
 import java.util.stream.IntStream;
@@ -11,84 +13,89 @@ import static org.assertj.core.api.Assertions.assertThat;
 class TruckServiceTest {
 
     @Test
-    void canPlacePackage_givenEmptyTruck_returnsTrue() {
-        var truckService = new TruckService(6, 6);
-        var pkg = new Package(List.of("333"), "test", '9');
+    void canPlaceParcel_givenEmptyTruck_returnsTrue() {
+        var truckService = new TruckService();
+        var truck = new Truck(new TruckSize(6, 6));
+        var parcel = new Parcel(List.of("333"), "test", '9');
 
-        assertThat(truckService.canPlacePackage(pkg, 0, 0))
+        assertThat(truckService.canPlaceParcel(truck, parcel, 0, 0))
                 .isTrue();
     }
 
     @Test
-    void canPlacePackage_givenFullTruck_returnsFalse() {
-        var truckService = new TruckService(6, 6);
-        truckService.placePackage(new Package(List.of("999", "999", "999"), "test", '9'), 0, 0);
-        truckService.placePackage(new Package(List.of("999", "999", "999"), "test", '9'), 0, 3);
-        truckService.placePackage(new Package(List.of("999", "999", "999"), "test", '9'), 3, 0);
-        truckService.placePackage(new Package(List.of("999", "999", "999"), "test", '9'), 3, 3);
+    void canPlaceParcel_givenFullTruck_returnsFalse() {
+        var truckService = new TruckService();
+        var truck = new Truck(new TruckSize(6, 6));
+        truckService.placeParcel(truck, new Parcel(List.of("999", "999", "999"), "test", '9'), 0, 0);
+        truckService.placeParcel(truck, new Parcel(List.of("999", "999", "999"), "test", '9'), 0, 3);
+        truckService.placeParcel(truck, new Parcel(List.of("999", "999", "999"), "test", '9'), 3, 0);
+        truckService.placeParcel(truck, new Parcel(List.of("999", "999", "999"), "test", '9'), 3, 3);
 
-        var pkg = new Package(List.of("1"), "test", '9');
+        var parcel = new Parcel(List.of("1"), "test", '9');
 
         IntStream.range(0, 6)
                 .forEach(i -> IntStream.range(0, 6)
                         .forEach(j -> {
-                            assertThat(truckService.canPlacePackage(pkg, i, j))
+                            assertThat(truckService.canPlaceParcel(truck, parcel, i, j))
                                     .isFalse();
                         }));
 
     }
 
     @Test
-    void placePackage_givenBigPackage_returnsCorrectlyPlacedPackage() {
-        var truckService = new TruckService(6, 6);
-        truckService.placePackage(new Package(List.of("999", "999", "999"), "test", '9'), 2, 2);
+    void placePackage_givenBigPackage_returnsCorrectlyPlacedParcel() {
+        var truckService = new TruckService();
+        var truck = new Truck(new TruckSize(6, 6));
+        truckService.placeParcel(truck, new Parcel(List.of("999", "999", "999"), "test", '9'), 2, 2);
 
-        assertThat(truckService.getTruck().getContent()[2][2])
+        assertThat(truck.getContent()[2][2])
                 .isEqualTo('9');
-        assertThat(truckService.getTruck().getContent()[3][3])
+        assertThat(truck.getContent()[3][3])
                 .isEqualTo('9');
-        assertThat(truckService.getTruck().getContent()[4][4])
+        assertThat(truck.getContent()[4][4])
                 .isEqualTo('9');
-        assertThat(truckService.getTruck().getContent()[2][4])
+        assertThat(truck.getContent()[2][4])
                 .isEqualTo('9');
-        assertThat(truckService.getTruck().getContent()[4][2])
+        assertThat(truck.getContent()[4][2])
                 .isEqualTo('9');
 
-        assertThat(truckService.getTruck().getContent()[1][1])
+        assertThat(truck.getContent()[1][1])
                 .isEqualTo(' ');
-        assertThat(truckService.getTruck().getContent()[1][2])
+        assertThat(truck.getContent()[1][2])
                 .isEqualTo(' ');
-        assertThat(truckService.getTruck().getContent()[1][3])
+        assertThat(truck.getContent()[1][3])
                 .isEqualTo(' ');
-        assertThat(truckService.getTruck().getContent()[1][4])
+        assertThat(truck.getContent()[1][4])
                 .isEqualTo(' ');
     }
 
     @Test
     void getFreeSpaceCount_givenSemiFilledTruck_returnsCorrectFreeSpaceCount() {
-        var truckService = new TruckService(6, 6);
-        truckService.placePackage(new Package(List.of("999", "999", "999"), "test", '9'), 0, 0);
+        var truckService = new TruckService();
+        var truck = new Truck(new TruckSize(6, 6));
+        truckService.placeParcel(truck, new Parcel(List.of("999", "999", "999"), "test", '9'), 0, 0);
 
-        assertThat(truckService.getFreeSpaceCount())
+        assertThat(truckService.getFreeSpaceCount(truck))
                 .isEqualTo(27);
     }
 
     @Test
     void getFreeSpaceCount_givenFullFilledTruck_returnsCorrectFreeSpaceCount() {
-        var truckService = new TruckService(3, 3);
-        truckService.placePackage(new Package(List.of("999", "999", "999"), "test", '9'), 0, 0);
+        var truckService = new TruckService();
+        var truck = new Truck(new TruckSize(3, 3));
+        truckService.placeParcel(truck, new Parcel(List.of("999", "999", "999"), "test", '9'), 0, 0);
 
-        assertThat(truckService.getFreeSpaceCount())
+        assertThat(truckService.getFreeSpaceCount(truck))
                 .isEqualTo(0);
     }
 
     @Test
     void getPackages_givenFullFilledTruck_returnsCorrectPackageList() {
-        var truckService = new TruckService(3, 3);
-        truckService.placePackage(new Package(List.of("999", "999", "999"), "test", '9'), 0, 0);
+        var truckService = new TruckService();
+        var truck = new Truck(new TruckSize(3, 3));
+        truckService.placeParcel(truck, new Parcel(List.of("999", "999", "999"), "test", '9'), 0, 0);
 
-        assertThat(truckService.getPackages().size())
+        assertThat(truck.getParcels().size())
                 .isEqualTo(1);
-        // todo: проверить по содержимому
     }
 }
