@@ -1,11 +1,12 @@
 package ru.hofftech.liga.lessons.packageloader.config;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.env.Environment;
 import ru.hofftech.liga.lessons.packageloader.controller.TelegramController;
 import ru.hofftech.liga.lessons.packageloader.repository.OrderRepository;
 import ru.hofftech.liga.lessons.packageloader.repository.ParcelRepository;
@@ -24,6 +25,7 @@ import ru.hofftech.liga.lessons.packageloader.service.command.FindParcelUserComm
 import ru.hofftech.liga.lessons.packageloader.service.command.FindUserOrdersCommandService;
 import ru.hofftech.liga.lessons.packageloader.service.command.LoadParcelsUserCommandService;
 import ru.hofftech.liga.lessons.packageloader.service.command.UnloadTrucksUserCommandService;
+import ru.hofftech.liga.lessons.packageloader.service.interfaces.UserCommandService;
 import ru.hofftech.liga.lessons.packageloader.service.logistic.BalancedFillTruckLogisticService;
 import ru.hofftech.liga.lessons.packageloader.service.logistic.FullFillTruckLogisticService;
 import ru.hofftech.liga.lessons.packageloader.service.logistic.OnePerTruckLogisticService;
@@ -34,10 +36,18 @@ import ru.hofftech.liga.lessons.packageloader.validator.FindUserOrdersUserComman
 import ru.hofftech.liga.lessons.packageloader.validator.LoadParcelsUserCommandValidator;
 import ru.hofftech.liga.lessons.packageloader.validator.UnloadTrucksUserCommandValidator;
 
+import java.util.Map;
+
 @Slf4j
 @Configuration
 @EnableConfigurationProperties(BillingConfiguration.class)
 public class AppConfig {
+    @Value("${telegram.credentials.username}")
+    private String botUsername;
+
+    @Value("${telegram.credentials.token}")
+    private String botToken;
+
     // Repos
     @Bean
     public ParcelRepository parcelRepository() {
@@ -57,10 +67,8 @@ public class AppConfig {
     }
 
     @Bean
-    public TelegramService telegramService(UserCommandProcessorService userCommandProcessorService, Environment environment) {
+    public TelegramService telegramService(UserCommandProcessorService userCommandProcessorService) {
         try {
-            var botUsername = environment.getProperty("telegram.credentials.username");
-            var botToken = environment.getProperty("telegram.credentials.token");
             return new TelegramService(botUsername, botToken, userCommandProcessorService);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
@@ -130,8 +138,8 @@ public class AppConfig {
     @Bean
     public UserCommandProcessorService userCommandProcessorService(
             UserCommandParserService userCommandParserService,
-            ApplicationContext applicationContext) {
-        return new UserCommandProcessorService(userCommandParserService, applicationContext);
+            Map<String, UserCommandService> userCommandServices) {
+        return new UserCommandProcessorService(userCommandParserService, userCommandServices);
     }
 
     @Bean
@@ -161,6 +169,7 @@ public class AppConfig {
 
     // Commands
     @Bean
+    @Qualifier
     public CreateParcelUserCommandService createParcelUserCommandService(
             ParcelRepository parcelRepository,
             CreateParcelUserCommandValidator commandValidator) {

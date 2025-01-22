@@ -23,7 +23,7 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 public class FileLoaderService {
-    private static String PARCEL_NAME_DELIMITER = ",";
+    private static final String PARCEL_NAME_DELIMITER = ",";
 
     /**
      * Получает имена посылок из указанного файла.

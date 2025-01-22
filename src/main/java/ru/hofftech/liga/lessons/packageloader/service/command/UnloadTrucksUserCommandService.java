@@ -21,10 +21,6 @@ import java.util.List;
  */
 @AllArgsConstructor
 public class UnloadTrucksUserCommandService implements UserCommandService {
-    private static final String ARGUMENT_IN_FILE = "-infile";
-    private static final String ARGUMENT_OUT_FILE = "-outfile";
-    private static final String ARGUMENT_WITH_COUNT = "--withcount";
-
     private final FileLoaderService fileLoaderService;
     private final ReportParcelService reportParcelService;
     private final UnloadTrucksUserCommandValidator commandValidator;

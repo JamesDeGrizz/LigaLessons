@@ -17,7 +17,7 @@ import java.util.List;
  */
 @AllArgsConstructor
 public class EditParcelUserCommandService implements UserCommandService {
-    private static String DELIMITER = ",";
+    private static final String DELIMITER = ",";
 
     private final ParcelRepository parcelRepository;
     private final EditParcelUserCommandValidator commandValidator;

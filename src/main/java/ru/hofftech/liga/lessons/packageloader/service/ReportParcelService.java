@@ -27,7 +27,7 @@ public class ReportParcelService {
         log.info(PARCELS_UNLOAD_MESSAGE);
         if (withCount) {
             parcels.stream()
-                .collect(Collectors.groupingBy(parcel -> parcel.getName(), Collectors.counting()))
+                .collect(Collectors.groupingBy(Parcel::getName, Collectors.counting()))
                 .forEach((name, count) -> log.info("\n" + name + ";" + count));
         }
         else {
@@ -48,7 +48,7 @@ public class ReportParcelService {
         var stringBuilder = new StringBuilder();
         if (withCount) {
             parcels.stream()
-                    .collect(Collectors.groupingBy(parcel -> parcel.getName(), Collectors.counting()))
+                    .collect(Collectors.groupingBy(Parcel::getName, Collectors.counting()))
                     .forEach((name, count) -> stringBuilder
                             .append(name)
                             .append(";")

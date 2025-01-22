@@ -62,7 +62,7 @@ public class BalancedFillTruckLogisticService implements LogisticService {
     private void distributePackagesToTrucks(List<Parcel> parcels, List<Truck> trucks) {
         for (var parcel : parcels) {
             var mostFreeTruck = trucks.stream()
-                    .max(Comparator.comparing(x -> truckService.getFreeSpaceCount(x)))
+                    .max(Comparator.comparing(truck -> truckService.getFreeSpaceCount(truck)))
                     .get();
 
             var placed = false;

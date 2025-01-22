@@ -34,7 +34,7 @@ public class BillingService {
         };
 
         var totalPrice = parcels.stream()
-                .mapToInt(x -> x.getSize() * pricePerCell)
+                .mapToInt(parcel -> parcel.getSize() * pricePerCell)
                 .sum();
 
         var order = new Order(userId, new Date(), commandStr, trucksCount, parcels.size(), totalPrice);
