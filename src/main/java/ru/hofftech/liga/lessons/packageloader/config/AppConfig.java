@@ -1,7 +1,6 @@
 package ru.hofftech.liga.lessons.packageloader.config;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
@@ -47,6 +46,7 @@ public class AppConfig {
 
     @Value("${telegram.credentials.token}")
     private String botToken;
+    private final String qwe = "qwe";
 
     // Repos
     @Bean
@@ -168,35 +168,34 @@ public class AppConfig {
 
 
     // Commands
-    @Bean
-    @Qualifier
+    @Bean(BeanNameConfig.CREATE_PARCEL)
     public CreateParcelUserCommandService createParcelUserCommandService(
             ParcelRepository parcelRepository,
             CreateParcelUserCommandValidator commandValidator) {
         return new CreateParcelUserCommandService(parcelRepository, commandValidator);
     }
 
-    @Bean
+    @Bean(BeanNameConfig.DELETE_PARCEL)
     public DeleteParcelUserCommandService deleteParcelUserCommandService(
             ParcelRepository parcelRepository,
             DeleteParcelUserCommandValidator deleteParcelUserCommandValidator) {
         return new DeleteParcelUserCommandService(parcelRepository, deleteParcelUserCommandValidator);
     }
 
-    @Bean
+    @Bean(BeanNameConfig.EDIT_PARCEL)
     public EditParcelUserCommandService editParcelUserCommandService(
             ParcelRepository parcelRepository,
             EditParcelUserCommandValidator commandValidator) {
         return new EditParcelUserCommandService(parcelRepository, commandValidator);
     }
 
-    @Bean
+    @Bean(BeanNameConfig.FIND_PARCEL)
     public FindParcelUserCommandService findParcelUserCommandService(
             ParcelRepository parcelRepository) {
         return new FindParcelUserCommandService(parcelRepository);
     }
 
-    @Bean
+    @Bean(BeanNameConfig.LOAD_PARCELS)
     public LoadParcelsUserCommandService loadParcelsUserCommandService(
             FileLoaderService fileLoaderService,
             ReportTruckService reportTruckService,
@@ -213,7 +212,7 @@ public class AppConfig {
                 billingService);
     }
 
-    @Bean
+    @Bean(BeanNameConfig.UNLOAD_TRUCKS)
     public UnloadTrucksUserCommandService unloadTrucksUserCommandService(
             FileLoaderService fileLoaderService,
             ReportParcelService reportParcelService,
@@ -226,7 +225,7 @@ public class AppConfig {
                 billingService);
     }
 
-    @Bean
+    @Bean(BeanNameConfig.SHOW_ORDERS)
     public FindUserOrdersCommandService findUserOrdersCommandService(
             OrderRepository orderRepository,
             FindUserOrdersUserCommandValidator commandValidator) {
