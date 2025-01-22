@@ -44,3 +44,4 @@ bin/
 
 ### Custom ###
 gradle/
+spring-shell.log

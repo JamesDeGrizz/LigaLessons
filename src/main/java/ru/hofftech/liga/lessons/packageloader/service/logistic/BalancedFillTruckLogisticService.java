@@ -2,7 +2,7 @@ package ru.hofftech.liga.lessons.packageloader.service.logistic;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import ru.hofftech.liga.lessons.packageloader.model.Package;
+import ru.hofftech.liga.lessons.packageloader.model.Parcel;
 import ru.hofftech.liga.lessons.packageloader.model.Truck;
 import ru.hofftech.liga.lessons.packageloader.model.TruckSize;
 import ru.hofftech.liga.lessons.packageloader.service.TruckService;
@@ -24,16 +24,16 @@ public class BalancedFillTruckLogisticService implements LogisticService {
     /**
      * Размещает посылки в грузовиках методом "равномерная погрузка по машинам".
      *
-     * @param packages список посылок для размещения
+     * @param parcels список посылок для размещения
      * @param truckSizes список размеров грузовиков
      * @return список грузовиков с размещенными посылками
      */
     @Override
-    public List<Truck> placePackagesToTrucks(List<Package> packages, List<TruckSize> truckSizes) {
+    public List<Truck> placeParcelsToTrucks(List<Parcel> parcels, List<TruckSize> truckSizes) {
         log.info("Начинаем заполнение грузовиков методом \"равномерная погрузка по машинам\"");
         var trucks = getTrucks(truckSizes);
 
-        distributePackagesToTrucks(packages, trucks);
+        distributePackagesToTrucks(parcels, trucks);
 
         log.info("Заполнение грузовиков методом \"равномерная погрузка по машинам\" успешно завершено");
         return trucks;
@@ -56,24 +56,24 @@ public class BalancedFillTruckLogisticService implements LogisticService {
     /**
      * Распределяет посылки по грузовикам.
      *
-     * @param packages список посылок для размещения
+     * @param parcels список посылок для размещения
      * @param trucks список грузовиков
      */
-    private void distributePackagesToTrucks(List<Package> packages, List<Truck> trucks) {
-        for (var pkg : packages) {
+    private void distributePackagesToTrucks(List<Parcel> parcels, List<Truck> trucks) {
+        for (var parcel : parcels) {
             var mostFreeTruck = trucks.stream()
-                    .max(Comparator.comparing(x -> truckService.getFreeSpaceCount(x)))
+                    .max(Comparator.comparing(truck -> truckService.getFreeSpaceCount(truck)))
                     .get();
 
             var placed = false;
-            for (int i = 0; i <= mostFreeTruck.getSize().getHeight() - pkg.getHeight(); i++) {
+            for (int i = 0; i <= mostFreeTruck.getSize().getHeight() - parcel.getHeight(); i++) {
                 if (placed) {
                     break;
                 }
 
-                for (int j = 0; j <= mostFreeTruck.getSize().getHeight() - pkg.getWidth(); j++) {
-                    if (truckService.canPlacePackage(mostFreeTruck, pkg, i, j)) {
-                        truckService.placePackage(mostFreeTruck, pkg, i, j);
+                for (int j = 0; j <= mostFreeTruck.getSize().getHeight() - parcel.getWidth(); j++) {
+                    if (truckService.canPlaceParcel(mostFreeTruck, parcel, i, j)) {
+                        truckService.placeParcel(mostFreeTruck, parcel, i, j);
                         placed = true;
                         break;
                     }
@@ -84,7 +84,7 @@ public class BalancedFillTruckLogisticService implements LogisticService {
                 throw new IllegalArgumentException("Посылки невозможно отправить заданным алгоритмом, размер посылок превышает ёмкость грузовиков.");
             }
 
-            log.info("Посылка \n{} успешно погружена в грузовик", pkg);
+            log.info("Посылка \n{} успешно погружена в грузовик", parcel);
         }
     }
 }

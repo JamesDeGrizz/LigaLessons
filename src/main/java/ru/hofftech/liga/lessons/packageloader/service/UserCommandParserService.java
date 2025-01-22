@@ -1,8 +1,14 @@
 package ru.hofftech.liga.lessons.packageloader.service;
 
 import lombok.extern.slf4j.Slf4j;
-import ru.hofftech.liga.lessons.packageloader.model.ParsedUserCommand;
-import ru.hofftech.liga.lessons.packageloader.model.enums.Command;
+import ru.hofftech.liga.lessons.packageloader.model.dto.BaseUserCommandDto;
+import ru.hofftech.liga.lessons.packageloader.model.dto.CreateParcelUserCommandDto;
+import ru.hofftech.liga.lessons.packageloader.model.dto.DeleteParcelUserCommandDto;
+import ru.hofftech.liga.lessons.packageloader.model.dto.EditParcelUserCommandDto;
+import ru.hofftech.liga.lessons.packageloader.model.dto.FindParcelUserCommandDto;
+import ru.hofftech.liga.lessons.packageloader.model.dto.FindUserOrdersUserCommandDto;
+import ru.hofftech.liga.lessons.packageloader.model.dto.LoadParcelsUserCommandDto;
+import ru.hofftech.liga.lessons.packageloader.model.dto.UnloadTrucksUserCommandDto;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -10,6 +16,7 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 /**
+ * todo удалить после перехода на rest
  * Сервис для парсинга команд пользователя и их аргументов.
  * Этот класс предоставляет методы для разбора команд и аргументов, введенных пользователем, и преобразования их в удобный для обработки формат.
  */
@@ -27,8 +34,7 @@ public class UserCommandParserService {
     private static final String DELETE_COMMAND = "delete";
     private static final String LOAD_COMMAND = "load";
     private static final String UNLOAD_COMMAND = "unload";
-    private static final String EXIT_COMMAND = "exit";
-    private static final String HELP_COMMAND = "help";
+    private static final String ORDERS_COMMAND = "orders";
 
     private static final String COMMAND_REGEX = "(\\w+)(.*)";
     private static final String ARGUMENTS_MAP_REGEX = "(-[^\\s]+)\\s+\"([^\"]+)\"";
@@ -45,26 +51,24 @@ public class UserCommandParserService {
      * @param userCommand команда пользователя
      * @return команда, соответствующая введенной пользователем команде
      */
-    public ParsedUserCommand parse(String userCommand) {
+    public BaseUserCommandDto parse(String userCommand) {
         var commandMatcher = commandPattern.matcher(userCommand);
 
         if (!commandMatcher.find()) {
-            return new ParsedUserCommand(Command.RETRY, null);
+            throw new IllegalArgumentException("Неправильная команда: " + userCommand);
         }
 
-        var command = switch (commandMatcher.group(COMMAND_GROUP_NUMBER)) {
-            case CREATE_COMMAND -> Command.CREATE_PACKAGE;
-            case FIND_COMMAND -> Command.FIND_PACKAGE;
-            case EDIT_COMMAND -> Command.EDIT_PACKAGE;
-            case DELETE_COMMAND -> Command.DELETE_PACKAGE;
-            case LOAD_COMMAND -> Command.LOAD_PACKAGES;
-            case UNLOAD_COMMAND -> Command.UNLOAD_TRUCKS;
-            case EXIT_COMMAND -> Command.EXIT;
-            case HELP_COMMAND -> Command.HELP;
-            default -> Command.RETRY;
+        var args = parseArguments(userCommand);
+        return switch (commandMatcher.group(COMMAND_GROUP_NUMBER)) {
+            case CREATE_COMMAND -> CreateParcelUserCommandDto.fromArgsMap(args);
+            case FIND_COMMAND -> FindParcelUserCommandDto.fromArgsMap(args);
+            case EDIT_COMMAND -> EditParcelUserCommandDto.fromArgsMap(args);
+            case DELETE_COMMAND -> DeleteParcelUserCommandDto.fromArgsMap(args);
+            case LOAD_COMMAND -> LoadParcelsUserCommandDto.fromArgsMap(args);
+            case UNLOAD_COMMAND -> UnloadTrucksUserCommandDto.fromArgsMap(args);
+            case ORDERS_COMMAND -> FindUserOrdersUserCommandDto.fromArgsMap(args);
+            default -> null;
         };
-
-        return new ParsedUserCommand(command, parseArguments(userCommand));
     }
 
     /**

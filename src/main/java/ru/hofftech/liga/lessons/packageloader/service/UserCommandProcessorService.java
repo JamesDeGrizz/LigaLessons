@@ -1,56 +1,48 @@
 package ru.hofftech.liga.lessons.packageloader.service;
 
 import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import ru.hofftech.liga.lessons.packageloader.model.UserCommand;
-import ru.hofftech.liga.lessons.packageloader.model.enums.CommandSource;
-import ru.hofftech.liga.lessons.packageloader.service.factory.UserCommandServiceFactory;
+import ru.hofftech.liga.lessons.packageloader.config.BeanNameConfig;
+import ru.hofftech.liga.lessons.packageloader.model.dto.BaseUserCommandDto;
+import ru.hofftech.liga.lessons.packageloader.model.dto.CreateParcelUserCommandDto;
+import ru.hofftech.liga.lessons.packageloader.model.dto.DeleteParcelUserCommandDto;
+import ru.hofftech.liga.lessons.packageloader.model.dto.EditParcelUserCommandDto;
+import ru.hofftech.liga.lessons.packageloader.model.dto.FindParcelUserCommandDto;
+import ru.hofftech.liga.lessons.packageloader.model.dto.FindUserOrdersUserCommandDto;
+import ru.hofftech.liga.lessons.packageloader.model.dto.LoadParcelsUserCommandDto;
+import ru.hofftech.liga.lessons.packageloader.model.dto.UnloadTrucksUserCommandDto;
+import ru.hofftech.liga.lessons.packageloader.service.interfaces.UserCommandService;
 
-import java.util.concurrent.BlockingQueue;
+import java.util.Map;
 
-/**
- * Сервис для обработки команд пользователя.
- * Этот класс предоставляет методы для получения и обработки команд пользователя, поступающих из очереди.
- */
-@Slf4j
 @AllArgsConstructor
 public class UserCommandProcessorService {
     private final UserCommandParserService userCommandParserService;
-    private final UserCommandServiceFactory userCommandServiceFactory;
-    private final TelegramService telegramService;
+    private final Map<String, UserCommandService> userCommandServices;
 
-    /**
-     * Очередь команд пользователя для обработки.
-     */
-    private final BlockingQueue<UserCommand> queue;
-
-    /**
-     * Получает и обрабатывает команды пользователя из очереди.
-     * Метод бесконечно ожидает команды от пользователя и выполняет их, отправляя результаты в соответствующий источник (консоль или Telegram).
-     */
-    public void process() {
-        log.info("Для ознакомления с функционалом введите команду help");
-
-        while (true) {
-            UserCommand input = null;
-            try {
-                input = queue.take();
-            } catch (Exception e) {
-                log.error(e.getMessage(), e);
-                continue;
-            }
-
-            var command = userCommandParserService.parse(input.command());
-
-            var service = userCommandServiceFactory.getUserCommandService(command.command());
-            var executionLog = service.execute(command.arguments());
-
-            if (input.commandSource() == CommandSource.CONSOLE) {
-                log.info(executionLog);
-            }
-            else {
-                telegramService.sendMessage(executionLog);
-            }
+    public String processRawInput(String userInput) {
+        var dto = userCommandParserService.parse(userInput);
+        if (dto == null) {
+            return "Введена нераспознанная команда. Попробуйте ещё раз";
         }
+
+        return processCommand(dto);
+    }
+
+    public String processCommand(BaseUserCommandDto command) {
+        var service = switch (command) {
+            case CreateParcelUserCommandDto create -> userCommandServices.get(BeanNameConfig.CREATE_PARCEL);
+            case FindParcelUserCommandDto find -> userCommandServices.get(BeanNameConfig.FIND_PARCEL);
+            case EditParcelUserCommandDto edit -> userCommandServices.get(BeanNameConfig.EDIT_PARCEL);
+            case DeleteParcelUserCommandDto delete -> userCommandServices.get(BeanNameConfig.DELETE_PARCEL);
+            case LoadParcelsUserCommandDto load -> userCommandServices.get(BeanNameConfig.LOAD_PARCELS);
+            case UnloadTrucksUserCommandDto unload -> userCommandServices.get(BeanNameConfig.UNLOAD_TRUCKS);
+            case FindUserOrdersUserCommandDto orders -> userCommandServices.get(BeanNameConfig.SHOW_ORDERS);
+            default -> null;
+        };
+        if (service == null) {
+            return "Введена нераспознанная команда. Попробуйте ещё раз";
+        }
+
+        return service.execute(command);
     }
 }

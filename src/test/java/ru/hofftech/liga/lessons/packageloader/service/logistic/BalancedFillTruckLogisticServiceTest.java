@@ -2,37 +2,40 @@ package ru.hofftech.liga.lessons.packageloader.service.logistic;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import ru.hofftech.liga.lessons.packageloader.model.Package;
+import ru.hofftech.liga.lessons.packageloader.model.Parcel;
+import ru.hofftech.liga.lessons.packageloader.model.TruckSize;
+import ru.hofftech.liga.lessons.packageloader.service.TruckService;
 
 import java.util.Arrays;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
 class BalancedFillTruckLogisticServiceTest {
     private BalancedFillTruckLogisticService balancedFillTruckLogisticService;
-    private TruckServiceFactory truckServiceFactory;
+    private TruckService truckService;
 
     @BeforeEach
     public void setUp() {
-        truckServiceFactory = new TruckServiceFactory();
-        balancedFillTruckLogisticService = new BalancedFillTruckLogisticService(truckServiceFactory);
+        truckService = new TruckService();
+        balancedFillTruckLogisticService = new BalancedFillTruckLogisticService(truckService);
     }
 
     @Test
-    void placePackagesToTrucks_given8Packages2Trucks_returns2Trucks() {
+    void placePackagesToTrucks_given8Parcels2Trucks_returns2Trucks() {
         var packages = Arrays.asList(
-                new Package(Arrays.asList("999", "999", "999"), "test", '9'),
-                new Package(Arrays.asList("999", "999", "999"), "test", '9'),
-                new Package(Arrays.asList("666", "666"), "test", '9'),
-                new Package(Arrays.asList("666", "666"), "test", '9'),
-                new Package(Arrays.asList("333"), "test", '9'),
-                new Package(Arrays.asList("333"), "test", '9'),
-                new Package(Arrays.asList("1"), "test", '9'),
-                new Package(Arrays.asList("1"), "test", '9')
+                new Parcel(Arrays.asList("999", "999", "999"), "test", '9'),
+                new Parcel(Arrays.asList("999", "999", "999"), "test", '9'),
+                new Parcel(Arrays.asList("666", "666"), "test", '9'),
+                new Parcel(Arrays.asList("666", "666"), "test", '9'),
+                new Parcel(Arrays.asList("333"), "test", '9'),
+                new Parcel(Arrays.asList("333"), "test", '9'),
+                new Parcel(Arrays.asList("1"), "test", '9'),
+                new Parcel(Arrays.asList("1"), "test", '9')
         );
 
-        var trucks = balancedFillTruckLogisticService.placePackagesToTrucks(packages, 2);
+        var trucks = balancedFillTruckLogisticService.placeParcelsToTrucks(packages, List.of(new TruckSize(6, 6), new TruckSize(6, 6)));
 
         assertThat(trucks)
                 .isNotEmpty()
@@ -54,19 +57,19 @@ class BalancedFillTruckLogisticServiceTest {
     }
 
     @Test
-    void placePackagesToTrucks_given8Packages1Truck_returnsException() {
+    void placePackagesToTrucks_given8Parcels1Truck_returnsException() {
         var packages = Arrays.asList(
-                new Package(Arrays.asList("999", "999", "999"), "test", '9'),
-                new Package(Arrays.asList("999", "999", "999"), "test", '9'),
-                new Package(Arrays.asList("666", "666"), "test", '9'),
-                new Package(Arrays.asList("666", "666"), "test", '9'),
-                new Package(Arrays.asList("333"), "test", '9'),
-                new Package(Arrays.asList("333"), "test", '9'),
-                new Package(Arrays.asList("1"), "test", '9'),
-                new Package(Arrays.asList("1"), "test", '9')
+                new Parcel(Arrays.asList("999", "999", "999"), "test", '9'),
+                new Parcel(Arrays.asList("999", "999", "999"), "test", '9'),
+                new Parcel(Arrays.asList("666", "666"), "test", '9'),
+                new Parcel(Arrays.asList("666", "666"), "test", '9'),
+                new Parcel(Arrays.asList("333"), "test", '9'),
+                new Parcel(Arrays.asList("333"), "test", '9'),
+                new Parcel(Arrays.asList("1"), "test", '9'),
+                new Parcel(Arrays.asList("1"), "test", '9')
         );
 
-        assertThatThrownBy(() -> balancedFillTruckLogisticService.placePackagesToTrucks(packages, 1))
+        assertThatThrownBy(() -> balancedFillTruckLogisticService.placeParcelsToTrucks(packages, List.of(new TruckSize(6, 6))))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 }

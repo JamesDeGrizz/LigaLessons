@@ -1,0 +1,399 @@
+[
+  {
+    "size": {
+      "width": 6,
+      "height": 6
+    },
+    "content": [
+      "999999",
+      "999999",
+      "999999",
+      "999999",
+      "999999",
+      "999999"
+    ],
+    "packages": [
+      {
+        "content": [
+          "999",
+          "999",
+          "999"
+        ],
+        "name": "тип 9",
+        "symbol": "9",
+        "placingPoints": [
+          {
+            "height": 3,
+            "width": 0
+          },
+          {
+            "height": 3,
+            "width": 1
+          },
+          {
+            "height": 3,
+            "width": 2
+          },
+          {
+            "height": 4,
+            "width": 0
+          },
+          {
+            "height": 4,
+            "width": 1
+          },
+          {
+            "height": 4,
+            "width": 2
+          },
+          {
+            "height": 5,
+            "width": 0
+          },
+          {
+            "height": 5,
+            "width": 1
+          },
+          {
+            "height": 5,
+            "width": 2
+          }
+        ],
+        "size": 9,
+        "width": 3,
+        "height": 3
+      },
+      {
+        "content": [
+          "999",
+          "999",
+          "999"
+        ],
+        "name": "тип 9",
+        "symbol": "9",
+        "placingPoints": [
+          {
+            "height": 3,
+            "width": 0
+          },
+          {
+            "height": 3,
+            "width": 1
+          },
+          {
+            "height": 3,
+            "width": 2
+          },
+          {
+            "height": 4,
+            "width": 0
+          },
+          {
+            "height": 4,
+            "width": 1
+          },
+          {
+            "height": 4,
+            "width": 2
+          },
+          {
+            "height": 5,
+            "width": 0
+          },
+          {
+            "height": 5,
+            "width": 1
+          },
+          {
+            "height": 5,
+            "width": 2
+          }
+        ],
+        "size": 9,
+        "width": 3,
+        "height": 3
+      },
+      {
+        "content": [
+          "999",
+          "999",
+          "999"
+        ],
+        "name": "тип 9",
+        "symbol": "9",
+        "placingPoints": [
+          {
+            "height": 3,
+            "width": 0
+          },
+          {
+            "height": 3,
+            "width": 1
+          },
+          {
+            "height": 3,
+            "width": 2
+          },
+          {
+            "height": 4,
+            "width": 0
+          },
+          {
+            "height": 4,
+            "width": 1
+          },
+          {
+            "height": 4,
+            "width": 2
+          },
+          {
+            "height": 5,
+            "width": 0
+          },
+          {
+            "height": 5,
+            "width": 1
+          },
+          {
+            "height": 5,
+            "width": 2
+          }
+        ],
+        "size": 9,
+        "width": 3,
+        "height": 3
+      },
+      {
+        "content": [
+          "999",
+          "999",
+          "999"
+        ],
+        "name": "тип 9",
+        "symbol": "9",
+        "placingPoints": [
+          {
+            "height": 3,
+            "width": 0
+          },
+          {
+            "height": 3,
+            "width": 1
+          },
+          {
+            "height": 3,
+            "width": 2
+          },
+          {
+            "height": 4,
+            "width": 0
+          },
+          {
+            "height": 4,
+            "width": 1
+          },
+          {
+            "height": 4,
+            "width": 2
+          },
+          {
+            "height": 5,
+            "width": 0
+          },
+          {
+            "height": 5,
+            "width": 1
+          },
+          {
+            "height": 5,
+            "width": 2
+          }
+        ],
+        "size": 9,
+        "width": 3,
+        "height": 3
+      }
+    ]
+  },
+  {
+    "size": {
+      "width": 6,
+      "height": 6
+    },
+    "content": [
+      "999999",
+      "999999",
+      "999999",
+      "999   ",
+      "999   ",
+      "999   "
+    ],
+    "packages": [
+      {
+        "content": [
+          "999",
+          "999",
+          "999"
+        ],
+        "name": "тип 9",
+        "symbol": "9",
+        "placingPoints": [
+          {
+            "height": 3,
+            "width": 0
+          },
+          {
+            "height": 3,
+            "width": 1
+          },
+          {
+            "height": 3,
+            "width": 2
+          },
+          {
+            "height": 4,
+            "width": 0
+          },
+          {
+            "height": 4,
+            "width": 1
+          },
+          {
+            "height": 4,
+            "width": 2
+          },
+          {
+            "height": 5,
+            "width": 0
+          },
+          {
+            "height": 5,
+            "width": 1
+          },
+          {
+            "height": 5,
+            "width": 2
+          }
+        ],
+        "size": 9,
+        "width": 3,
+        "height": 3
+      },
+      {
+        "content": [
+          "999",
+          "999",
+          "999"
+        ],
+        "name": "тип 9",
+        "symbol": "9",
+        "placingPoints": [
+          {
+            "height": 3,
+            "width": 0
+          },
+          {
+            "height": 3,
+            "width": 1
+          },
+          {
+            "height": 3,
+            "width": 2
+          },
+          {
+            "height": 4,
+            "width": 0
+          },
+          {
+            "height": 4,
+            "width": 1
+          },
+          {
+            "height": 4,
+            "width": 2
+          },
+          {
+            "height": 5,
+            "width": 0
+          },
+          {
+            "height": 5,
+            "width": 1
+          },
+          {
+            "height": 5,
+            "width": 2
+          }
+        ],
+        "size": 9,
+        "width": 3,
+        "height": 3
+      },
+      {
+        "content": [
+          "999",
+          "999",
+          "999"
+        ],
+        "name": "тип 9",
+        "symbol": "9",
+        "placingPoints": [
+          {
+            "height": 3,
+            "width": 0
+          },
+          {
+            "height": 3,
+            "width": 1
+          },
+          {
+            "height": 3,
+            "width": 2
+          },
+          {
+            "height": 4,
+            "width": 0
+          },
+          {
+            "height": 4,
+            "width": 1
+          },
+          {
+            "height": 4,
+            "width": 2
+          },
+          {
+            "height": 5,
+            "width": 0
+          },
+          {
+            "height": 5,
+            "width": 1
+          },
+          {
+            "height": 5,
+            "width": 2
+          }
+        ],
+        "size": 9,
+        "width": 3,
+        "height": 3
+      }
+    ]
+  },
+  {
+    "size": {
+      "width": 6,
+      "height": 6
+    },
+    "content": [
+      "      ",
+      "      ",
+      "      ",
+      "      ",
+      "      ",
+      "      "
+    ],
+    "packages": []
+  }
+]

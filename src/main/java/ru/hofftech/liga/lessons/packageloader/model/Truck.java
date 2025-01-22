@@ -31,7 +31,7 @@ public class Truck {
     /**
      * Список посылок, находящихся в грузовике.
      */
-    private final List<Package> packages = new ArrayList<>();
+    private final List<Parcel> parcels = new ArrayList<>();
 
     /**
      * Создает новый грузовик с указанным размером.

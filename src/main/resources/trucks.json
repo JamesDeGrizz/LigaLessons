@@ -12,7 +12,7 @@
       "      ",
       "      "
     ],
-    "packages": [
+    "parcels": [
       {
         "content": [
           "1"
@@ -234,7 +234,7 @@
       "999   ",
       "999   "
     ],
-    "packages": [
+    "parcels": [
       {
         "content": [
           "999",
@@ -397,6 +397,6 @@
       "      ",
       "      "
     ],
-    "packages": []
+    "parcels": []
   }
 ]

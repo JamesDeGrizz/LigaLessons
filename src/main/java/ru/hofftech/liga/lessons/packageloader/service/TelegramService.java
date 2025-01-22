@@ -8,10 +8,6 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
-import ru.hofftech.liga.lessons.packageloader.model.UserCommand;
-import ru.hofftech.liga.lessons.packageloader.model.enums.CommandSource;
-
-import java.util.concurrent.BlockingQueue;
 
 /**
  * Сервис для взаимодействия с Telegram ботом.
@@ -21,25 +17,10 @@ import java.util.concurrent.BlockingQueue;
 @Slf4j
 @RequiredArgsConstructor
 public class TelegramService extends TelegramLongPollingBot {
-    /**
-     * Очередь команд пользователя для обработки.
-     */
-    private final BlockingQueue<UserCommand> queue;
-
-    /**
-     * Имя пользователя Telegram бота.
-     */
     private final String username;
-
-    /**
-     * Токен Telegram бота.
-     */
     private final String token;
 
-    /**
-     * Идентификатор последнего чата.
-     */
-    private long lastChatId = -1;
+    private final UserCommandProcessorService userCommandProcessorService;
 
     /**
      * Инициализирует Telegram бота и регистрирует его в Telegram API.
@@ -73,18 +54,15 @@ public class TelegramService extends TelegramLongPollingBot {
         if (update.hasMessage() && update.getMessage().hasText()) {
             String messageText = update.getMessage().getText();
             log.debug("Получено сообщение {}", messageText);
-            lastChatId = update.getMessage().getChatId();
+            var chatId = update.getMessage().getChatId();
 
             switch (messageText){
                 case "/start":
-                    startCommandReceived(update.getMessage().getChat().getFirstName());
+                    startCommandReceived(update.getMessage().getChat().getFirstName(), chatId);
                     break;
                 default:
-                    try {
-                        queue.put(new UserCommand(CommandSource.TELEGRAM, messageText));
-                    } catch (InterruptedException e) {
-                        sendMessage("Не получилось обработать вашу команду, попробуйте ещё раз");
-                    }
+                    var output = userCommandProcessorService.processRawInput(update.getMessage().getText());
+                    sendMessage(output, chatId);
             }
         }
     }
@@ -94,9 +72,9 @@ public class TelegramService extends TelegramLongPollingBot {
      *
      * @param textToSend текст сообщения для отправки
      */
-    public void sendMessage(String textToSend) {
+    private void sendMessage(String textToSend, long chatId) {
         var message = new SendMessage();
-        message.setChatId(String.valueOf(lastChatId));
+        message.setChatId(String.valueOf(chatId));
         message.setText(textToSend);
         try {
             execute(message);
@@ -105,7 +83,7 @@ public class TelegramService extends TelegramLongPollingBot {
         }
     }
 
-    private void startCommandReceived(String name) {
-        sendMessage("Добрый день, " + name + ". Для ознакомления с функционалом введите команду help");
+    private void startCommandReceived(String name, long chatId) {
+        sendMessage("Добрый день, " + name + ". Для ознакомления с функционалом введите команду help", chatId);
     }
 }

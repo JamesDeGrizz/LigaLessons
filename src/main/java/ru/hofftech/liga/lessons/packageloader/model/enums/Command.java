@@ -12,40 +12,27 @@ public enum Command {
     /**
      * Погрузка посылок
      */
-    LOAD_PACKAGES,
-
-    /**
-     * Завершение работы приложения
-     */
-    EXIT,
-
-    /**
-     * Неправильный ввод
-     */
-    RETRY,
-
-    /**
-     * Вывод справки
-     */
-    HELP,
+    LOAD_PARCELS,
 
     /**
      * Создание новой посылки
      */
-    CREATE_PACKAGE,
+    CREATE_PARCEL,
 
     /**
      * Поиск посыл(ки/ок)
      */
-    FIND_PACKAGE,
+    FIND_PARCEL,
 
     /**
      * Редактирование посылки
      */
-    EDIT_PACKAGE,
+    EDIT_PARCEL,
 
     /**
      * Кдаление посылки
      */
-    DELETE_PACKAGE,
+    DELETE_PARCEL,
+
+    SHOW_ORDERS,
 }

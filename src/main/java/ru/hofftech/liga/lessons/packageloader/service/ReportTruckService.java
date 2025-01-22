@@ -26,11 +26,13 @@ public class ReportTruckService {
         var builder = new StringBuilder();
         builder.append("\n");
 
-        IntStream.range(0, content.length).mapToObj(i -> content[content.length - 1 - i]).forEach(row -> {
-            builder.append("+");
-            IntStream.range(0, row.length).forEach(j -> builder.append(row[j]));
-            builder.append("+\n");
-        });
+        IntStream.range(0, content.length)
+                .mapToObj(index -> content[content.length - 1 - index])
+                .forEach(row -> {
+                    builder.append("+");
+                    IntStream.range(0, row.length).forEach(j -> builder.append(row[j]));
+                    builder.append("+\n");
+                });
 
         builder.append("+");
         IntStream.range(0, content[0].length).forEach(j -> builder.append("+"));

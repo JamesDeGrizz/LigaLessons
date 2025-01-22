@@ -1,9 +1,17 @@
 plugins {
     id("java")
+    id("org.springframework.boot") version "3.4.0"
+    id("io.spring.dependency-management") version "1.1.7"
 }
 
 group = "ru.hofftech.liga.lessons"
 version = "1.0-SNAPSHOT"
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
 
 repositories {
     mavenCentral()
@@ -20,6 +28,8 @@ object Versions {
 }
 
 dependencies {
+    implementation("org.springframework.shell:spring-shell-starter")
+
     implementation("org.slf4j:slf4j-api:${Versions.SLF4J}")
     implementation("ch.qos.logback:logback-core:${Versions.LOGBACK}")
     implementation("ch.qos.logback:logback-classic:${Versions.LOGBACK}")
@@ -30,12 +40,19 @@ dependencies {
     implementation("org.telegram:telegrambots:${Versions.TELEGRAM_BOT}")
 
     implementation("org.projectlombok:lombok:${Versions.LOMBOK}")
+
     compileOnly("org.projectlombok:lombok:${Versions.LOMBOK}")
     annotationProcessor("org.projectlombok:lombok:${Versions.LOMBOK}")
 
     testImplementation(platform("org.junit:junit-bom:${Versions.JUNIT_BOM}"))
     testImplementation("org.junit.jupiter:junit-jupiter")
     testImplementation("org.assertj:assertj-core:${Versions.ASSERTJ_CORE}")
+}
+
+dependencyManagement {
+    imports {
+        mavenBom("org.springframework.shell:spring-shell-dependencies:3.4.0")
+    }
 }
 
 tasks.test {

@@ -3,7 +3,7 @@ package ru.hofftech.liga.lessons.packageloader.service;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import ru.hofftech.liga.lessons.packageloader.model.Package;
+import ru.hofftech.liga.lessons.packageloader.model.Parcel;
 import ru.hofftech.liga.lessons.packageloader.model.PlacingPoint;
 import ru.hofftech.liga.lessons.packageloader.model.Truck;
 
@@ -20,16 +20,16 @@ public class TruckService {
     /**
      * Проверяет, можно ли разместить посылку в грузовике на заданной позиции.
      *
-     * @param pkg посылка для размещения
+     * @param parcel посылка для размещения
      * @param startRow начальная строка для размещения
      * @param startCol начальный столбец для размещения
      * @return true, если посылка может быть размещена, иначе false
      */
-    public boolean canPlacePackage(Truck truck, Package pkg, int startRow, int startCol) {
-        for (var i = 0; i < pkg.getHeight(); i++) {
-            for (var j = 0; j < pkg.getWidth(); j++) {
+    public boolean canPlaceParcel(Truck truck, Parcel parcel, int startRow, int startCol) {
+        for (var i = 0; i < parcel.getHeight(); i++) {
+            for (var j = 0; j < parcel.getWidth(); j++) {
                 if (truck.getContent()[startRow + i][startCol + j] != ' ') {
-                    log.debug("Не получится разместить посылку \n{} на позиции: ({}, {})", pkg, startRow, startCol);
+                    log.debug("Не получится разместить посылку \n{} на позиции: ({}, {})", parcel, startRow, startCol);
                     return false;
                 }
             }
@@ -41,23 +41,23 @@ public class TruckService {
     /**
      * Размещает посылку в грузовике на заданной позиции.
      *
-     * @param pkg посылка для размещения
+     * @param parcel посылка для размещения
      * @param startRow начальная строка для размещения
      * @param startCol начальный столбец для размещения
      */
-    public void placePackage(Truck truck, Package pkg, int startRow, int startCol) {
-        log.debug("Размещаем посылку \n{} на позиции ({}, {})", pkg, startRow, startCol);
+    public void placeParcel(Truck truck, Parcel parcel, int startRow, int startCol) {
+        log.debug("Размещаем посылку \n{} на позиции ({}, {})", parcel, startRow, startCol);
 
         var placingPoints = new ArrayList<PlacingPoint>();
-        for (int i = 0; i < pkg.getHeight(); i++) {
-            for (int j = 0; j < pkg.getWidth(); j++) {
-                truck.getContent()[startRow + i][startCol + j] = pkg.charAt(i, j);
+        for (int i = 0; i < parcel.getHeight(); i++) {
+            for (int j = 0; j < parcel.getWidth(); j++) {
+                truck.getContent()[startRow + i][startCol + j] = parcel.charAt(i, j);
                 placingPoints.add(new PlacingPoint(startRow + i, startCol + j));
             }
         }
 
-        pkg.placePackage(placingPoints);
-        truck.getPackages().add(pkg);
+        parcel.placeParcel(placingPoints);
+        truck.getParcels().add(parcel);
     }
 
     /**

@@ -14,21 +14,21 @@ class FileLoaderServiceTest {
     }
 
     @Test
-    void getPackageNames_givenNonExistentFilePath_returnsEmptyList() {
-        var packages = fileLoaderService.getPackageNames("non-existent-file");
-        assertTrue(packages.isEmpty());
+    void getParcelNames_givenNonExistentFilePath_returnsEmptyList() {
+        var parcels = fileLoaderService.getParcelNames("non-existent-file");
+        assertNull(parcels);
     }
 
     @Test
-    void getPackageNames_givenEmptyFile_returnsEmptyList() {
-        var packages = fileLoaderService.getPackageNames("empty_packages.txt");
-        assertTrue(packages.isEmpty());
+    void getParcelNames_givenEmptyFile_returnsEmptyList() {
+        var parcels = fileLoaderService.getParcelNames("empty_parcels.txt");
+        assertEquals(0, parcels.length);
     }
 
     @Test
-    void getPackageNames_givenCorrectFile_returnsFourPackageList() {
-        var packages = fileLoaderService.getPackageNames("packages.txt");
-        assertEquals(4, packages.size());
+    void getPackageNames_givenCorrectFile_returnsFourParcelList() {
+        var parcels = fileLoaderService.getParcelNames("parcels.txt");
+        assertEquals(5, parcels.length);
     }
 
     @Test
