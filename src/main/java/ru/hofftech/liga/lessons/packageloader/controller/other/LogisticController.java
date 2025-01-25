@@ -1,4 +1,4 @@
-package ru.hofftech.liga.lessons.packageloader.controller;
+package ru.hofftech.liga.lessons.packageloader.controller.other;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.shell.standard.ShellComponent;

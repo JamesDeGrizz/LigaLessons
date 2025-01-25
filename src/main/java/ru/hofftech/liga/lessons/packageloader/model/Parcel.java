@@ -2,9 +2,9 @@ package ru.hofftech.liga.lessons.packageloader.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 import java.util.Comparator;
@@ -17,7 +17,7 @@ import java.util.Optional;
  */
 @Getter
 @Setter
-@RequiredArgsConstructor
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor(force = true)
 @JsonIgnoreProperties(ignoreUnknown = true)

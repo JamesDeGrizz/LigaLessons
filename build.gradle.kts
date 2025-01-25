@@ -25,10 +25,25 @@ object Versions {
     const val TELEGRAM_BOT = "6.9.7.1"
     const val JUNIT_BOM = "5.10.0"
     const val ASSERTJ_CORE = "3.26.3"
+    const val MAPSTRUCT = "1.6.3"
+    const val MAPSTRUCT_LOMBOK = "0.2.0"
+    const val SWAGGER = "2.8.3"
 }
 
 dependencies {
+    annotationProcessor("org.mapstruct:mapstruct-processor:${Versions.MAPSTRUCT}")
+    annotationProcessor("org.projectlombok:lombok-mapstruct-binding:${Versions.MAPSTRUCT_LOMBOK}")
+    annotationProcessor("org.projectlombok:lombok:${Versions.LOMBOK}")
+
     implementation("org.springframework.shell:spring-shell-starter")
+    implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:${Versions.SWAGGER}")
+
+    implementation("org.flywaydb:flyway-core")
+    implementation("org.flywaydb:flyway-database-postgresql")
+
+    implementation("org.mapstruct:mapstruct:${Versions.MAPSTRUCT}")
 
     implementation("org.slf4j:slf4j-api:${Versions.SLF4J}")
     implementation("ch.qos.logback:logback-core:${Versions.LOGBACK}")
@@ -40,11 +55,14 @@ dependencies {
     implementation("org.telegram:telegrambots:${Versions.TELEGRAM_BOT}")
 
     implementation("org.projectlombok:lombok:${Versions.LOMBOK}")
-
     compileOnly("org.projectlombok:lombok:${Versions.LOMBOK}")
-    annotationProcessor("org.projectlombok:lombok:${Versions.LOMBOK}")
+
+    runtimeOnly("org.postgresql:postgresql")
+
+    testAnnotationProcessor("org.mapstruct:mapstruct-processor:${Versions.MAPSTRUCT}")
 
     testImplementation(platform("org.junit:junit-bom:${Versions.JUNIT_BOM}"))
+    testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.junit.jupiter:junit-jupiter")
     testImplementation("org.assertj:assertj-core:${Versions.ASSERTJ_CORE}")
 }

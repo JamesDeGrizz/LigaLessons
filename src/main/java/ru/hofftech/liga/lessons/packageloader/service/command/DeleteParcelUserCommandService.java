@@ -31,10 +31,12 @@ public class DeleteParcelUserCommandService implements UserCommandService {
             return "Посылка не может быть удалена: \n" + String.join("\n", validationErrors);
         }
 
-        if (!parcelRepository.delete(castedCommand.parcelId())) {
+        var existingParcel = parcelRepository.findById(castedCommand.parcelId());
+        if (!existingParcel.isPresent()) {
             return "Посылка не может быть удалена: \nпосылка с названием \"{}\" не существует" + castedCommand.parcelId();
         }
 
+        parcelRepository.delete(existingParcel.get());
         return "Посылка успешно удалена";
     }
 }

@@ -6,7 +6,9 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import ru.hofftech.liga.lessons.packageloader.controller.TelegramController;
+import ru.hofftech.liga.lessons.packageloader.controller.other.TelegramController;
+import ru.hofftech.liga.lessons.packageloader.mapper.OrderMapper;
+import ru.hofftech.liga.lessons.packageloader.mapper.ParcelMapper;
 import ru.hofftech.liga.lessons.packageloader.repository.OrderRepository;
 import ru.hofftech.liga.lessons.packageloader.repository.ParcelRepository;
 import ru.hofftech.liga.lessons.packageloader.service.BillingService;
@@ -17,7 +19,6 @@ import ru.hofftech.liga.lessons.packageloader.service.TelegramService;
 import ru.hofftech.liga.lessons.packageloader.service.TruckService;
 import ru.hofftech.liga.lessons.packageloader.service.UserCommandParserService;
 import ru.hofftech.liga.lessons.packageloader.service.UserCommandProcessorService;
-import ru.hofftech.liga.lessons.packageloader.service.command.CreateParcelUserCommandService;
 import ru.hofftech.liga.lessons.packageloader.service.command.DeleteParcelUserCommandService;
 import ru.hofftech.liga.lessons.packageloader.service.command.EditParcelUserCommandService;
 import ru.hofftech.liga.lessons.packageloader.service.command.FindParcelUserCommandService;
@@ -46,18 +47,6 @@ public class AppConfig {
 
     @Value("${telegram.credentials.token}")
     private String botToken;
-    private final String qwe = "qwe";
-
-    // Repos
-    @Bean
-    public ParcelRepository parcelRepository() {
-        return new ParcelRepository();
-    }
-
-    @Bean
-    public OrderRepository orderRepository() {
-        return new OrderRepository();
-    }
 
 
     // Telegram
@@ -145,8 +134,9 @@ public class AppConfig {
     @Bean
     public BillingService billingService(
             OrderRepository orderRepository,
-            BillingConfiguration billingConfiguration) {
-        return new BillingService(orderRepository, billingConfiguration);
+            BillingConfiguration billingConfiguration,
+            OrderMapper orderMapper) {
+        return new BillingService(orderRepository, billingConfiguration, orderMapper);
     }
 
 
@@ -168,12 +158,13 @@ public class AppConfig {
 
 
     // Commands
-    @Bean(BeanNameConfig.CREATE_PARCEL)
-    public CreateParcelUserCommandService createParcelUserCommandService(
-            ParcelRepository parcelRepository,
-            CreateParcelUserCommandValidator commandValidator) {
-        return new CreateParcelUserCommandService(parcelRepository, commandValidator);
-    }
+//    @Bean(BeanNameConfig.CREATE_PARCEL)
+//    public CreateParcelUserCommandService createParcelUserCommandService(
+//            ParcelRepository parcelRepository,
+//            CreateParcelUserCommandValidator commandValidator,
+//            ParcelMapper parcelMapper) {
+//        return new CreateParcelUserCommandService(parcelRepository, commandValidator, parcelMapper);
+//    }
 
     @Bean(BeanNameConfig.DELETE_PARCEL)
     public DeleteParcelUserCommandService deleteParcelUserCommandService(
@@ -191,8 +182,9 @@ public class AppConfig {
 
     @Bean(BeanNameConfig.FIND_PARCEL)
     public FindParcelUserCommandService findParcelUserCommandService(
-            ParcelRepository parcelRepository) {
-        return new FindParcelUserCommandService(parcelRepository);
+            ParcelRepository parcelRepository,
+            ParcelMapper parcelMapper) {
+        return new FindParcelUserCommandService(parcelRepository, parcelMapper);
     }
 
     @Bean(BeanNameConfig.LOAD_PARCELS)
@@ -202,14 +194,16 @@ public class AppConfig {
             ParcelRepository parcelRepository,
             LoadParcelsUserCommandValidator commandValidator,
             BillingService billingService,
-            ApplicationContext applicationContext) {
+            ApplicationContext applicationContext,
+            ParcelMapper parcelMapper) {
         return new LoadParcelsUserCommandService(
                 fileLoaderService,
                 reportTruckService,
                 parcelRepository,
                 commandValidator,
                 applicationContext,
-                billingService);
+                billingService,
+                parcelMapper);
     }
 
     @Bean(BeanNameConfig.UNLOAD_TRUCKS)
@@ -228,7 +222,8 @@ public class AppConfig {
     @Bean(BeanNameConfig.SHOW_ORDERS)
     public FindUserOrdersCommandService findUserOrdersCommandService(
             OrderRepository orderRepository,
-            FindUserOrdersUserCommandValidator commandValidator) {
-        return new FindUserOrdersCommandService(orderRepository, commandValidator);
+            FindUserOrdersUserCommandValidator commandValidator,
+            OrderMapper orderMapper) {
+        return new FindUserOrdersCommandService(orderRepository, commandValidator, orderMapper);
     }
 }

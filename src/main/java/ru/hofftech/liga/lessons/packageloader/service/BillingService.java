@@ -2,9 +2,10 @@ package ru.hofftech.liga.lessons.packageloader.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
+import ru.hofftech.liga.lessons.packageloader.config.BillingConfiguration;
+import ru.hofftech.liga.lessons.packageloader.mapper.OrderMapper;
 import ru.hofftech.liga.lessons.packageloader.model.Order;
 import ru.hofftech.liga.lessons.packageloader.model.Parcel;
-import ru.hofftech.liga.lessons.packageloader.config.BillingConfiguration;
 import ru.hofftech.liga.lessons.packageloader.model.enums.Command;
 import ru.hofftech.liga.lessons.packageloader.repository.OrderRepository;
 
@@ -16,6 +17,7 @@ import java.util.List;
 public class BillingService {
     private final OrderRepository orderRepository;
     private final BillingConfiguration billingConfiguration;
+    private final OrderMapper orderMapper;
 
     public void saveOrder(String userId, Command command, int trucksCount, List<Parcel> parcels) {
         int pricePerCell;
@@ -38,6 +40,6 @@ public class BillingService {
                 .sum();
 
         var order = new Order(userId, new Date(), commandStr, trucksCount, parcels.size(), totalPrice);
-        orderRepository.saveOrder(order);
+        orderRepository.save(orderMapper.toOrderEntity(order));
     }
 }

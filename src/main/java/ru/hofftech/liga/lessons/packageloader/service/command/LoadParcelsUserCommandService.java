@@ -3,6 +3,7 @@ package ru.hofftech.liga.lessons.packageloader.service.command;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationContext;
+import ru.hofftech.liga.lessons.packageloader.mapper.ParcelMapper;
 import ru.hofftech.liga.lessons.packageloader.model.Parcel;
 import ru.hofftech.liga.lessons.packageloader.model.Truck;
 import ru.hofftech.liga.lessons.packageloader.model.TruckSize;
@@ -42,6 +43,7 @@ public class LoadParcelsUserCommandService implements UserCommandService {
     private final LoadParcelsUserCommandValidator commandValidator;
     private final ApplicationContext applicationContext;
     private final BillingService billingService;
+    private final ParcelMapper parcelMapper;
 
     @Override
     public String execute(BaseUserCommandDto command) {
@@ -83,7 +85,7 @@ public class LoadParcelsUserCommandService implements UserCommandService {
     }
 
     private List<Parcel> getPackages(LoadParcelsUserCommandDto command, List<String> errors) {
-        var packages = new ArrayList<Parcel>();
+        var parcels = new ArrayList<Parcel>();
         String[] packageNames = null;
 
         if (command.parcelsText() != null && !command.parcelsText().isEmpty()) {
@@ -99,15 +101,15 @@ public class LoadParcelsUserCommandService implements UserCommandService {
         }
 
         for (var packageName : packageNames) {
-            var found = parcelRepository.find(packageName);
+            var found = parcelRepository.findById(packageName);
             if (!found.isPresent()) {
                 errors.add("Посылки с названием \"" + packageName + "\" не существует");
                 continue;
             }
-            packages.add(found.get());
+            parcels.add(parcelMapper.toParcelDto(found.get()));
         }
 
-        return packages.stream()
+        return parcels.stream()
                 .sorted((p1, p2) -> p1.getWidth() * p1.getHeight() - p2.getWidth() * p2.getHeight())
                 .collect(Collectors.toList());
     }

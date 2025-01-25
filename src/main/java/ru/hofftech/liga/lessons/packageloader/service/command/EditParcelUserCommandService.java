@@ -1,15 +1,11 @@
 package ru.hofftech.liga.lessons.packageloader.service.command;
 
 import lombok.AllArgsConstructor;
-import ru.hofftech.liga.lessons.packageloader.model.Parcel;
 import ru.hofftech.liga.lessons.packageloader.model.dto.BaseUserCommandDto;
 import ru.hofftech.liga.lessons.packageloader.model.dto.EditParcelUserCommandDto;
 import ru.hofftech.liga.lessons.packageloader.repository.ParcelRepository;
 import ru.hofftech.liga.lessons.packageloader.service.interfaces.UserCommandService;
 import ru.hofftech.liga.lessons.packageloader.validator.EditParcelUserCommandValidator;
-
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * Сервис для редактирования посылок на основе команд пользователя.
@@ -38,16 +34,19 @@ public class EditParcelUserCommandService implements UserCommandService {
             return "Посылка не может быть отредактирована: \n" + String.join("\n", validationErrors);
         }
 
-        var parcelContent = getParcelContent(castedCommand.form());
+        var parcelOptional = parcelRepository.findById(castedCommand.currentParcelId());
+        if (!parcelOptional.isPresent()) {
+            return "Посылка не может быть отредактирована: \nпосылка с названием " + castedCommand.currentParcelId() + " не существует";
+        }
 
-        if (!parcelRepository.update(castedCommand.currentParcelId(), new Parcel(parcelContent, castedCommand.newParcelId(), castedCommand.symbol().charAt(0)))) {
+        var parcel = parcelOptional.get();
+        parcel.setName(castedCommand.currentParcelId());
+        parcel.setContentRawString(castedCommand.form());
+        var savedParcel = parcelRepository.save(parcel);
+        if (savedParcel == null) {
             return "Посылка не может быть отредактирована: \nпосылка с названием " + castedCommand.currentParcelId() + " не существует";
         }
 
         return "Посылка успешно отредактирована";
-    }
-
-    private List<String> getParcelContent(String form) {
-        return Arrays.stream(form.split(DELIMITER)).toList();
     }
 }

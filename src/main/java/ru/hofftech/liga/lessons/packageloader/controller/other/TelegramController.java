@@ -1,4 +1,4 @@
-package ru.hofftech.liga.lessons.packageloader.controller;
+package ru.hofftech.liga.lessons.packageloader.controller.other;
 
 import ru.hofftech.liga.lessons.packageloader.service.TelegramService;
 

@@ -1,6 +1,7 @@
 package ru.hofftech.liga.lessons.packageloader.service.command;
 
 import lombok.AllArgsConstructor;
+import ru.hofftech.liga.lessons.packageloader.mapper.ParcelMapper;
 import ru.hofftech.liga.lessons.packageloader.model.dto.BaseUserCommandDto;
 import ru.hofftech.liga.lessons.packageloader.model.dto.FindParcelUserCommandDto;
 import ru.hofftech.liga.lessons.packageloader.repository.ParcelRepository;
@@ -13,6 +14,7 @@ import ru.hofftech.liga.lessons.packageloader.service.interfaces.UserCommandServ
 @AllArgsConstructor
 public class FindParcelUserCommandService implements UserCommandService {
     private final ParcelRepository parcelRepository;
+    private final ParcelMapper parcelMapper;
 
     @Override
     public String execute(BaseUserCommandDto command) {
@@ -26,16 +28,16 @@ public class FindParcelUserCommandService implements UserCommandService {
             var parcels = parcelRepository.findAll();
             var stringBuilder = new StringBuilder();
             for (var parcel : parcels) {
-                stringBuilder.append(parcel.toString());
+                stringBuilder.append(parcelMapper.toParcelDto(parcel).toString());
             }
             return stringBuilder.toString();
         }
 
-        var parcel = parcelRepository.find(castedCommand.parcelId());
-        if (parcel == null || !parcel.isPresent()) {
+        var parcel = parcelRepository.findById(castedCommand.parcelId());
+        if (!parcel.isPresent()) {
             return "Посылка не может быть выведена: \nпосылка с названием " + castedCommand.parcelId() + " не существует";
         }
 
-        return parcel.get().toString();
+        return parcelMapper.toParcelDto(parcel.get()).toString();
     }
 }
