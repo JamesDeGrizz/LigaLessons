@@ -1,16 +1,15 @@
 FROM openjdk:21-jdk-slim AS build
 WORKDIR /app
 COPY . /app
-RUN pwd
-RUN ls -l gradlew
-RUN chmod +x /app/gradlew && /app/gradlew clean build -x test --no-daemon
+RUN chmod +x ./gradlew && ./gradlew clean build -x test --no-daemon
+RUN ls -la
+RUN ls -la build
+RUN ls -la build/libs
 
 FROM openjdk:21-jdk-slim AS builder
 WORKDIR /app
-RUN ls -la
-COPY --from=build /app/build/libs/ParcelLoaderApplication-1.0.0.jar /app/ParcelLoaderApplication.jar
-RUN ls -la
-RUN java -Djarmode=layertools -jar ParcelLoaderApplication.jar extract
+COPY --from=build /app/build/libs/parcelloader-1.0-SNAPSHOT.jar /app/parcelloader-1.0-SNAPSHOT.jar
+RUN java -Djarmode=layertools -jar parcelloader-1.0-SNAPSHOT.jar extract
 
 FROM openjdk:21-jdk-slim
 WORKDIR /app

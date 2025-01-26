@@ -1,12 +1,15 @@
 services:
   postgres:
     image: postgres
+    container_name: parcels_db
     ports:
       - 5432:5432
     environment:
       - POSTGRES_DB=postgres
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
+    networks:
+      - spring-rest-client
 
   parcelloader:
     build:
@@ -23,6 +26,7 @@ services:
   consoleclient:
     build:
       context: ./consoleclient
+    container_name: consoleclient
     ports:
       - "8081:8081"
     environment:
@@ -35,6 +39,7 @@ services:
   telegramclient:
     build:
       context: ./telegramclient
+    container_name: telegramclient
     environment:
       PARCEL_LOADER_URL: "http://parcelloader:8080"
     env_file:

@@ -1,12 +1,12 @@
 FROM openjdk:21-jdk-slim AS build
 WORKDIR /app
 COPY . /app
-RUN chmod +x ./gradlew && ./gradlew clean build --no-daemon
+RUN chmod +x ./gradlew && ./gradlew clean build -x test --no-daemon
 
 FROM openjdk:21-jdk-slim AS builder
 WORKDIR /app
-COPY --from=build /app/build/libs/card-service-1.0.0.jar /app/ConsoleClientApplication.jar
-RUN java -Djarmode=layertools -jar ConsoleClientApplication.jar extract
+COPY --from=build /app/build/libs/consoleclient-1.0-SNAPSHOT.jar /app/consoleclient-1.0-SNAPSHOT.jar
+RUN java -Djarmode=layertools -jar consoleclient-1.0-SNAPSHOT.jar extract
 
 FROM openjdk:21-jdk-slim
 WORKDIR /app
