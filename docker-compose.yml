@@ -1,0 +1,51 @@
+services:
+  postgres:
+    image: postgres
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+
+  parcelloader:
+    build:
+      context: ./parcelloader
+    container_name: parcelloader
+    restart: always
+    ports:
+      - "8080:8080"
+    networks:
+      - spring-rest-client
+    depends_on:
+      - postgres
+
+  consoleclient:
+    build:
+      context: ./consoleclient
+    ports:
+      - "8081:8081"
+    environment:
+      PARCEL_LOADER_URL: "http://parcelloader:8080"
+    networks:
+      - spring-rest-client
+    depends_on:
+      - parcelloader
+
+  telegramclient:
+    build:
+      context: ./telegramclient
+    environment:
+      PARCEL_LOADER_URL: "http://parcelloader:8080"
+    env_file:
+      - telegramclient/credentials.env
+    ports:
+      - "8082:8082"
+    networks:
+      - spring-rest-client
+    depends_on:
+      - parcelloader
+
+networks:
+  spring-rest-client:
+    driver: bridge

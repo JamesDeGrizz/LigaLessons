@@ -1,0 +1,402 @@
+[
+  {
+    "size": {
+      "width": 6,
+      "height": 6
+    },
+    "content": [
+      "112222",
+      "333333",
+      "333333",
+      "333333",
+      "      ",
+      "      "
+    ],
+    "parcels": [
+      {
+        "content": [
+          "1"
+        ],
+        "name": "Посылка тип 1",
+        "symbol": "1",
+        "placingPoints": [
+          {
+            "height": 0,
+            "width": 1
+          }
+        ],
+        "height": 1,
+        "width": 1
+      },
+      {
+        "content": [
+          "1"
+        ],
+        "name": "Посылка тип 1",
+        "symbol": "1",
+        "placingPoints": [
+          {
+            "height": 0,
+            "width": 1
+          }
+        ],
+        "height": 1,
+        "width": 1
+      },
+      {
+        "content": [
+          "22"
+        ],
+        "name": "Посылка тип 2",
+        "symbol": "2",
+        "placingPoints": [
+          {
+            "height": 0,
+            "width": 4
+          },
+          {
+            "height": 0,
+            "width": 5
+          }
+        ],
+        "height": 1,
+        "width": 2
+      },
+      {
+        "content": [
+          "22"
+        ],
+        "name": "Посылка тип 2",
+        "symbol": "2",
+        "placingPoints": [
+          {
+            "height": 0,
+            "width": 4
+          },
+          {
+            "height": 0,
+            "width": 5
+          }
+        ],
+        "height": 1,
+        "width": 2
+      },
+      {
+        "content": [
+          "333"
+        ],
+        "name": "Посылка тип 3",
+        "symbol": "3",
+        "placingPoints": [
+          {
+            "height": 3,
+            "width": 3
+          },
+          {
+            "height": 3,
+            "width": 4
+          },
+          {
+            "height": 3,
+            "width": 5
+          }
+        ],
+        "height": 1,
+        "width": 3
+      },
+      {
+        "content": [
+          "333"
+        ],
+        "name": "Посылка тип 3",
+        "symbol": "3",
+        "placingPoints": [
+          {
+            "height": 3,
+            "width": 3
+          },
+          {
+            "height": 3,
+            "width": 4
+          },
+          {
+            "height": 3,
+            "width": 5
+          }
+        ],
+        "height": 1,
+        "width": 3
+      },
+      {
+        "content": [
+          "333"
+        ],
+        "name": "Посылка тип 3",
+        "symbol": "3",
+        "placingPoints": [
+          {
+            "height": 3,
+            "width": 3
+          },
+          {
+            "height": 3,
+            "width": 4
+          },
+          {
+            "height": 3,
+            "width": 5
+          }
+        ],
+        "height": 1,
+        "width": 3
+      },
+      {
+        "content": [
+          "333"
+        ],
+        "name": "Посылка тип 3",
+        "symbol": "3",
+        "placingPoints": [
+          {
+            "height": 3,
+            "width": 3
+          },
+          {
+            "height": 3,
+            "width": 4
+          },
+          {
+            "height": 3,
+            "width": 5
+          }
+        ],
+        "height": 1,
+        "width": 3
+      },
+      {
+        "content": [
+          "333"
+        ],
+        "name": "Посылка тип 3",
+        "symbol": "3",
+        "placingPoints": [
+          {
+            "height": 3,
+            "width": 3
+          },
+          {
+            "height": 3,
+            "width": 4
+          },
+          {
+            "height": 3,
+            "width": 5
+          }
+        ],
+        "height": 1,
+        "width": 3
+      },
+      {
+        "content": [
+          "333"
+        ],
+        "name": "Посылка тип 3",
+        "symbol": "3",
+        "placingPoints": [
+          {
+            "height": 3,
+            "width": 3
+          },
+          {
+            "height": 3,
+            "width": 4
+          },
+          {
+            "height": 3,
+            "width": 5
+          }
+        ],
+        "height": 1,
+        "width": 3
+      }
+    ]
+  },
+  {
+    "size": {
+      "width": 6,
+      "height": 6
+    },
+    "content": [
+      "999999",
+      "999999",
+      "999999",
+      "999   ",
+      "999   ",
+      "999   "
+    ],
+    "parcels": [
+      {
+        "content": [
+          "999",
+          "999",
+          "999"
+        ],
+        "name": "Посылка тип 9",
+        "symbol": "9",
+        "placingPoints": [
+          {
+            "height": 3,
+            "width": 0
+          },
+          {
+            "height": 3,
+            "width": 1
+          },
+          {
+            "height": 3,
+            "width": 2
+          },
+          {
+            "height": 4,
+            "width": 0
+          },
+          {
+            "height": 4,
+            "width": 1
+          },
+          {
+            "height": 4,
+            "width": 2
+          },
+          {
+            "height": 5,
+            "width": 0
+          },
+          {
+            "height": 5,
+            "width": 1
+          },
+          {
+            "height": 5,
+            "width": 2
+          }
+        ],
+        "height": 3,
+        "width": 3
+      },
+      {
+        "content": [
+          "999",
+          "999",
+          "999"
+        ],
+        "name": "Посылка тип 9",
+        "symbol": "9",
+        "placingPoints": [
+          {
+            "height": 3,
+            "width": 0
+          },
+          {
+            "height": 3,
+            "width": 1
+          },
+          {
+            "height": 3,
+            "width": 2
+          },
+          {
+            "height": 4,
+            "width": 0
+          },
+          {
+            "height": 4,
+            "width": 1
+          },
+          {
+            "height": 4,
+            "width": 2
+          },
+          {
+            "height": 5,
+            "width": 0
+          },
+          {
+            "height": 5,
+            "width": 1
+          },
+          {
+            "height": 5,
+            "width": 2
+          }
+        ],
+        "height": 3,
+        "width": 3
+      },
+      {
+        "content": [
+          "999",
+          "999",
+          "999"
+        ],
+        "name": "Посылка тип 9",
+        "symbol": "9",
+        "placingPoints": [
+          {
+            "height": 3,
+            "width": 0
+          },
+          {
+            "height": 3,
+            "width": 1
+          },
+          {
+            "height": 3,
+            "width": 2
+          },
+          {
+            "height": 4,
+            "width": 0
+          },
+          {
+            "height": 4,
+            "width": 1
+          },
+          {
+            "height": 4,
+            "width": 2
+          },
+          {
+            "height": 5,
+            "width": 0
+          },
+          {
+            "height": 5,
+            "width": 1
+          },
+          {
+            "height": 5,
+            "width": 2
+          }
+        ],
+        "height": 3,
+        "width": 3
+      }
+    ]
+  },
+  {
+    "size": {
+      "width": 6,
+      "height": 6
+    },
+    "content": [
+      "      ",
+      "      ",
+      "      ",
+      "      ",
+      "      ",
+      "      "
+    ],
+    "parcels": []
+  }
+]
