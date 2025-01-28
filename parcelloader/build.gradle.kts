@@ -35,7 +35,6 @@ dependencies {
     annotationProcessor("org.projectlombok:lombok-mapstruct-binding:${Versions.MAPSTRUCT_LOMBOK}")
     annotationProcessor("org.projectlombok:lombok:${Versions.LOMBOK}")
 
-    implementation("org.springframework.shell:spring-shell-starter")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:${Versions.SWAGGER}")

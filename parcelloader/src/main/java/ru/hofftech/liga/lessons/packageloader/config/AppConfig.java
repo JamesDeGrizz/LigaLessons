@@ -14,15 +14,13 @@ import ru.hofftech.liga.lessons.packageloader.service.FileLoaderService;
 import ru.hofftech.liga.lessons.packageloader.service.ReportParcelService;
 import ru.hofftech.liga.lessons.packageloader.service.ReportTruckService;
 import ru.hofftech.liga.lessons.packageloader.service.TruckService;
-import ru.hofftech.liga.lessons.packageloader.service.UserCommandParserService;
-import ru.hofftech.liga.lessons.packageloader.service.UserCommandProcessorService;
+import ru.hofftech.liga.lessons.packageloader.service.command.CreateParcelUserCommandService;
 import ru.hofftech.liga.lessons.packageloader.service.command.DeleteParcelUserCommandService;
 import ru.hofftech.liga.lessons.packageloader.service.command.EditParcelUserCommandService;
 import ru.hofftech.liga.lessons.packageloader.service.command.FindParcelUserCommandService;
 import ru.hofftech.liga.lessons.packageloader.service.command.FindUserOrdersCommandService;
 import ru.hofftech.liga.lessons.packageloader.service.command.LoadParcelsUserCommandService;
 import ru.hofftech.liga.lessons.packageloader.service.command.UnloadTrucksUserCommandService;
-import ru.hofftech.liga.lessons.packageloader.service.interfaces.UserCommandService;
 import ru.hofftech.liga.lessons.packageloader.service.logistic.BalancedFillTruckLogisticService;
 import ru.hofftech.liga.lessons.packageloader.service.logistic.FullFillTruckLogisticService;
 import ru.hofftech.liga.lessons.packageloader.service.logistic.OnePerTruckLogisticService;
@@ -93,18 +91,6 @@ public class AppConfig {
     }
 
     @Bean
-    public UserCommandParserService userCommandParserService() {
-        return new UserCommandParserService();
-    }
-
-    @Bean
-    public UserCommandProcessorService userCommandProcessorService(
-            UserCommandParserService userCommandParserService,
-            Map<String, UserCommandService> userCommandServices) {
-        return new UserCommandProcessorService(userCommandParserService, userCommandServices);
-    }
-
-    @Bean
     public BillingService billingService(
             OrderRepository orderRepository,
             BillingConfiguration billingConfiguration,
@@ -131,36 +117,36 @@ public class AppConfig {
 
 
     // Commands
-//    @Bean(BeanNameConfig.CREATE_PARCEL)
-//    public CreateParcelUserCommandService createParcelUserCommandService(
-//            ParcelRepository parcelRepository,
-//            CreateParcelUserCommandValidator commandValidator,
-//            ParcelMapper parcelMapper) {
-//        return new CreateParcelUserCommandService(parcelRepository, commandValidator, parcelMapper);
-//    }
+    @Bean
+    public CreateParcelUserCommandService createParcelUserCommandService(
+            ParcelRepository parcelRepository,
+            CreateParcelUserCommandValidator commandValidator,
+            ParcelMapper parcelMapper) {
+        return new CreateParcelUserCommandService(parcelRepository, commandValidator, parcelMapper);
+    }
 
-    @Bean(BeanNameConfig.DELETE_PARCEL)
+    @Bean
     public DeleteParcelUserCommandService deleteParcelUserCommandService(
             ParcelRepository parcelRepository,
             DeleteParcelUserCommandValidator deleteParcelUserCommandValidator) {
         return new DeleteParcelUserCommandService(parcelRepository, deleteParcelUserCommandValidator);
     }
 
-    @Bean(BeanNameConfig.EDIT_PARCEL)
+    @Bean
     public EditParcelUserCommandService editParcelUserCommandService(
             ParcelRepository parcelRepository,
             EditParcelUserCommandValidator commandValidator) {
         return new EditParcelUserCommandService(parcelRepository, commandValidator);
     }
 
-    @Bean(BeanNameConfig.FIND_PARCEL)
+    @Bean
     public FindParcelUserCommandService findParcelUserCommandService(
             ParcelRepository parcelRepository,
             ParcelMapper parcelMapper) {
         return new FindParcelUserCommandService(parcelRepository, parcelMapper);
     }
 
-    @Bean(BeanNameConfig.LOAD_PARCELS)
+    @Bean
     public LoadParcelsUserCommandService loadParcelsUserCommandService(
             FileLoaderService fileLoaderService,
             ReportTruckService reportTruckService,
@@ -179,7 +165,7 @@ public class AppConfig {
                 parcelMapper);
     }
 
-    @Bean(BeanNameConfig.UNLOAD_TRUCKS)
+    @Bean
     public UnloadTrucksUserCommandService unloadTrucksUserCommandService(
             FileLoaderService fileLoaderService,
             ReportParcelService reportParcelService,
@@ -192,7 +178,7 @@ public class AppConfig {
                 billingService);
     }
 
-    @Bean(BeanNameConfig.SHOW_ORDERS)
+    @Bean
     public FindUserOrdersCommandService findUserOrdersCommandService(
             OrderRepository orderRepository,
             FindUserOrdersUserCommandValidator commandValidator,

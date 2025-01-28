@@ -11,11 +11,10 @@ import java.util.List;
 
 @Mapper(componentModel = "spring")
 public abstract class ParcelMapper {
-    @Mapping(target = "contentRawString", source = "content", qualifiedByName = "stringListToString")
+    @Mapping(target = "content", source = "content", qualifiedByName = "stringListToString")
     public abstract ParcelEntity toParcelEntity(Parcel dto);
 
-    @Mapping(target = "content", source = "contentRawString", qualifiedByName = "stringToStringList")
-    @Mapping(target = "symbol", source = "contentRawString", qualifiedByName = "symbolExtractor")
+    @Mapping(target = "content", source = "content", qualifiedByName = "stringToStringList")
     @Mapping(target = "placingPoints", ignore = true)
     public abstract Parcel toParcelDto(ParcelEntity entity);
 
@@ -29,10 +28,5 @@ public abstract class ParcelMapper {
     @Named("stringToStringList")
     public static List<String> stringToStringList(String content) {
         return Arrays.stream(content.split(DELIMITER)).toList();
-    }
-
-    @Named("symbolExtractor")
-    public static char symbolExtractor(String content) {
-        return content.charAt(0);
     }
 }

@@ -30,7 +30,7 @@ public enum Command {
     EDIT_PARCEL,
 
     /**
-     * Кдаление посылки
+     * Удаление посылки
      */
     DELETE_PARCEL,
 

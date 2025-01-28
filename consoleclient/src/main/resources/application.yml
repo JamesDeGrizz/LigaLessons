@@ -2,3 +2,7 @@ spring:
   shell:
     interactive:
       enabled: true
+
+services:
+  url:
+    parcels-loader: http://localhost:8080

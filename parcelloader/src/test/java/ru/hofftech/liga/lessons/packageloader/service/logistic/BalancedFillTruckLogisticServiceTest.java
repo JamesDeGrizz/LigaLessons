@@ -25,14 +25,14 @@ class BalancedFillTruckLogisticServiceTest {
     @Test
     void placePackagesToTrucks_given8Parcels2Trucks_returns2Trucks() {
         var packages = Arrays.asList(
-                new Parcel(Arrays.asList("999", "999", "999"), "test", '9'),
-                new Parcel(Arrays.asList("999", "999", "999"), "test", '9'),
-                new Parcel(Arrays.asList("666", "666"), "test", '9'),
-                new Parcel(Arrays.asList("666", "666"), "test", '9'),
-                new Parcel(Arrays.asList("333"), "test", '9'),
-                new Parcel(Arrays.asList("333"), "test", '9'),
-                new Parcel(Arrays.asList("1"), "test", '9'),
-                new Parcel(Arrays.asList("1"), "test", '9')
+                new Parcel(Arrays.asList("999", "999", "999"), "test", '9', null),
+                new Parcel(Arrays.asList("999", "999", "999"), "test", '9', null),
+                new Parcel(Arrays.asList("666", "666"), "test", '9', null),
+                new Parcel(Arrays.asList("666", "666"), "test", '9', null),
+                new Parcel(Arrays.asList("333"), "test", '9', null),
+                new Parcel(Arrays.asList("333"), "test", '9', null),
+                new Parcel(Arrays.asList("1"), "test", '9', null),
+                new Parcel(Arrays.asList("1"), "test", '9', null)
         );
 
         var trucks = balancedFillTruckLogisticService.placeParcelsToTrucks(packages, List.of(new TruckSize(6, 6), new TruckSize(6, 6)));
@@ -59,14 +59,14 @@ class BalancedFillTruckLogisticServiceTest {
     @Test
     void placePackagesToTrucks_given8Parcels1Truck_returnsException() {
         var packages = Arrays.asList(
-                new Parcel(Arrays.asList("999", "999", "999"), "test", '9'),
-                new Parcel(Arrays.asList("999", "999", "999"), "test", '9'),
-                new Parcel(Arrays.asList("666", "666"), "test", '9'),
-                new Parcel(Arrays.asList("666", "666"), "test", '9'),
-                new Parcel(Arrays.asList("333"), "test", '9'),
-                new Parcel(Arrays.asList("333"), "test", '9'),
-                new Parcel(Arrays.asList("1"), "test", '9'),
-                new Parcel(Arrays.asList("1"), "test", '9')
+                new Parcel(Arrays.asList("999", "999", "999"), "test", '9', null),
+                new Parcel(Arrays.asList("999", "999", "999"), "test", '9', null),
+                new Parcel(Arrays.asList("666", "666"), "test", '9', null),
+                new Parcel(Arrays.asList("666", "666"), "test", '9', null),
+                new Parcel(Arrays.asList("333"), "test", '9', null),
+                new Parcel(Arrays.asList("333"), "test", '9', null),
+                new Parcel(Arrays.asList("1"), "test", '9', null),
+                new Parcel(Arrays.asList("1"), "test", '9', null)
         );
 
         assertThatThrownBy(() -> balancedFillTruckLogisticService.placeParcelsToTrucks(packages, List.of(new TruckSize(6, 6))))

@@ -5,11 +5,11 @@ import java.util.Map;
 public record UnloadTrucksUserCommandDto(String infile,
                                          String outfile,
                                          String userId,
-                                         boolean withCount) implements BaseUserCommandDto {
-    private static final String ARGUMENT_IN_FILE = "-infile";
-    private static final String ARGUMENT_OUT_FILE = "-outfile";
+                                         boolean withCount) {
+    private static final String ARGUMENT_IN_FILE = "--infile";
+    private static final String ARGUMENT_OUT_FILE = "--outfile";
     private static final String ARGUMENT_WITH_COUNT = "--withcount";
-    private static final String ARGUMENT_USER_ID = "-user-id";
+    private static final String ARGUMENT_USER_ID = "--user-id";
 
     public static UnloadTrucksUserCommandDto fromArgsMap(Map<String, String> args) {
         if (args == null || args.isEmpty()) {

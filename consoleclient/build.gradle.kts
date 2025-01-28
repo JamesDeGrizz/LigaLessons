@@ -31,6 +31,7 @@ dependencies {
     annotationProcessor("org.projectlombok:lombok:${Versions.LOMBOK}")
 
     implementation("org.springframework.shell:spring-shell-starter")
+    implementation("org.springframework.boot:spring-boot-starter-web")
 
     implementation("org.slf4j:slf4j-api:${Versions.SLF4J}")
     implementation("ch.qos.logback:logback-core:${Versions.LOGBACK}")

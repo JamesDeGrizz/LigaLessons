@@ -2,29 +2,19 @@ package ru.hofftech.liga.lessons.packageloader.service.command;
 
 import lombok.AllArgsConstructor;
 import ru.hofftech.liga.lessons.packageloader.mapper.ParcelMapper;
-import ru.hofftech.liga.lessons.packageloader.model.dto.BaseUserCommandDto;
 import ru.hofftech.liga.lessons.packageloader.model.dto.FindParcelUserCommandDto;
 import ru.hofftech.liga.lessons.packageloader.repository.ParcelRepository;
-import ru.hofftech.liga.lessons.packageloader.service.interfaces.UserCommandService;
 
 /**
  * Сервис для поиска посылок на основе команд пользователя.
- * Этот класс реализует интерфейс {@link UserCommandService} и предоставляет методы для обработки команд поиска посылок.
  */
 @AllArgsConstructor
-public class FindParcelUserCommandService implements UserCommandService {
+public class FindParcelUserCommandService {
     private final ParcelRepository parcelRepository;
     private final ParcelMapper parcelMapper;
 
-    @Override
-    public String execute(BaseUserCommandDto command) {
-        if (!(command instanceof FindParcelUserCommandDto)) {
-            return "Посылка не может быть выведена: \nПередана команда неправильного типа";
-        }
-
-        var castedCommand = (FindParcelUserCommandDto) command;
-
-        if (castedCommand.parcelId() == null || castedCommand.parcelId().isEmpty()) {
+    public String execute(FindParcelUserCommandDto command) {
+        if (command == null || command.parcelId() == null || command.parcelId().isEmpty()) {
             var parcels = parcelRepository.findAll();
             var stringBuilder = new StringBuilder();
             for (var parcel : parcels) {
@@ -33,9 +23,9 @@ public class FindParcelUserCommandService implements UserCommandService {
             return stringBuilder.toString();
         }
 
-        var parcel = parcelRepository.findById(castedCommand.parcelId());
+        var parcel = parcelRepository.findByName(command.parcelId());
         if (!parcel.isPresent()) {
-            return "Посылка не может быть выведена: \nпосылка с названием " + castedCommand.parcelId() + " не существует";
+            return "Посылка не может быть выведена: \nпосылка с названием " + command.parcelId() + " не существует";
         }
 
         return parcelMapper.toParcelDto(parcel.get()).toString();

@@ -2,8 +2,6 @@ package ru.hofftech.liga.lessons.telegramclient.service;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.hofftech.liga.lessons.telegramclient.config.BeanNameConfig;
-import ru.hofftech.liga.lessons.telegramclient.model.dto.BaseUserCommandDto;
 import ru.hofftech.liga.lessons.telegramclient.model.dto.CreateParcelUserCommandDto;
 import ru.hofftech.liga.lessons.telegramclient.model.dto.DeleteParcelUserCommandDto;
 import ru.hofftech.liga.lessons.telegramclient.model.dto.EditParcelUserCommandDto;
@@ -11,40 +9,32 @@ import ru.hofftech.liga.lessons.telegramclient.model.dto.FindParcelUserCommandDt
 import ru.hofftech.liga.lessons.telegramclient.model.dto.FindUserOrdersUserCommandDto;
 import ru.hofftech.liga.lessons.telegramclient.model.dto.LoadParcelsUserCommandDto;
 import ru.hofftech.liga.lessons.telegramclient.model.dto.UnloadTrucksUserCommandDto;
-import ru.hofftech.liga.lessons.telegramclient.service.interfaces.UserCommandService;
-
-import java.util.Map;
+import ru.hofftech.liga.lessons.telegramclient.model.enums.Command;
 
 @AllArgsConstructor
 @Service
 public class UserCommandProcessorService {
     private final UserCommandParserService userCommandParserService;
-    private final Map<String, UserCommandService> userCommandServices;
+    private final ParcelLoaderClientService parcelLoaderClientService;
 
     public String processRawInput(String userInput) {
-        var dto = userCommandParserService.parse(userInput);
-        if (dto == null) {
-            return "Введена нераспознанная команда. Попробуйте ещё раз";
+        try {
+            var command = userCommandParserService.parse(userInput);
+            if (command == null) {
+                return "Введена нераспознанная команда. Попробуйте ещё раз";
+            }
+
+            return switch (command.getCommand()) {
+                case Command.CREATE_PARCEL -> parcelLoaderClientService.createParcel(CreateParcelUserCommandDto.fromArgsMap(command.getArgs()));
+                case Command.FIND_PARCEL -> parcelLoaderClientService.getParcel(FindParcelUserCommandDto.fromArgsMap(command.getArgs()).parcelId());
+                case Command.EDIT_PARCEL -> parcelLoaderClientService.updateParcel(EditParcelUserCommandDto.fromArgsMap(command.getArgs()).currentParcelId(), CreateParcelUserCommandDto.fromArgsMap(command.getArgs()));
+                case Command.DELETE_PARCEL -> parcelLoaderClientService.deleteParcel(DeleteParcelUserCommandDto.fromArgsMap(command.getArgs()).parcelId());
+                case Command.LOAD_PARCELS -> parcelLoaderClientService.load(LoadParcelsUserCommandDto.fromArgsMap(command.getArgs()));
+                case Command.UNLOAD_TRUCKS -> parcelLoaderClientService.unload(UnloadTrucksUserCommandDto.fromArgsMap(command.getArgs()));
+                case Command.SHOW_ORDERS -> parcelLoaderClientService.findUserOrders(FindUserOrdersUserCommandDto.fromArgsMap(command.getArgs()).userId());
+            };
+        } catch (Exception e) {
+            return e.getMessage();
         }
-
-        return processCommand(dto);
-    }
-
-    public String processCommand(BaseUserCommandDto command) {
-        var service = switch (command) {
-            case CreateParcelUserCommandDto create -> userCommandServices.get(BeanNameConfig.CREATE_PARCEL);
-            case FindParcelUserCommandDto find -> userCommandServices.get(BeanNameConfig.FIND_PARCEL);
-            case EditParcelUserCommandDto edit -> userCommandServices.get(BeanNameConfig.EDIT_PARCEL);
-            case DeleteParcelUserCommandDto delete -> userCommandServices.get(BeanNameConfig.DELETE_PARCEL);
-            case LoadParcelsUserCommandDto load -> userCommandServices.get(BeanNameConfig.LOAD_PARCELS);
-            case UnloadTrucksUserCommandDto unload -> userCommandServices.get(BeanNameConfig.UNLOAD_TRUCKS);
-            case FindUserOrdersUserCommandDto orders -> userCommandServices.get(BeanNameConfig.SHOW_ORDERS);
-            default -> null;
-        };
-        if (service == null) {
-            return "Введена нераспознанная команда. Попробуйте ещё раз";
-        }
-
-        return service.execute(command);
     }
 }

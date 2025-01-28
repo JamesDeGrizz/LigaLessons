@@ -25,12 +25,12 @@ class FullFillTruckLogisticServiceTest {
     @Test
     void placePackagesToTrucks_given6Parcels2Trucks_returns2Trucks() {
         var packages = Arrays.asList(
-                new Parcel(Arrays.asList("999", "999", "999"), "test", '9'),
-                new Parcel(Arrays.asList("999", "999", "999"), "test", '9'),
-                new Parcel(Arrays.asList("666", "666"), "test", '6'),
-                new Parcel(Arrays.asList("666", "666"), "test", '6'),
-                new Parcel(Arrays.asList("333"), "test", '3'),
-                new Parcel(Arrays.asList("333"), "test", '3')
+                new Parcel(Arrays.asList("999", "999", "999"), "test", '9', null),
+                new Parcel(Arrays.asList("999", "999", "999"), "test", '9', null),
+                new Parcel(Arrays.asList("666", "666"), "test", '6', null),
+                new Parcel(Arrays.asList("666", "666"), "test", '6', null),
+                new Parcel(Arrays.asList("333"), "test", '3', null),
+                new Parcel(Arrays.asList("333"), "test", '3', null)
         );
 
         var trucks = fullFillTruckLogisticService.placeParcelsToTrucks(packages, List.of(new TruckSize(6, 6), new TruckSize(6, 6)));
@@ -67,14 +67,14 @@ class FullFillTruckLogisticServiceTest {
     @Test
     void placePackagesToTrucks_given8Parcels1Truck_returnsException() {
         var packages = Arrays.asList(
-                new Parcel(Arrays.asList("999", "999", "999"), "test", '9'),
-                new Parcel(Arrays.asList("999", "999", "999"), "test", '9'),
-                new Parcel(Arrays.asList("666", "666"), "test", '9'),
-                new Parcel(Arrays.asList("666", "666"), "test", '9'),
-                new Parcel(Arrays.asList("333"), "test", '9'),
-                new Parcel(Arrays.asList("333"), "test", '9'),
-                new Parcel(Arrays.asList("1"), "test", '9'),
-                new Parcel(Arrays.asList("1"), "test", '9')
+                new Parcel(Arrays.asList("999", "999", "999"), "test", '9', null),
+                new Parcel(Arrays.asList("999", "999", "999"), "test", '9', null),
+                new Parcel(Arrays.asList("666", "666"), "test", '9', null),
+                new Parcel(Arrays.asList("666", "666"), "test", '9', null),
+                new Parcel(Arrays.asList("333"), "test", '9', null),
+                new Parcel(Arrays.asList("333"), "test", '9', null),
+                new Parcel(Arrays.asList("1"), "test", '9', null),
+                new Parcel(Arrays.asList("1"), "test", '9', null)
         );
 
         assertThatThrownBy(() -> fullFillTruckLogisticService.placeParcelsToTrucks(packages, List.of(new TruckSize(6, 6))))

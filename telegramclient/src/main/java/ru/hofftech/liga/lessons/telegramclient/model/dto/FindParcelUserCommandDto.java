@@ -2,8 +2,8 @@ package ru.hofftech.liga.lessons.telegramclient.model.dto;
 
 import java.util.Map;
 
-public record FindParcelUserCommandDto(String parcelId) implements BaseUserCommandDto {
-    private static final String ARGUMENT_NAME = "-name";
+public record FindParcelUserCommandDto(String parcelId) {
+    private static final String ARGUMENT_NAME = "--name";
 
     public static FindParcelUserCommandDto fromArgsMap(Map<String, String> args) {
         if (args == null || args.isEmpty()) {

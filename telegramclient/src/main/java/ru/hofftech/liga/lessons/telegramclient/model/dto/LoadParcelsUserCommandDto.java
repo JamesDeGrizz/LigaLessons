@@ -8,14 +8,14 @@ public record LoadParcelsUserCommandDto(String out,
                                         String userId,
                                         String outFilename,
                                         String parcelsText,
-                                        String parcelsFile) implements BaseUserCommandDto {
-    private static final String ARGUMENT_OUT_TYPE = "-out";
-    private static final String ARGUMENT_OUT_FILENAME = "-out-filename";
-    private static final String ARGUMENT_PARCELS_TEXT = "-parcels-text";
-    private static final String ARGUMENT_PARCELS_FILE = "-parcels-file";
-    private static final String ARGUMENT_ALGORITHM_TYPE = "-type";
-    private static final String ARGUMENT_TRUCKS = "-trucks";
-    private static final String ARGUMENT_USER_ID = "-user-id";
+                                        String parcelsFile) {
+    private static final String ARGUMENT_OUT_TYPE = "--out";
+    private static final String ARGUMENT_OUT_FILENAME = "--out-filename";
+    private static final String ARGUMENT_PARCELS_TEXT = "--parcels-text";
+    private static final String ARGUMENT_PARCELS_FILE = "--parcels-file";
+    private static final String ARGUMENT_ALGORITHM_TYPE = "--type";
+    private static final String ARGUMENT_TRUCKS = "--trucks";
+    private static final String ARGUMENT_USER_ID = "--user-id";
 
     public static LoadParcelsUserCommandDto fromArgsMap(Map<String, String> args) {
         if (args == null || args.isEmpty()) {

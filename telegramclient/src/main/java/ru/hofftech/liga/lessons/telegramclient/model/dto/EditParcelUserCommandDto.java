@@ -2,7 +2,7 @@ package ru.hofftech.liga.lessons.telegramclient.model.dto;
 
 import java.util.Map;
 
-public record EditParcelUserCommandDto(String currentParcelId, String newParcelId, String form, String symbol) implements BaseUserCommandDto {
+public record EditParcelUserCommandDto(String currentParcelId, String newParcelId, String form, String symbol) {
     private static final String ARGUMENT_ID = "--id";
     private static final String ARGUMENT_NAME = "--name";
     private static final String ARGUMENT_SYMBOL = "--symbol";

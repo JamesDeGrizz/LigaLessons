@@ -16,7 +16,7 @@ class TruckServiceTest {
     void canPlaceParcel_givenEmptyTruck_returnsTrue() {
         var truckService = new TruckService();
         var truck = new Truck(new TruckSize(6, 6));
-        var parcel = new Parcel(List.of("333"), "test", '9');
+        var parcel = new Parcel(List.of("333"), "test", '9', null);
 
         assertThat(truckService.canPlaceParcel(truck, parcel, 0, 0))
                 .isTrue();
@@ -26,12 +26,12 @@ class TruckServiceTest {
     void canPlaceParcel_givenFullTruck_returnsFalse() {
         var truckService = new TruckService();
         var truck = new Truck(new TruckSize(6, 6));
-        truckService.placeParcel(truck, new Parcel(List.of("999", "999", "999"), "test", '9'), 0, 0);
-        truckService.placeParcel(truck, new Parcel(List.of("999", "999", "999"), "test", '9'), 0, 3);
-        truckService.placeParcel(truck, new Parcel(List.of("999", "999", "999"), "test", '9'), 3, 0);
-        truckService.placeParcel(truck, new Parcel(List.of("999", "999", "999"), "test", '9'), 3, 3);
+        truckService.placeParcel(truck, new Parcel(List.of("999", "999", "999"), "test", '9', null), 0, 0);
+        truckService.placeParcel(truck, new Parcel(List.of("999", "999", "999"), "test", '9', null), 0, 3);
+        truckService.placeParcel(truck, new Parcel(List.of("999", "999", "999"), "test", '9', null), 3, 0);
+        truckService.placeParcel(truck, new Parcel(List.of("999", "999", "999"), "test", '9', null), 3, 3);
 
-        var parcel = new Parcel(List.of("1"), "test", '9');
+        var parcel = new Parcel(List.of("1"), "test", '9', null);
 
         IntStream.range(0, 6)
                 .forEach(i -> IntStream.range(0, 6)
@@ -46,7 +46,7 @@ class TruckServiceTest {
     void placePackage_givenBigPackage_returnsCorrectlyPlacedParcel() {
         var truckService = new TruckService();
         var truck = new Truck(new TruckSize(6, 6));
-        truckService.placeParcel(truck, new Parcel(List.of("999", "999", "999"), "test", '9'), 2, 2);
+        truckService.placeParcel(truck, new Parcel(List.of("999", "999", "999"), "test", '9', null), 2, 2);
 
         assertThat(truck.getContent()[2][2])
                 .isEqualTo('9');
@@ -73,7 +73,7 @@ class TruckServiceTest {
     void getFreeSpaceCount_givenSemiFilledTruck_returnsCorrectFreeSpaceCount() {
         var truckService = new TruckService();
         var truck = new Truck(new TruckSize(6, 6));
-        truckService.placeParcel(truck, new Parcel(List.of("999", "999", "999"), "test", '9'), 0, 0);
+        truckService.placeParcel(truck, new Parcel(List.of("999", "999", "999"), "test", '9', null), 0, 0);
 
         assertThat(truckService.getFreeSpaceCount(truck))
                 .isEqualTo(27);
@@ -83,7 +83,7 @@ class TruckServiceTest {
     void getFreeSpaceCount_givenFullFilledTruck_returnsCorrectFreeSpaceCount() {
         var truckService = new TruckService();
         var truck = new Truck(new TruckSize(3, 3));
-        truckService.placeParcel(truck, new Parcel(List.of("999", "999", "999"), "test", '9'), 0, 0);
+        truckService.placeParcel(truck, new Parcel(List.of("999", "999", "999"), "test", '9', null), 0, 0);
 
         assertThat(truckService.getFreeSpaceCount(truck))
                 .isEqualTo(0);
@@ -93,7 +93,7 @@ class TruckServiceTest {
     void getPackages_givenFullFilledTruck_returnsCorrectPackageList() {
         var truckService = new TruckService();
         var truck = new Truck(new TruckSize(3, 3));
-        truckService.placeParcel(truck, new Parcel(List.of("999", "999", "999"), "test", '9'), 0, 0);
+        truckService.placeParcel(truck, new Parcel(List.of("999", "999", "999"), "test", '9', null), 0, 0);
 
         assertThat(truck.getParcels().size())
                 .isEqualTo(1);

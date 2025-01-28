@@ -13,26 +13,4 @@ public enum Command {
      * Погрузка посылок
      */
     LOAD_PARCELS,
-
-    /**
-     * Создание новой посылки
-     */
-    CREATE_PARCEL,
-
-    /**
-     * Поиск посыл(ки/ок)
-     */
-    FIND_PARCEL,
-
-    /**
-     * Редактирование посылки
-     */
-    EDIT_PARCEL,
-
-    /**
-     * Кдаление посылки
-     */
-    DELETE_PARCEL,
-
-    SHOW_ORDERS,
 }

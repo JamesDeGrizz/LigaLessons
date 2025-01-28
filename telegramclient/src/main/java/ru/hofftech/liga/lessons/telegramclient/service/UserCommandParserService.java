@@ -1,7 +1,7 @@
 package ru.hofftech.liga.lessons.telegramclient.service;
 
 import lombok.extern.slf4j.Slf4j;
-import ru.hofftech.liga.lessons.telegramclient.model.dto.BaseUserCommandDto;
+import ru.hofftech.liga.lessons.telegramclient.model.ParsedCommand;
 import ru.hofftech.liga.lessons.telegramclient.model.dto.CreateParcelUserCommandDto;
 import ru.hofftech.liga.lessons.telegramclient.model.dto.DeleteParcelUserCommandDto;
 import ru.hofftech.liga.lessons.telegramclient.model.dto.EditParcelUserCommandDto;
@@ -9,6 +9,7 @@ import ru.hofftech.liga.lessons.telegramclient.model.dto.FindParcelUserCommandDt
 import ru.hofftech.liga.lessons.telegramclient.model.dto.FindUserOrdersUserCommandDto;
 import ru.hofftech.liga.lessons.telegramclient.model.dto.LoadParcelsUserCommandDto;
 import ru.hofftech.liga.lessons.telegramclient.model.dto.UnloadTrucksUserCommandDto;
+import ru.hofftech.liga.lessons.telegramclient.model.enums.Command;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -45,13 +46,7 @@ public class UserCommandParserService {
     private final Pattern oneArgumentPattern = Pattern.compile(ONE_ARGUMENT_REGEX);
     private final Pattern flagsArgumentPattern = Pattern.compile(FLAGS_ARGUMENT_REGEX);
 
-    /**
-     * Разбирает команду пользователя и возвращает соответствующую команду.
-     *
-     * @param userCommand команда пользователя
-     * @return команда, соответствующая введенной пользователем команде
-     */
-    public BaseUserCommandDto parse(String userCommand) {
+    public ParsedCommand parse(String userCommand) {
         var commandMatcher = commandPattern.matcher(userCommand);
 
         if (!commandMatcher.find()) {
@@ -60,23 +55,27 @@ public class UserCommandParserService {
 
         var args = parseArguments(userCommand);
         return switch (commandMatcher.group(COMMAND_GROUP_NUMBER)) {
-            case CREATE_COMMAND -> CreateParcelUserCommandDto.fromArgsMap(args);
-            case FIND_COMMAND -> FindParcelUserCommandDto.fromArgsMap(args);
-            case EDIT_COMMAND -> EditParcelUserCommandDto.fromArgsMap(args);
-            case DELETE_COMMAND -> DeleteParcelUserCommandDto.fromArgsMap(args);
-            case LOAD_COMMAND -> LoadParcelsUserCommandDto.fromArgsMap(args);
-            case UNLOAD_COMMAND -> UnloadTrucksUserCommandDto.fromArgsMap(args);
-            case ORDERS_COMMAND -> FindUserOrdersUserCommandDto.fromArgsMap(args);
+            case CREATE_COMMAND -> new ParsedCommand(Command.CREATE_PARCEL, args);
+            case FIND_COMMAND -> new ParsedCommand(Command.FIND_PARCEL, args);
+            case EDIT_COMMAND -> new ParsedCommand(Command.EDIT_PARCEL, args);
+            case DELETE_COMMAND -> new ParsedCommand(Command.DELETE_PARCEL, args);
+            case LOAD_COMMAND -> new ParsedCommand(Command.LOAD_PARCELS, args);
+            case UNLOAD_COMMAND -> new ParsedCommand(Command.UNLOAD_TRUCKS, args);
+            case ORDERS_COMMAND -> new ParsedCommand(Command.SHOW_ORDERS, args);
             default -> null;
         };
+//        return switch (commandMatcher.group(COMMAND_GROUP_NUMBER)) {
+//            case CREATE_COMMAND -> CreateParcelUserCommandDto.fromArgsMap(args);
+//            case FIND_COMMAND -> FindParcelUserCommandDto.fromArgsMap(args);
+//            case EDIT_COMMAND -> EditParcelUserCommandDto.fromArgsMap(args);
+//            case DELETE_COMMAND -> DeleteParcelUserCommandDto.fromArgsMap(args);
+//            case LOAD_COMMAND -> LoadParcelsUserCommandDto.fromArgsMap(args);
+//            case UNLOAD_COMMAND -> UnloadTrucksUserCommandDto.fromArgsMap(args);
+//            case ORDERS_COMMAND -> FindUserOrdersUserCommandDto.fromArgsMap(args);
+//            default -> null;
+//        };
     }
 
-    /**
-     * Разбирает аргументы команды пользователя и возвращает их в виде HashMap.
-     *
-     * @param userCommand команда пользователя
-     * @return HashMap аргументов команды
-     */
     private Map<String, String> parseArguments(String userCommand) {
         var commandMatcher = commandPattern.matcher(userCommand);
 

@@ -7,7 +7,6 @@ import ru.hofftech.liga.lessons.packageloader.mapper.ParcelMapper;
 import ru.hofftech.liga.lessons.packageloader.model.Parcel;
 import ru.hofftech.liga.lessons.packageloader.model.Truck;
 import ru.hofftech.liga.lessons.packageloader.model.TruckSize;
-import ru.hofftech.liga.lessons.packageloader.model.dto.BaseUserCommandDto;
 import ru.hofftech.liga.lessons.packageloader.model.dto.LoadParcelsUserCommandDto;
 import ru.hofftech.liga.lessons.packageloader.model.enums.Command;
 import ru.hofftech.liga.lessons.packageloader.model.enums.PlacingAlgorithm;
@@ -15,7 +14,6 @@ import ru.hofftech.liga.lessons.packageloader.repository.ParcelRepository;
 import ru.hofftech.liga.lessons.packageloader.service.BillingService;
 import ru.hofftech.liga.lessons.packageloader.service.FileLoaderService;
 import ru.hofftech.liga.lessons.packageloader.service.ReportTruckService;
-import ru.hofftech.liga.lessons.packageloader.service.interfaces.UserCommandService;
 import ru.hofftech.liga.lessons.packageloader.service.logistic.BalancedFillTruckLogisticService;
 import ru.hofftech.liga.lessons.packageloader.service.logistic.FullFillTruckLogisticService;
 import ru.hofftech.liga.lessons.packageloader.service.logistic.OnePerTruckLogisticService;
@@ -28,11 +26,10 @@ import java.util.stream.Collectors;
 
 /**
  * Сервис для загрузки посылок на основе команд пользователя.
- * Этот класс реализует интерфейс {@link UserCommandService} и предоставляет методы для обработки команд загрузки посылок.
  */
 @Slf4j
 @AllArgsConstructor
-public class LoadParcelsUserCommandService implements UserCommandService {
+public class LoadParcelsUserCommandService {
     private static final String PARCELS_DELIMITER = ",";
     private static final String TRUCKS_DELIMITER = ",";
     private static final String TRUCKS_SIZE_DELIMITER = "x";
@@ -45,28 +42,22 @@ public class LoadParcelsUserCommandService implements UserCommandService {
     private final BillingService billingService;
     private final ParcelMapper parcelMapper;
 
-    @Override
-    public String execute(BaseUserCommandDto command) {
+    public String execute(LoadParcelsUserCommandDto command) {
         if (command == null) {
             return "Посылки не могут быть погружены: \nПередан пустой список аргументов";
         }
-        if (!(command instanceof LoadParcelsUserCommandDto)) {
-            return "Посылки не могут быть погружены: \nПередана команда неправильного типа";
-        }
 
-        var castedCommand = (LoadParcelsUserCommandDto) command;
-
-        var validationErrors = commandValidator.validate(castedCommand);
+        var validationErrors = commandValidator.validate(command);
         if (!validationErrors.isEmpty()) {
             return "Посылки не могут быть погружены: \n" + String.join("\n", validationErrors);
         }
 
-        var algorithm = getPlacingAlgorithm(castedCommand.type());
-        var truckSizes = getTruckSizes(castedCommand.trucks());
-        var needToSaveReport = castedCommand.outFilename() != null && !castedCommand.outFilename().isEmpty();
+        var algorithm = getPlacingAlgorithm(command.type());
+        var truckSizes = getTruckSizes(command.trucks());
+        var needToSaveReport = command.outFilename() != null && !command.outFilename().isEmpty();
 
         var errors = new ArrayList<String>();
-        var packages = getPackages(castedCommand, errors);
+        var packages = getPackages(command, errors);
         if (!errors.isEmpty()) {
             return "Посылки не могут быть погружены: \n" + String.join("\n", errors);
         }
@@ -77,9 +68,9 @@ public class LoadParcelsUserCommandService implements UserCommandService {
         }
 
         reportTruckContent(trucks);
-        saveReportToFileIfNeed(needToSaveReport, castedCommand.outFilename(), trucks);
+        saveReportToFileIfNeed(needToSaveReport, command.outFilename(), trucks);
 
-        billingService.saveOrder(castedCommand.userId(), Command.LOAD_PARCELS, trucks.size(), packages);
+        billingService.saveOrder(command.userId(), Command.LOAD_PARCELS, trucks.size(), packages);
 
         return "Посылки успешно погружены";
     }
@@ -101,7 +92,7 @@ public class LoadParcelsUserCommandService implements UserCommandService {
         }
 
         for (var packageName : packageNames) {
-            var found = parcelRepository.findById(packageName);
+            var found = parcelRepository.findByName(packageName);
             if (!found.isPresent()) {
                 errors.add("Посылки с названием \"" + packageName + "\" не существует");
                 continue;

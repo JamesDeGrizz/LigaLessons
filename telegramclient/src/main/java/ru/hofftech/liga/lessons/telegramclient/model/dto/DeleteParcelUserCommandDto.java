@@ -2,7 +2,7 @@ package ru.hofftech.liga.lessons.telegramclient.model.dto;
 
 import java.util.Map;
 
-public record DeleteParcelUserCommandDto(String parcelId) implements BaseUserCommandDto {
+public record DeleteParcelUserCommandDto(String parcelId) {
     private static final String ARGUMENT_NAME = "--name";
 
     public static DeleteParcelUserCommandDto fromArgsMap(Map<String, String> args) {
