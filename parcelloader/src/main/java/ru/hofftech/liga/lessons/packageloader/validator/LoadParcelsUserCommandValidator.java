@@ -39,7 +39,7 @@ public class LoadParcelsUserCommandValidator {
     }
 
     private void validateReportFileName(LoadParcelsUserCommandDto command, List<String> errors) {
-        if (command.out() != null || !command.out().equals(ARGUMENT_OUT_TYPE_JSON)) {
+        if (command.out() != null && !command.out().equals(ARGUMENT_OUT_TYPE_JSON)) {
             return;
         }
 

@@ -19,14 +19,14 @@ class LoadParcelsUserCommandValidatorTest {
 
     @Test
     public void testValidateAllFieldsPresent() {
-        LoadParcelsUserCommandDto command = new LoadParcelsUserCommandDto("json-file", "1", "10x20", "user1", "report.json", "parcel1", null);
+        LoadParcelsUserCommandDto command = new LoadParcelsUserCommandDto("json-file", "1", "6x6", "user1", "report.json", "parcel1", null);
         List<String> errors = validator.validate(command);
         assertTrue(errors.isEmpty());
     }
 
     @Test
     public void testValidateMissingUserId() {
-        LoadParcelsUserCommandDto command = new LoadParcelsUserCommandDto("json-file", "1", "10x20", null, "report.json", "parcel1", null);
+        LoadParcelsUserCommandDto command = new LoadParcelsUserCommandDto("json-file", "1", "6x6", null, "report.json", "parcel1", null);
         List<String> errors = validator.validate(command);
         assertEquals(1, errors.size());
         assertEquals("Не хватает аргумента \"user-id\"", errors.get(0));
@@ -34,7 +34,7 @@ class LoadParcelsUserCommandValidatorTest {
 
     @Test
     public void testValidateEmptyUserId() {
-        LoadParcelsUserCommandDto command = new LoadParcelsUserCommandDto("json-file", "1", "10x20", "", "report.json", "parcel1", null);
+        LoadParcelsUserCommandDto command = new LoadParcelsUserCommandDto("json-file", "1", "6x6", "", "report.json", "parcel1", null);
         List<String> errors = validator.validate(command);
         assertEquals(1, errors.size());
         assertEquals("Не хватает аргумента \"user-id\"", errors.get(0));
@@ -42,7 +42,7 @@ class LoadParcelsUserCommandValidatorTest {
 
     @Test
     public void testValidateMissingOut() {
-        LoadParcelsUserCommandDto command = new LoadParcelsUserCommandDto(null, "1", "10x20", "user1", "report.json", "parcel1", null);
+        LoadParcelsUserCommandDto command = new LoadParcelsUserCommandDto(null, "1", "6x6", "user1", "report.json", "parcel1", null);
         List<String> errors = validator.validate(command);
         assertEquals(1, errors.size());
         assertEquals("Не хватает аргумента \"out\"", errors.get(0));
@@ -50,7 +50,7 @@ class LoadParcelsUserCommandValidatorTest {
 
     @Test
     public void testValidateEmptyOut() {
-        LoadParcelsUserCommandDto command = new LoadParcelsUserCommandDto("", "1", "10x20", "user1", "report.json", "parcel1", null);
+        LoadParcelsUserCommandDto command = new LoadParcelsUserCommandDto("", "1", "6x6", "user1", "report.json", "parcel1", null);
         List<String> errors = validator.validate(command);
         assertEquals(1, errors.size());
         assertEquals("Не хватает аргумента \"out\"", errors.get(0));
@@ -58,7 +58,7 @@ class LoadParcelsUserCommandValidatorTest {
 
     @Test
     public void testValidateInvalidOutType() {
-        LoadParcelsUserCommandDto command = new LoadParcelsUserCommandDto("invalid-type", "1", "10x20", "user1", "report.json", "parcel1", null);
+        LoadParcelsUserCommandDto command = new LoadParcelsUserCommandDto("invalid-type", "1", "6x6", "user1", "report.json", "parcel1", null);
         List<String> errors = validator.validate(command);
         assertEquals(1, errors.size());
         assertEquals("Неправильное значение типа аргумента \"out\". Доступно \"json-file\" и \"text\"", errors.get(0));
@@ -66,7 +66,7 @@ class LoadParcelsUserCommandValidatorTest {
 
     @Test
     public void testValidateMissingReportFileName() {
-        LoadParcelsUserCommandDto command = new LoadParcelsUserCommandDto("json-file", "1", "10x20", "user1", null, "parcel1", null);
+        LoadParcelsUserCommandDto command = new LoadParcelsUserCommandDto("json-file", "1", "6x6", "user1", null, "parcel1", null);
         List<String> errors = validator.validate(command);
         assertEquals(1, errors.size());
         assertEquals("Не хватает аргумента \"out-filename\"", errors.get(0));
@@ -74,7 +74,7 @@ class LoadParcelsUserCommandValidatorTest {
 
     @Test
     public void testValidateEmptyReportFileName() {
-        LoadParcelsUserCommandDto command = new LoadParcelsUserCommandDto("json-file", "1", "10x20", "user1", "", "parcel1", null);
+        LoadParcelsUserCommandDto command = new LoadParcelsUserCommandDto("json-file", "1", "6x6", "user1", "", "parcel1", null);
         List<String> errors = validator.validate(command);
         assertEquals(1, errors.size());
         assertEquals("Не хватает аргумента \"out-filename\"", errors.get(0));
@@ -82,7 +82,7 @@ class LoadParcelsUserCommandValidatorTest {
 
     @Test
     public void testValidateMissingPackages() {
-        LoadParcelsUserCommandDto command = new LoadParcelsUserCommandDto("json-file", "1", "10x20", "user1", "report.json", null, null);
+        LoadParcelsUserCommandDto command = new LoadParcelsUserCommandDto("json-file", "1", "6x6", "user1", "report.json", null, null);
         List<String> errors = validator.validate(command);
         assertEquals(1, errors.size());
         assertEquals("Должен быть указан 1 из параметров: \"parcels-text\" или \"parcels-file\"", errors.get(0));
@@ -90,7 +90,7 @@ class LoadParcelsUserCommandValidatorTest {
 
     @Test
     public void testValidateMissingPlacingAlgorithm() {
-        LoadParcelsUserCommandDto command = new LoadParcelsUserCommandDto("json-file", null, "10x20", "user1", "report.json", "parcel1", null);
+        LoadParcelsUserCommandDto command = new LoadParcelsUserCommandDto("json-file", null, "6x6", "user1", "report.json", "parcel1", null);
         List<String> errors = validator.validate(command);
         assertEquals(1, errors.size());
         assertEquals("Не хватает аргумента \"type\"", errors.get(0));
@@ -98,7 +98,7 @@ class LoadParcelsUserCommandValidatorTest {
 
     @Test
     public void testValidateEmptyPlacingAlgorithm() {
-        LoadParcelsUserCommandDto command = new LoadParcelsUserCommandDto("json-file", "", "10x20", "user1", "report.json", "parcel1", null);
+        LoadParcelsUserCommandDto command = new LoadParcelsUserCommandDto("json-file", "", "6x6", "user1", "report.json", "parcel1", null);
         List<String> errors = validator.validate(command);
         assertEquals(1, errors.size());
         assertEquals("Не хватает аргумента \"type\"", errors.get(0));
@@ -106,7 +106,7 @@ class LoadParcelsUserCommandValidatorTest {
 
     @Test
     public void testValidateInvalidPlacingAlgorithm() {
-        LoadParcelsUserCommandDto command = new LoadParcelsUserCommandDto("json-file", "3", "10x20", "user1", "report.json", "parcel1", null);
+        LoadParcelsUserCommandDto command = new LoadParcelsUserCommandDto("json-file", "3", "6x6", "user1", "report.json", "parcel1", null);
         List<String> errors = validator.validate(command);
         assertEquals(1, errors.size());
         assertEquals("Неправильное значение типа алгоритма: 3", errors.get(0));
@@ -114,7 +114,7 @@ class LoadParcelsUserCommandValidatorTest {
 
     @Test
     public void testValidateNonNumericPlacingAlgorithm() {
-        LoadParcelsUserCommandDto command = new LoadParcelsUserCommandDto("json-file", "abc", "10x20", "user1", "report.json", "parcel1", null);
+        LoadParcelsUserCommandDto command = new LoadParcelsUserCommandDto("json-file", "abc", "6x6", "user1", "report.json", "parcel1", null);
         List<String> errors = validator.validate(command);
         assertEquals(1, errors.size());
         assertEquals("Введённое значение нельзя привести к числу: abc", errors.get(0));
@@ -146,7 +146,7 @@ class LoadParcelsUserCommandValidatorTest {
 
     @Test
     public void testValidateInvalidTruckWidth() {
-        LoadParcelsUserCommandDto command = new LoadParcelsUserCommandDto("json-file", "1", "-10x20", "user1", "report.json", "parcel1", null);
+        LoadParcelsUserCommandDto command = new LoadParcelsUserCommandDto("json-file", "1", "-10x6", "user1", "report.json", "parcel1", null);
         List<String> errors = validator.validate(command);
         assertEquals(1, errors.size());
         assertEquals("Неправильное значение ширины грузовика: -10", errors.get(0));
@@ -154,7 +154,7 @@ class LoadParcelsUserCommandValidatorTest {
 
     @Test
     public void testValidateInvalidTruckHeight() {
-        LoadParcelsUserCommandDto command = new LoadParcelsUserCommandDto("json-file", "1", "10x-20", "user1", "report.json", "parcel1", null);
+        LoadParcelsUserCommandDto command = new LoadParcelsUserCommandDto("json-file", "1", "6x-20", "user1", "report.json", "parcel1", null);
         List<String> errors = validator.validate(command);
         assertEquals(1, errors.size());
         assertEquals("Неправильное значение высоты грузовика: -20", errors.get(0));
