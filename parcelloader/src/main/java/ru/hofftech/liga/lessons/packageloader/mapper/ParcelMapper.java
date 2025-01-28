@@ -11,14 +11,14 @@ import java.util.List;
 
 @Mapper(componentModel = "spring")
 public abstract class ParcelMapper {
+    static final String DELIMITER = ",";
+
     @Mapping(target = "content", source = "content", qualifiedByName = "stringListToString")
     public abstract ParcelEntity toParcelEntity(Parcel dto);
 
     @Mapping(target = "content", source = "content", qualifiedByName = "stringToStringList")
     @Mapping(target = "placingPoints", ignore = true)
     public abstract Parcel toParcelDto(ParcelEntity entity);
-
-    static final String DELIMITER = ",";
 
     @Named("stringListToString")
     public static String stringListToString(List<String> content) {

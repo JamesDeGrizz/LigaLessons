@@ -10,22 +10,24 @@ import ru.hofftech.liga.lessons.packageloader.validator.EditParcelUserCommandVal
  */
 @AllArgsConstructor
 public class EditParcelUserCommandService {
+    private static final String ERROR_MESSAGE_TEXT = "Посылка не может быть отредактирована: ";
+
     private final ParcelRepository parcelRepository;
     private final EditParcelUserCommandValidator commandValidator;
 
     public String execute(EditParcelUserCommandDto command) {
         if (command == null) {
-            return "Посылка не может быть отредактирована: \nПередан пустой список аргументов";
+            return ERROR_MESSAGE_TEXT + "\nПередан пустой список аргументов";
         }
 
         var validationErrors = commandValidator.validate(command);
         if (!validationErrors.isEmpty()) {
-            return "Посылка не может быть отредактирована: \n" + String.join("\n", validationErrors);
+            return ERROR_MESSAGE_TEXT + "\n" + String.join("\n", validationErrors);
         }
 
         var parcelOptional = parcelRepository.findByName(command.currentParcelId());
         if (!parcelOptional.isPresent()) {
-            return "Посылка не может быть отредактирована: \nпосылка с названием " + command.currentParcelId() + " не существует";
+            return ERROR_MESSAGE_TEXT + "\nпосылка с названием " + command.currentParcelId() + " не существует";
         }
 
         var parcel = parcelOptional.get();
@@ -34,7 +36,7 @@ public class EditParcelUserCommandService {
         parcel.setSymbol(command.symbol().charAt(0));
         var savedParcel = parcelRepository.save(parcel);
         if (savedParcel == null) {
-            return "Посылка не может быть отредактирована: \nпосылка с названием " + command.currentParcelId() + " не существует";
+            return ERROR_MESSAGE_TEXT + "\nпосылка с названием " + command.currentParcelId() + " не существует";
         }
 
         return "Посылка успешно отредактирована";

@@ -12,7 +12,7 @@ import ru.hofftech.liga.lessons.consoleclient.model.dto.UnloadTrucksUserCommandD
 
 @AllArgsConstructor
 public class UserCommandProcessorService {
-    private final ParcelLoaderClientService parcelLoaderClientService;
+    private final ParcelLoaderClient parcelLoaderClientService;
 
     public String processCommand(BaseUserCommandDto command) {
         return switch (command) {

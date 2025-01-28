@@ -10,6 +10,8 @@ import ru.hofftech.liga.lessons.packageloader.repository.ParcelRepository;
  */
 @AllArgsConstructor
 public class FindParcelUserCommandService {
+    private static final String ERROR_MESSAGE_TEXT = "Посылка не может быть отредактирована: ";
+
     private final ParcelRepository parcelRepository;
     private final ParcelMapper parcelMapper;
 
@@ -25,7 +27,7 @@ public class FindParcelUserCommandService {
 
         var parcel = parcelRepository.findByName(command.parcelId());
         if (!parcel.isPresent()) {
-            return "Посылка не может быть выведена: \nпосылка с названием " + command.parcelId() + " не существует";
+            return ERROR_MESSAGE_TEXT + "\nпосылка с названием " + command.parcelId() + " не существует";
         }
 
         return parcelMapper.toParcelDto(parcel.get()).toString();

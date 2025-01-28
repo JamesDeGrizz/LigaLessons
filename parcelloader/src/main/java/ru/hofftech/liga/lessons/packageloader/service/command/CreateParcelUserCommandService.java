@@ -15,6 +15,7 @@ import java.util.Arrays;
 @AllArgsConstructor
 public class CreateParcelUserCommandService {
     private static final String DELIMITER = ",";
+    private static final String ERROR_MESSAGE_TEXT = "Посылка не может быть создана: ";
 
     private final ParcelRepository parcelRepository;
     private final CreateParcelUserCommandValidator commandValidator;
@@ -22,17 +23,17 @@ public class CreateParcelUserCommandService {
 
     public String execute(CreateParcelUserCommandDto command) {
         if (command == null) {
-            return "Посылка не может быть создана: \nПередан пустой список аргументов";
+            return ERROR_MESSAGE_TEXT + "\nПередан пустой список аргументов";
         }
 
         var validationErrors = commandValidator.validate(command);
         if (!validationErrors.isEmpty()) {
-            return "Посылка не может быть создана: \n" + String.join("\n", validationErrors);
+            return ERROR_MESSAGE_TEXT + "\n" + String.join("\n", validationErrors);
         }
 
         var existingParcel = parcelRepository.findByName(command.parcelId());
         if (existingParcel.isPresent()) {
-            return "Посылка не может быть создана: \nпосылка с названием " + command.parcelId() + " уже существует";
+            return ERROR_MESSAGE_TEXT + "\nпосылка с названием " + command.parcelId() + " уже существует";
         }
 
         var parcel = Parcel.builder()

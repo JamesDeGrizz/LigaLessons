@@ -15,7 +15,7 @@ import ru.hofftech.liga.lessons.telegramclient.model.enums.Command;
 @Service
 public class UserCommandProcessorService {
     private final UserCommandParserService userCommandParserService;
-    private final ParcelLoaderClientService parcelLoaderClientService;
+    private final ParcelLoaderClient parcelLoaderClientService;
 
     public String processRawInput(String userInput) {
         try {

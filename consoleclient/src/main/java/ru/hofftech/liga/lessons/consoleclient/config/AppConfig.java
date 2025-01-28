@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.support.RestClientAdapter;
 import org.springframework.web.service.invoker.HttpServiceProxyFactory;
-import ru.hofftech.liga.lessons.consoleclient.service.ParcelLoaderClientService;
+import ru.hofftech.liga.lessons.consoleclient.service.ParcelLoaderClient;
 import ru.hofftech.liga.lessons.consoleclient.service.UserCommandProcessorService;
 
 @Slf4j
@@ -18,18 +18,18 @@ public class AppConfig {
 
     // Services
     @Bean
-    public UserCommandProcessorService userCommandProcessorService(ParcelLoaderClientService parcelLoaderClientService) {
+    public UserCommandProcessorService userCommandProcessorService(ParcelLoaderClient parcelLoaderClientService) {
         return new UserCommandProcessorService(parcelLoaderClientService);
     }
 
     @Bean
-    public ParcelLoaderClientService parcelLoaderClientService() {
+    public ParcelLoaderClient parcelLoaderClientService() {
         var client = RestClient.builder()
                 .baseUrl(parcelsLoaderUrl)
                 .build();
 
         var adapter = RestClientAdapter.create(client);
         var httpServiceProxyFactory = HttpServiceProxyFactory.builderFor(adapter).build();
-        return httpServiceProxyFactory.createClient(ParcelLoaderClientService.class);
+        return httpServiceProxyFactory.createClient(ParcelLoaderClient.class);
     }
 }
