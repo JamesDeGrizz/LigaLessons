@@ -2,7 +2,7 @@ package ru.hofftech.liga.lessons.packageloader.model;
 
 import java.util.Date;
 
-public record Order(String userId, Date date, String operation, int trucksCount, int parcelsCount, int totalPrice) {
+public record Order(String name, Date date, String operation, int trucksCount, int parcelsCount, int totalPrice) {
     private static final String DELIMITER = "; ";
 
     @Override

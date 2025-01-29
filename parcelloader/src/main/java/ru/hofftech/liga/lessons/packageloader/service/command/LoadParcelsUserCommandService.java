@@ -93,7 +93,7 @@ public class LoadParcelsUserCommandService {
 
         for (var packageName : packageNames) {
             var found = parcelRepository.findByName(packageName);
-            if (!found.isPresent()) {
+            if (found.isEmpty()) {
                 errors.add("Посылки с названием \"" + packageName + "\" не существует");
                 continue;
             }

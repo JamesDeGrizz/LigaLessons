@@ -15,8 +15,8 @@ public class FindUserOrdersUserCommandValidator {
     }
 
     private void validateUserId(FindUserOrdersUserCommandDto command, List<String> errors) {
-        if (command.userId() == null || command.userId().isEmpty()) {
-            errors.add("Не хватает аргумента \"user-id\"");
+        if (command.name() == null || command.name().isEmpty()) {
+            errors.add("Не хватает аргумента \"name\"");
         }
     }
 }

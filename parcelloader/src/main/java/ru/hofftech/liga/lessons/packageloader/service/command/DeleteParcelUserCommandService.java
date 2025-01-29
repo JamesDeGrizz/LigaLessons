@@ -26,7 +26,7 @@ public class DeleteParcelUserCommandService {
         }
 
         var existingParcel = parcelRepository.findByName(command.parcelId());
-        if (!existingParcel.isPresent()) {
+        if (existingParcel.isEmpty()) {
             return ERROR_MESSAGE_TEXT + "\nпосылка с названием \"{}\" не существует" + command.parcelId();
         }
 

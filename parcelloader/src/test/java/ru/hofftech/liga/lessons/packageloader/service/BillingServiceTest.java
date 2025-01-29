@@ -50,7 +50,7 @@ class BillingServiceTest {
 
         // Assert
         verify(orderMapper).toOrderEntity(argThat(order ->
-                order.userId().equals("user123") &&
+                order.name().equals("user123") &&
                         order.operation().equals("Погрузка") &&
                         order.trucksCount() == 2 &&
                         order.parcelsCount() == 2 &&

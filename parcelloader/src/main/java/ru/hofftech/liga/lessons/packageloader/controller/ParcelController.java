@@ -10,21 +10,15 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import ru.hofftech.liga.lessons.packageloader.model.Parcel;
 import ru.hofftech.liga.lessons.packageloader.model.dto.CreateParcelUserCommandDto;
 import ru.hofftech.liga.lessons.packageloader.model.dto.DeleteParcelUserCommandDto;
 import ru.hofftech.liga.lessons.packageloader.model.dto.EditParcelUserCommandDto;
 import ru.hofftech.liga.lessons.packageloader.model.dto.FindParcelUserCommandDto;
-import ru.hofftech.liga.lessons.packageloader.model.entity.ParcelEntity;
-import ru.hofftech.liga.lessons.packageloader.repository.ParcelRepository;
 import ru.hofftech.liga.lessons.packageloader.service.command.CreateParcelUserCommandService;
 import ru.hofftech.liga.lessons.packageloader.service.command.DeleteParcelUserCommandService;
 import ru.hofftech.liga.lessons.packageloader.service.command.EditParcelUserCommandService;
 import ru.hofftech.liga.lessons.packageloader.service.command.FindParcelUserCommandService;
-
-import java.util.List;
 
 @RestController
 @Tag(name = "ParcelController", description = "CRUD операции посылок")

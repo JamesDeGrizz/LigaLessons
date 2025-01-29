@@ -1,17 +1,18 @@
 package ru.hofftech.liga.lessons.packageloader.service.command;
 
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import ru.hofftech.liga.lessons.packageloader.mapper.OrderMapper;
-import ru.hofftech.liga.lessons.packageloader.model.Order;
 import ru.hofftech.liga.lessons.packageloader.model.dto.FindUserOrdersUserCommandDto;
+import ru.hofftech.liga.lessons.packageloader.model.entity.OrderEntity;
 import ru.hofftech.liga.lessons.packageloader.repository.OrderRepository;
 import ru.hofftech.liga.lessons.packageloader.validator.FindUserOrdersUserCommandValidator;
 
-import java.util.stream.Collectors;
-
 @AllArgsConstructor
 public class FindUserOrdersCommandService {
+    private static final int PAGE_SIZE = 1000;
+
     private final OrderRepository orderRepository;
     private final FindUserOrdersUserCommandValidator commandValidator;
     private final OrderMapper orderMapper;
@@ -26,12 +27,20 @@ public class FindUserOrdersCommandService {
             return "Заказы не могут быть показаны: \n" + String.join("\n", validationErrors);
         }
 
-        var page = PageRequest.of(0, Integer.MAX_VALUE);
-        var userOrders = orderRepository.findByUserId(command.userId(), page)
-                .stream()
-                .map(orderMapper::toOrderDto)
-                .map(Order::toString)
-                .collect(Collectors.toList());
-        return "Заказы пользователя " + command.userId() + ":\n" + String.join(";\n", userOrders);
+        var pageNumber = 0;
+        var stringBuilder = new StringBuilder();
+        Page<OrderEntity> page;
+
+        do {
+            var pageable = PageRequest.of(pageNumber++, PAGE_SIZE);
+            page = orderRepository.findByName(command.name(), pageable);
+            for (var order : page) {
+                stringBuilder
+                        .append("\n")
+                        .append(orderMapper.toOrderDto(order).toString());
+            }
+        } while (page.hasNext());
+
+        return "Заказы пользователя " + command.name() + ":" + stringBuilder;
     }
 }

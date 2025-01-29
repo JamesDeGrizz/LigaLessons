@@ -8,5 +8,5 @@ import ru.hofftech.liga.lessons.packageloader.model.entity.OrderEntity;
 
 @Repository
 public interface OrderRepository extends JpaRepository<OrderEntity, String> {
-    Page<OrderEntity> findByUserId(String userId, Pageable page);
+    Page<OrderEntity> findByName(String name, Pageable page);
 }

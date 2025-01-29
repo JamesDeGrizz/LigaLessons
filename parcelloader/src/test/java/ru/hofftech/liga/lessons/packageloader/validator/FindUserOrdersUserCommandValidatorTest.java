@@ -29,7 +29,7 @@ class FindUserOrdersUserCommandValidatorTest {
         FindUserOrdersUserCommandDto command = new FindUserOrdersUserCommandDto(null);
         List<String> errors = validator.validate(command);
         assertEquals(1, errors.size());
-        assertEquals("Не хватает аргумента \"user-id\"", errors.get(0));
+        assertEquals("Не хватает аргумента \"name\"", errors.get(0));
     }
 
     @Test
@@ -37,6 +37,6 @@ class FindUserOrdersUserCommandValidatorTest {
         FindUserOrdersUserCommandDto command = new FindUserOrdersUserCommandDto("");
         List<String> errors = validator.validate(command);
         assertEquals(1, errors.size());
-        assertEquals("Не хватает аргумента \"user-id\"", errors.get(0));
+        assertEquals("Не хватает аргумента \"name\"", errors.get(0));
     }
 }

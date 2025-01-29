@@ -26,7 +26,7 @@ public class EditParcelUserCommandService {
         }
 
         var parcelOptional = parcelRepository.findByName(command.currentParcelId());
-        if (!parcelOptional.isPresent()) {
+        if (parcelOptional.isEmpty()) {
             return ERROR_MESSAGE_TEXT + "\nпосылка с названием " + command.currentParcelId() + " не существует";
         }
 
