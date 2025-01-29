@@ -2,24 +2,28 @@ package ru.hofftech.liga.lessons.packageloader.service.command;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 import ru.hofftech.liga.lessons.packageloader.mapper.ParcelMapper;
 import ru.hofftech.liga.lessons.packageloader.model.Parcel;
-import ru.hofftech.liga.lessons.packageloader.model.entity.ParcelEntity;
 import ru.hofftech.liga.lessons.packageloader.model.dto.CreateParcelUserCommandDto;
+import ru.hofftech.liga.lessons.packageloader.model.entity.ParcelEntity;
 import ru.hofftech.liga.lessons.packageloader.repository.ParcelRepository;
 import ru.hofftech.liga.lessons.packageloader.validator.CreateParcelUserCommandValidator;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
-class CreateParcelUserCommandServiceTest {
+@ExtendWith(MockitoExtension.class)
+public class CreateParcelUserCommandServiceTest {
 
     @Mock
     private ParcelRepository parcelRepository;
@@ -33,58 +37,56 @@ class CreateParcelUserCommandServiceTest {
     @InjectMocks
     private CreateParcelUserCommandService createParcelUserCommandService;
 
+    private CreateParcelUserCommandDto validCommand;
+    private Parcel parcelEntity;
+
     @BeforeEach
-    void setUp() {
-        MockitoAnnotations.openMocks(this);
+    public void setUp() {
+        validCommand = new CreateParcelUserCommandDto("parcel1", "A,B,C", "X");
+        parcelEntity = Parcel.builder()
+                .name("parcel1")
+                .content(List.of("A", "B", "C"))
+                .symbol('X')
+                .build();
     }
 
     @Test
-    void testExecuteNullCommand() {
+    public void testExecute_ValidCommand_ReturnsSuccessMessage() {
+        when(commandValidator.validate(validCommand)).thenReturn(List.of());
+        when(parcelRepository.findByName("parcel1")).thenReturn(Optional.empty());
+        when(parcelMapper.toParcelEntity(any(Parcel.class))).thenReturn(new ParcelEntity());
+        when(parcelRepository.save(any())).thenReturn(new ParcelEntity());
+        when(parcelMapper.toParcelDto(any())).thenReturn(parcelEntity);
+
+        String result = createParcelUserCommandService.execute(validCommand);
+
+        assertEquals("Посылка успешно создана:\n" + parcelEntity.toString(), result);
+        verify(parcelRepository, times(1)).save(any());
+    }
+
+    @Test
+    public void testExecute_NullCommand_ReturnsErrorMessage() {
         String result = createParcelUserCommandService.execute(null);
+
         assertEquals("Посылка не может быть создана: \nПередан пустой список аргументов", result);
     }
 
     @Test
-    void testExecuteValidationErrors() {
-        CreateParcelUserCommandDto command = new CreateParcelUserCommandDto("parcel1", "A,B,C", "X");
-        when(commandValidator.validate(command)).thenReturn(Arrays.asList("Validation error 1", "Validation error 2"));
+    public void testExecute_ValidationErrors_ReturnsErrorMessage() {
+        when(commandValidator.validate(validCommand)).thenReturn(List.of("Error 1", "Error 2"));
 
-        String result = createParcelUserCommandService.execute(command);
-        assertEquals("Посылка не может быть создана: \nValidation error 1\nValidation error 2", result);
+        String result = createParcelUserCommandService.execute(validCommand);
+
+        assertEquals("Посылка не может быть создана: \nError 1\nError 2", result);
     }
 
     @Test
-    void testExecuteParcelAlreadyExists() {
-        CreateParcelUserCommandDto command = new CreateParcelUserCommandDto("parcel1", "A,B,C", "X");
-        when(commandValidator.validate(command)).thenReturn(List.of());
+    public void testExecute_ParcelAlreadyExists_ReturnsErrorMessage() {
+        when(commandValidator.validate(validCommand)).thenReturn(List.of());
         when(parcelRepository.findByName("parcel1")).thenReturn(Optional.of(new ParcelEntity()));
 
-        String result = createParcelUserCommandService.execute(command);
+        String result = createParcelUserCommandService.execute(validCommand);
+
         assertEquals("Посылка не может быть создана: \nпосылка с названием parcel1 уже существует", result);
-    }
-
-    @Test
-    void testExecuteSuccess() {
-        CreateParcelUserCommandDto command = new CreateParcelUserCommandDto("parcel1", "A,B,C", "X");
-        when(commandValidator.validate(command)).thenReturn(List.of());
-        when(parcelRepository.findByName("parcel1")).thenReturn(Optional.empty());
-
-        Parcel parcel = Parcel.builder()
-                .name("parcel1")
-                .content(Arrays.asList("A", "B", "C"))
-                .symbol('X')
-                .build();
-        ParcelEntity parcelEntity = new ParcelEntity();
-        parcelEntity.setName("parcel1");
-        parcelEntity.setContent("A,B,C");
-        parcelEntity.setSymbol('X');
-
-        when(parcelMapper.toParcelEntity(parcel)).thenReturn(parcelEntity);
-        when(parcelRepository.save(parcelEntity)).thenReturn(parcelEntity);
-        when(parcelMapper.toParcelDto(parcelEntity)).thenReturn(parcel);
-
-        // todo: почему-то не работает маппер
-//        String result = createParcelUserCommandService.execute(command);
-//        assertEquals("Посылка успешно создана:\n" + parcel.toString(), result);
     }
 }
