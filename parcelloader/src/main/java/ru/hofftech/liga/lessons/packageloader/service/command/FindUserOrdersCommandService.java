@@ -1,6 +1,7 @@
 package ru.hofftech.liga.lessons.packageloader.service.command;
 
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import ru.hofftech.liga.lessons.packageloader.mapper.OrderMapper;
 import ru.hofftech.liga.lessons.packageloader.model.Order;
 import ru.hofftech.liga.lessons.packageloader.model.dto.FindUserOrdersUserCommandDto;
@@ -25,7 +26,8 @@ public class FindUserOrdersCommandService {
             return "Заказы не могут быть показаны: \n" + String.join("\n", validationErrors);
         }
 
-        var userOrders = orderRepository.findById(command.userId())
+        var page = PageRequest.of(0, Integer.MAX_VALUE);
+        var userOrders = orderRepository.findByUserId(command.userId(), page)
                 .stream()
                 .map(orderMapper::toOrderDto)
                 .map(Order::toString)

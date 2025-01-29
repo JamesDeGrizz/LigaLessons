@@ -2,13 +2,6 @@ package ru.hofftech.liga.lessons.telegramclient.service;
 
 import lombok.extern.slf4j.Slf4j;
 import ru.hofftech.liga.lessons.telegramclient.model.ParsedCommand;
-import ru.hofftech.liga.lessons.telegramclient.model.dto.CreateParcelUserCommandDto;
-import ru.hofftech.liga.lessons.telegramclient.model.dto.DeleteParcelUserCommandDto;
-import ru.hofftech.liga.lessons.telegramclient.model.dto.EditParcelUserCommandDto;
-import ru.hofftech.liga.lessons.telegramclient.model.dto.FindParcelUserCommandDto;
-import ru.hofftech.liga.lessons.telegramclient.model.dto.FindUserOrdersUserCommandDto;
-import ru.hofftech.liga.lessons.telegramclient.model.dto.LoadParcelsUserCommandDto;
-import ru.hofftech.liga.lessons.telegramclient.model.dto.UnloadTrucksUserCommandDto;
 import ru.hofftech.liga.lessons.telegramclient.model.enums.Command;
 
 import java.util.Collections;
@@ -64,16 +57,6 @@ public class UserCommandParserService {
             case ORDERS_COMMAND -> new ParsedCommand(Command.SHOW_ORDERS, args);
             default -> null;
         };
-//        return switch (commandMatcher.group(COMMAND_GROUP_NUMBER)) {
-//            case CREATE_COMMAND -> CreateParcelUserCommandDto.fromArgsMap(args);
-//            case FIND_COMMAND -> FindParcelUserCommandDto.fromArgsMap(args);
-//            case EDIT_COMMAND -> EditParcelUserCommandDto.fromArgsMap(args);
-//            case DELETE_COMMAND -> DeleteParcelUserCommandDto.fromArgsMap(args);
-//            case LOAD_COMMAND -> LoadParcelsUserCommandDto.fromArgsMap(args);
-//            case UNLOAD_COMMAND -> UnloadTrucksUserCommandDto.fromArgsMap(args);
-//            case ORDERS_COMMAND -> FindUserOrdersUserCommandDto.fromArgsMap(args);
-//            default -> null;
-//        };
     }
 
     private Map<String, String> parseArguments(String userCommand) {

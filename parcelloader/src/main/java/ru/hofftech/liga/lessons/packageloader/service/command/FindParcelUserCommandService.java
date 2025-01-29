@@ -1,6 +1,7 @@
 package ru.hofftech.liga.lessons.packageloader.service.command;
 
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import ru.hofftech.liga.lessons.packageloader.mapper.ParcelMapper;
 import ru.hofftech.liga.lessons.packageloader.model.dto.FindParcelUserCommandDto;
 import ru.hofftech.liga.lessons.packageloader.repository.ParcelRepository;
@@ -17,7 +18,9 @@ public class FindParcelUserCommandService {
 
     public String execute(FindParcelUserCommandDto command) {
         if (command == null || command.parcelId() == null || command.parcelId().isEmpty()) {
-            var parcels = parcelRepository.findAll();
+
+            var page = PageRequest.of(0, Integer.MAX_VALUE);
+            var parcels = parcelRepository.findAll(page);
             var stringBuilder = new StringBuilder();
             for (var parcel : parcels) {
                 stringBuilder.append(parcelMapper.toParcelDto(parcel).toString());
