@@ -11,6 +11,7 @@ import ru.hofftech.liga.lessons.packageloader.validator.FindUserOrdersUserComman
 
 @AllArgsConstructor
 public class FindUserOrdersCommandService {
+    // todo: в настройки
     private static final int PAGE_SIZE = 1000;
 
     private final OrderRepository orderRepository;
@@ -32,6 +33,7 @@ public class FindUserOrdersCommandService {
         Page<OrderEntity> page;
 
         do {
+            // todo: вытащить пагинацию в ендпоинт
             var pageable = PageRequest.of(pageNumber++, PAGE_SIZE);
             page = orderRepository.findByName(command.name(), pageable);
             for (var order : page) {

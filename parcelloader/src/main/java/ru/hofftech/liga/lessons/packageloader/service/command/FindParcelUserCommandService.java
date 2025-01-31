@@ -14,6 +14,7 @@ import ru.hofftech.liga.lessons.packageloader.repository.ParcelRepository;
 @RequiredArgsConstructor
 public class FindParcelUserCommandService {
     private static final String ERROR_MESSAGE_TEXT = "Посылка не может быть отредактирована: ";
+    // todo: в настройки
     private static final int PAGE_SIZE = 1000;
 
     private final ParcelRepository parcelRepository;
@@ -26,6 +27,7 @@ public class FindParcelUserCommandService {
             Page<ParcelEntity> page;
 
             do {
+                // todo: вытащить пагинацию в ендпоинт
                  var pageable = PageRequest.of(pageNumber++, PAGE_SIZE);
                 page = parcelRepository.findAll(pageable);
                 for (var parcel : page) {

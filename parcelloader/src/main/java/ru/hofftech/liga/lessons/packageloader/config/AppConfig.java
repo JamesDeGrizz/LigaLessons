@@ -31,8 +31,6 @@ import ru.hofftech.liga.lessons.packageloader.validator.FindUserOrdersUserComman
 import ru.hofftech.liga.lessons.packageloader.validator.LoadParcelsUserCommandValidator;
 import ru.hofftech.liga.lessons.packageloader.validator.UnloadTrucksUserCommandValidator;
 
-import java.util.Map;
-
 @Slf4j
 @Configuration
 @EnableConfigurationProperties(BillingConfiguration.class)
