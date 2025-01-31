@@ -1,0 +1,22 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/postgres
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+  jpa:
+#    generate-ddl: true
+#    hibernate:
+#      ddl-auto: create-drop
+#    open-in-view: false
+    show-sql: true
+
+telegram:
+  credentials:
+    username: ${BOT_USERNAME}
+    token: ${BOT_TOKEN}
+
+billing:
+  pricing:
+    load: 80
+    unload: 50
