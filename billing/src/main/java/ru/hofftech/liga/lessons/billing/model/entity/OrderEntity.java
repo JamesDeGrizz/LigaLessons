@@ -1,4 +1,4 @@
-package ru.hofftech.liga.lessons.packageloader.model.entity;
+package ru.hofftech.liga.lessons.billing.model.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -15,7 +15,7 @@ import lombok.Setter;
 import java.util.Date;
 
 @Entity
-@Table(name = "user_order", schema = "parcelloader")
+@Table(name = "user_order", schema = "billing")
 @Builder
 @Getter
 @Setter

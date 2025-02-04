@@ -1,4 +1,4 @@
-package ru.hofftech.liga.lessons.packageloader;
+package ru.hofftech.liga.lessons.billing;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -6,8 +6,8 @@ import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 
 @SpringBootApplication
 @ConfigurationPropertiesScan
-public class PackageLoaderApplication {
+public class BillingApplication {
     public static void main(String[] args) {
-        SpringApplication.run(PackageLoaderApplication.class, args);
+        SpringApplication.run(BillingApplication.class, args);
     }
 }

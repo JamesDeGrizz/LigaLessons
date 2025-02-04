@@ -5,8 +5,8 @@ RUN chmod +x ./gradlew && ./gradlew clean build -x test --no-daemon
 
 FROM openjdk:21-jdk-slim AS builder
 WORKDIR /app
-COPY --from=build /app/build/libs/parcelloader-1.0-SNAPSHOT.jar /app/parcelloader-1.0-SNAPSHOT.jar
-RUN java -Djarmode=layertools -jar parcelloader-1.0-SNAPSHOT.jar extract
+COPY --from=build /app/build/libs/billing-1.0-SNAPSHOT.jar /app/billing-1.0-SNAPSHOT.jar
+RUN java -Djarmode=layertools -jar billing-1.0-SNAPSHOT.jar extract
 
 FROM openjdk:21-jdk-slim
 WORKDIR /app

@@ -20,7 +20,6 @@ services:
       - POSTGRES_DB=postgres
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
-      - PORT=5435
     networks:
       - spring-rest-client
 
@@ -45,8 +44,6 @@ services:
       KAFKA_NUM_PARTITIONS: 10
       KAFKA_JMX_PORT: 29997
       KAFKA_JMX_HOSTNAME: kafka
-    networks:
-      - spring-rest-client
 
   kafka-ui:
     container_name: kafka-ui
@@ -59,73 +56,6 @@ services:
       KAFKA_CLUSTERS_0_NAME: local
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
       KAFKA_CLUSTERS_0_METRICS_PORT: 29997
-
-  parcelloader:
-    build:
-      context: ./parcelloader
-    container_name: parcelloader
-    restart: always
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://parcels_db:5432/postgres
-      SPRING_DATASOURCE_USERNAME: postgres
-      SPRING_DATASOURCE_PASSWORD: postgres
-      SPRING_KAFKA_BOOTSTRAP-SERVERS: kafka:29092
-    ports:
-      - "8080:8080"
-    networks:
-      - spring-rest-client
-    depends_on:
-      - parcels_db
-      
-  billing:
-    build:
-      context: ./billing
-    container_name: billing
-    restart: always
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://billing_db:5432/postgres
-      SPRING_DATASOURCE_USERNAME: postgres
-      SPRING_DATASOURCE_PASSWORD: postgres
-      SPRING_KAFKA_BOOTSTRAP-SERVERS: kafka:9092
-    ports:
-      - "8083:8083"
-    networks:
-      - spring-rest-client
-    depends_on:
-      - billing_db
-      - kafka
-
-  consoleclient:
-    build:
-      context: ./consoleclient
-    container_name: consoleclient
-    ports:
-      - "8081:8081"
-    environment:
-      PARCEL_LOADER_URL: "http://parcelloader:8080"
-      BILLING_URL: "http://billing:8083"
-    networks:
-      - spring-rest-client
-    depends_on:
-      - parcelloader
-      - billing
-
-  telegramclient:
-    build:
-      context: ./telegramclient
-    container_name: telegramclient
-    environment:
-      PARCEL_LOADER_URL: "http://parcelloader:8080"
-      BILLING_URL: "http://billing:8083"
-    env_file:
-      - telegramclient/credentials.env
-    ports:
-      - "8082:8082"
-    networks:
-      - spring-rest-client
-    depends_on:
-      - parcelloader
-      - billing
 
 networks:
   spring-rest-client:

@@ -14,6 +14,7 @@ public abstract class ParcelMapper {
     static final String DELIMITER = ",";
 
     @Mapping(target = "content", source = "content", qualifiedByName = "stringListToString")
+    @Mapping(target = "id", ignore = true)
     public abstract ParcelEntity toParcelEntity(Parcel dto);
 
     @Mapping(target = "content", source = "content", qualifiedByName = "stringToStringList")

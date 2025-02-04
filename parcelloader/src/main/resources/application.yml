@@ -5,18 +5,10 @@ spring:
     password: postgres
     driver-class-name: org.postgresql.Driver
   jpa:
-#    generate-ddl: true
-#    hibernate:
-#      ddl-auto: create-drop
-#    open-in-view: false
     show-sql: true
+  kafka:
+    bootstrap-servers: localhost:29092
 
-telegram:
-  credentials:
-    username: ${BOT_USERNAME}
-    token: ${BOT_TOKEN}
-
-billing:
-  pricing:
-    load: 80
-    unload: 50
+topics:
+  billing:
+    orders: parcels.orders.0

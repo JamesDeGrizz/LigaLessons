@@ -1,18 +1,20 @@
 package ru.hofftech.liga.lessons.packageloader.service.command;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationContext;
+import ru.hofftech.liga.lessons.packageloader.config.TopicsConfiguration;
 import ru.hofftech.liga.lessons.packageloader.mapper.ParcelMapper;
 import ru.hofftech.liga.lessons.packageloader.model.Parcel;
 import ru.hofftech.liga.lessons.packageloader.model.Truck;
 import ru.hofftech.liga.lessons.packageloader.model.TruckSize;
 import ru.hofftech.liga.lessons.packageloader.model.dto.LoadParcelsUserCommandDto;
+import ru.hofftech.liga.lessons.packageloader.model.dto.OrderDto;
 import ru.hofftech.liga.lessons.packageloader.model.enums.Command;
 import ru.hofftech.liga.lessons.packageloader.model.enums.PlacingAlgorithm;
 import ru.hofftech.liga.lessons.packageloader.repository.ParcelRepository;
-import ru.hofftech.liga.lessons.packageloader.service.BillingService;
 import ru.hofftech.liga.lessons.packageloader.service.FileLoaderService;
+import ru.hofftech.liga.lessons.packageloader.service.KafkaSenderService;
 import ru.hofftech.liga.lessons.packageloader.service.ReportTruckService;
 import ru.hofftech.liga.lessons.packageloader.service.logistic.BalancedFillTruckLogisticService;
 import ru.hofftech.liga.lessons.packageloader.service.logistic.FullFillTruckLogisticService;
@@ -21,6 +23,7 @@ import ru.hofftech.liga.lessons.packageloader.validator.LoadParcelsUserCommandVa
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,7 +31,7 @@ import java.util.stream.Collectors;
  * Сервис для загрузки посылок на основе команд пользователя.
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class LoadParcelsUserCommandService {
     private static final String PARCELS_DELIMITER = ",";
     private static final String TRUCKS_DELIMITER = ",";
@@ -39,8 +42,9 @@ public class LoadParcelsUserCommandService {
     private final ParcelRepository parcelRepository;
     private final LoadParcelsUserCommandValidator commandValidator;
     private final ApplicationContext applicationContext;
-    private final BillingService billingService;
+    private final KafkaSenderService kafkaSenderService;
     private final ParcelMapper parcelMapper;
+    private final TopicsConfiguration topicsConfiguration;
 
     public String execute(LoadParcelsUserCommandDto command) {
         if (command == null) {
@@ -57,12 +61,12 @@ public class LoadParcelsUserCommandService {
         var needToSaveReport = command.outFilename() != null && !command.outFilename().isEmpty();
 
         var errors = new ArrayList<String>();
-        var packages = getPackages(command, errors);
+        var parcels = getParcels(command, errors);
         if (!errors.isEmpty()) {
             return "Посылки не могут быть погружены: \n" + String.join("\n", errors);
         }
 
-        var trucks = placePackagesToTrucks(packages, algorithm, truckSizes, errors);
+        var trucks = placePackagesToTrucks(parcels, algorithm, truckSizes, errors);
         if (!errors.isEmpty()) {
             return "Посылки не могут быть погружены: \n" + String.join("\n", errors);
         }
@@ -70,12 +74,12 @@ public class LoadParcelsUserCommandService {
         reportTruckContent(trucks);
         saveReportToFileIfNeed(needToSaveReport, command.outFilename(), trucks);
 
-        billingService.saveOrder(command.userId(), Command.LOAD_PARCELS, trucks.size(), packages);
+        sendNewOrder(parcels, trucks.size(), command);
 
         return "Посылки успешно погружены";
     }
 
-    private List<Parcel> getPackages(LoadParcelsUserCommandDto command, List<String> errors) {
+    private List<Parcel> getParcels(LoadParcelsUserCommandDto command, List<String> errors) {
         var parcels = new ArrayList<Parcel>();
         String[] packageNames = null;
 
@@ -154,5 +158,13 @@ public class LoadParcelsUserCommandService {
         if (needToSaveReport) {
             reportTruckService.saveTrucksToFile(reportFileName, trucks);
         }
+    }
+
+    private void sendNewOrder(List<Parcel> parcels, int trucksCount, LoadParcelsUserCommandDto command) {
+        var placedCellsCount = parcels.stream()
+                .mapToInt(parcel -> parcel.getSize())
+                .sum();
+        var order = new OrderDto(command.userId(), new Date(), Command.LOAD_PARCELS, trucksCount, parcels.size(), placedCellsCount);
+        kafkaSenderService.send(topicsConfiguration.billing().orders(), order);
     }
 }

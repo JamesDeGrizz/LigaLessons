@@ -1,27 +1,31 @@
 package ru.hofftech.liga.lessons.packageloader.service.command;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import ru.hofftech.liga.lessons.packageloader.config.TopicsConfiguration;
 import ru.hofftech.liga.lessons.packageloader.model.Parcel;
 import ru.hofftech.liga.lessons.packageloader.model.Truck;
+import ru.hofftech.liga.lessons.packageloader.model.dto.OrderDto;
 import ru.hofftech.liga.lessons.packageloader.model.dto.UnloadTrucksUserCommandDto;
 import ru.hofftech.liga.lessons.packageloader.model.enums.Command;
-import ru.hofftech.liga.lessons.packageloader.service.BillingService;
 import ru.hofftech.liga.lessons.packageloader.service.FileLoaderService;
+import ru.hofftech.liga.lessons.packageloader.service.KafkaSenderService;
 import ru.hofftech.liga.lessons.packageloader.service.ReportParcelService;
 import ru.hofftech.liga.lessons.packageloader.validator.UnloadTrucksUserCommandValidator;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
  * Сервис для разгрузки грузовиков на основе команд пользователя.
  */
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class UnloadTrucksUserCommandService {
     private final FileLoaderService fileLoaderService;
     private final ReportParcelService reportParcelService;
     private final UnloadTrucksUserCommandValidator commandValidator;
-    private final BillingService billingService;
+    private final KafkaSenderService kafkaSenderService;
+    private final TopicsConfiguration topicsConfiguration;
 
     public String execute(UnloadTrucksUserCommandDto command) {
         if (command == null) {
@@ -38,21 +42,29 @@ public class UnloadTrucksUserCommandService {
             return "Не удалось загрузить грузовики из файла";
         }
 
-        var packages = getPackagesFromTrucks(trucks);
+        var parcels = getParcelsFromTrucks(trucks);
 
-        reportParcelService.reportParcels(packages, command.withCount());
-        reportParcelService.saveParcelsToFile(command.outfile(), packages, command.withCount());
+        reportParcelService.reportParcels(parcels, command.withCount());
+        reportParcelService.saveParcelsToFile(command.outfile(), parcels, command.withCount());
 
-        billingService.saveOrder(command.userId(), Command.UNLOAD_TRUCKS, trucks.size(), packages);
+        sendNewOrder(parcels, trucks.size(), command);
 
         return "Посылки успешно разгружены";
     }
 
-    private List<Parcel> getPackagesFromTrucks(List<Truck> trucks) {
+    private List<Parcel> getParcelsFromTrucks(List<Truck> trucks) {
         var packages = new ArrayList<Parcel>();
         trucks.forEach(truck -> {
             packages.addAll(truck.getParcels());
         });
         return packages;
+    }
+
+    private void sendNewOrder(List<Parcel> parcels, int trucksCount, UnloadTrucksUserCommandDto command) {
+        var placedCellsCount = parcels.stream()
+                .mapToInt(parcel -> parcel.getSize())
+                .sum();
+        var order = new OrderDto(command.userId(), new Date(), Command.UNLOAD_TRUCKS, trucksCount, parcels.size(), placedCellsCount);
+        kafkaSenderService.send(topicsConfiguration.billing().orders(), order);
     }
 }

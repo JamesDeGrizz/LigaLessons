@@ -1,5 +1,5 @@
-create table parcelloader.user_order(
-    id              serial      constraint parcelloader_pk_user_order primary key,
+create table billing.user_order(
+    id              serial      constraint billing_pk_user_order primary key,
     name            text        not null,
     date            timestamp   not null,
     operation       text        not null,
@@ -7,3 +7,6 @@ create table parcelloader.user_order(
     parcels_count   int         not null,
     total_price     int         not null
 );
+
+create index billing_user_order_name_idx
+    on billing.user_order (name);
