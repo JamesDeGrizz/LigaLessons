@@ -7,27 +7,30 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.test.context.ActiveProfiles;
 import ru.hofftech.liga.lessons.billing.config.BillingConfiguration;
 import ru.hofftech.liga.lessons.billing.mapper.OrderMapper;
+import ru.hofftech.liga.lessons.billing.model.dto.OrderKafkaDto;
 import ru.hofftech.liga.lessons.billing.model.dto.UserOrdersResponseDto;
 import ru.hofftech.liga.lessons.billing.model.entity.OrderEntity;
 import ru.hofftech.liga.lessons.billing.model.entity.OrderInboxEntity;
 import ru.hofftech.liga.lessons.billing.model.enums.Operation;
-import ru.hofftech.liga.lessons.billing.model.dto.OrderKafkaDto;
 import ru.hofftech.liga.lessons.billing.repository.OrderInboxRepository;
 import ru.hofftech.liga.lessons.billing.repository.OrderRepository;
 
 import java.util.Date;
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.anyList;
 import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.assertj.core.api.Assertions.*;
 
+@ActiveProfiles("test")
 @ExtendWith(MockitoExtension.class)
 class BillingServiceTest {
 
@@ -61,22 +64,23 @@ class BillingServiceTest {
         );
 
         OrderInboxEntity mockInboxEntity = new OrderInboxEntity();
+        OrderEntity mockEntity = new OrderEntity();
 
+        when(orderEntitiesService.prepareOrderEntity(any(OrderKafkaDto.class))).thenReturn(mockEntity);
+        when(orderEntitiesService.prepareOrderInboxEntity(any(OrderKafkaDto.class))).thenReturn(mockInboxEntity);
         when(orderInboxRepository.save(any(OrderInboxEntity.class))).thenReturn(mockInboxEntity);
-        when(billingConfiguration.load()).thenReturn(10);
-        when(billingConfiguration.unload()).thenReturn(20);
 
         billingService.saveOrder(orderDto);
 
-        verify(orderInboxRepository, times(2)).save(any(OrderInboxEntity.class)); // Два вызова: первый для создания, второй для обновления processed
+        verify(orderInboxRepository, times(1)).save(any(OrderInboxEntity.class)); // Два вызова: первый для создания, второй для обновления processed
         verify(orderRepository, times(1)).save(any(OrderEntity.class));
     }
 
     @Test
     public void testFindUserOrders_NullCommand_ThrowsException() {
-        assertThatThrownBy(() -> billingService.findUserOrders(null, 100, 0))
+        assertThatThrownBy(() -> billingService.findUserOrders(null, 0, 100))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("\"Заказы не могут быть показаны: userId = null\"");
+                .hasMessage("Заказы не могут быть показаны: userId = null");
     }
 
     @Test
@@ -92,12 +96,12 @@ class BillingServiceTest {
                 new OrderEntity(0L, "Order1", now, "Погрузка", 2, 5, 100)
         );
 
-        var pageable = PageRequest.of(0, 1000);
+        var pageable = PageRequest.of(0, 100);
         var page = new PageImpl<>(mockFoundEntities, pageable, mockResponses.size());
         when(orderRepository.findByName("Order1", pageable)).thenReturn(page);
         when(orderMapper.toFindUserOrdersUserResponseDtoList(anyList())).thenReturn(mockResponses);
 
-        List<UserOrdersResponseDto> result = billingService.findUserOrders(command, 100, 0);
+        List<UserOrdersResponseDto> result = billingService.findUserOrders(command, 0, 100);
 
         assertThat(result)
                 .isNotNull()

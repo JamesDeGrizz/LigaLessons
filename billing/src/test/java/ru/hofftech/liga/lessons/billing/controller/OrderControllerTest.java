@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.hofftech.liga.lessons.billing.model.dto.UserOrdersResponseDto;
@@ -12,7 +13,6 @@ import ru.hofftech.liga.lessons.billing.service.BillingService;
 import java.util.Date;
 import java.util.List;
 
-import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -20,6 +20,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@ActiveProfiles("test")
 @SpringBootTest
 @AutoConfigureMockMvc
 class OrderControllerTest {
@@ -36,14 +37,21 @@ class OrderControllerTest {
                 new UserOrdersResponseDto("Order1", new Date(), "Погрузка", 2, 5, 100)
         );
 
-        when(billingService.findUserOrders(userId, 100, 0))
+        when(billingService.findUserOrders(userId, 0, 100))
                 .thenReturn(mockResponses);
 
-        mockMvc.perform(get("/api/v1/orders/{userid}?limit={limit}&offset={offset}", userId, 100, 0))
+        var uriTemplate = new StringBuilder("/api/v1/orders/")
+                .append(userId)
+                .append("?offset=")
+                .append(0)
+                .append("&limit=")
+                .append(100)
+                .toString();
+        mockMvc.perform(get(uriTemplate))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].name").value("Order1"))
                 .andExpect(jsonPath("$[0].operation").value("Погрузка"));
 
-        verify(billingService, times(1)).findUserOrders(any(String.class), 100, 0);
+        verify(billingService, times(1)).findUserOrders(userId, 0, 100);
     }
 }
