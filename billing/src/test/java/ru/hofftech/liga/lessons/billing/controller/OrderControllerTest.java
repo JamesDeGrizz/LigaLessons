@@ -36,14 +36,14 @@ class OrderControllerTest {
                 new UserOrdersResponseDto("Order1", new Date(), "Погрузка", 2, 5, 100)
         );
 
-        when(billingService.findUserOrders(userId))
+        when(billingService.findUserOrders(userId, 100, 0))
                 .thenReturn(mockResponses);
 
-        mockMvc.perform(get("/api/v1/orders/{userid}", userId))
+        mockMvc.perform(get("/api/v1/orders/{userid}?limit={limit}&offset={offset}", userId, 100, 0))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].name").value("Order1"))
                 .andExpect(jsonPath("$[0].operation").value("Погрузка"));
 
-        verify(billingService, times(1)).findUserOrders(any(String.class));
+        verify(billingService, times(1)).findUserOrders(any(String.class), 100, 0);
     }
 }

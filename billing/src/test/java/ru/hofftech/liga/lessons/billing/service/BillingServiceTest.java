@@ -74,7 +74,7 @@ class BillingServiceTest {
 
     @Test
     public void testFindUserOrders_NullCommand_ThrowsException() {
-        assertThatThrownBy(() -> billingService.findUserOrders(null))
+        assertThatThrownBy(() -> billingService.findUserOrders(null, 100, 0))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("\"Заказы не могут быть показаны: userId = null\"");
     }
@@ -97,7 +97,7 @@ class BillingServiceTest {
         when(orderRepository.findByName("Order1", pageable)).thenReturn(page);
         when(orderMapper.toFindUserOrdersUserResponseDtoList(anyList())).thenReturn(mockResponses);
 
-        List<UserOrdersResponseDto> result = billingService.findUserOrders(command);
+        List<UserOrdersResponseDto> result = billingService.findUserOrders(command, 100, 0);
 
         assertThat(result)
                 .isNotNull()
