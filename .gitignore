@@ -48,3 +48,4 @@ spring-shell.log
 parcelloader/testFile.json
 parcelloader/trucks.json
 docker-compose-local.yml
+*.env

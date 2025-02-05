@@ -1,8 +1,10 @@
 package ru.hofftech.liga.lessons.billing.model.entity;
 
 import jakarta.persistence.Column;
-import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -10,16 +12,25 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Date;
+
 @Entity
-@Table(name = "user_order_inbox", schema = "billing")
+@Table(name = "user_order", schema = "billing")
 @Builder
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class OrderInboxEntity {
-    @EmbeddedId
-    private OrderInboxId id;
+public class Order {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String name;
+
+    private Date date;
+
+    private String operation;
 
     @Column(name = "trucks_count")
     private int trucksCount;
@@ -27,6 +38,6 @@ public class OrderInboxEntity {
     @Column(name = "parcels_count")
     private int parcelsCount;
 
-    @Column(name = "cells_count")
-    private int cellsCount;
+    @Column(name = "total_price")
+    private int totalPrice;
 }

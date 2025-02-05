@@ -15,6 +15,6 @@ import java.util.function.Consumer;
 public class KafkaConfig {
     @Bean
     public Consumer<OrderKafkaDto> orders(OrdersListener listener) {
-        return message -> listener.process(message);
+        return listener::process;
     }
 }

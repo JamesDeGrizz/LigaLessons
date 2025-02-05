@@ -70,6 +70,8 @@ services:
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: postgres
       SPRING_KAFKA_BOOTSTRAP-SERVERS: kafka:29092
+    env_file:
+      - parcelloader_credentials.env
     ports:
       - "8080:8080"
     networks:
@@ -82,15 +84,10 @@ services:
       context: ./billing
     container_name: billing
     restart: always
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://billing_db:5432/postgres
-      SPRING_DATASOURCE_USERNAME: postgres
-      SPRING_DATASOURCE_PASSWORD: postgres
-      SPRING_KAFKA_BOOTSTRAP-SERVERS: kafka:9092
     ports:
       - "8083:8083"
     env_file:
-      - billing/credentials.env
+      - billing_credentials.env
     networks:
       - spring-rest-client
     depends_on:

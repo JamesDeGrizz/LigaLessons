@@ -43,6 +43,6 @@ public class BillingService {
         var page = orderRepository.findByName(userId, pageable);
 
         return new ArrayList<>(
-                orderMapper.toFindUserOrdersUserResponseDtoList(page.stream().toList()));
+                orderMapper.toUserOrdersResponseDtoList(page.stream().toList()));
     }
 }

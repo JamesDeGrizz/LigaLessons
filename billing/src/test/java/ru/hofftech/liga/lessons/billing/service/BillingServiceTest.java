@@ -8,12 +8,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.ActiveProfiles;
-import ru.hofftech.liga.lessons.billing.config.BillingConfiguration;
 import ru.hofftech.liga.lessons.billing.mapper.OrderMapper;
 import ru.hofftech.liga.lessons.billing.model.dto.OrderKafkaDto;
 import ru.hofftech.liga.lessons.billing.model.dto.UserOrdersResponseDto;
-import ru.hofftech.liga.lessons.billing.model.entity.OrderEntity;
-import ru.hofftech.liga.lessons.billing.model.entity.OrderInboxEntity;
+import ru.hofftech.liga.lessons.billing.model.entity.Order;
+import ru.hofftech.liga.lessons.billing.model.entity.OrderInbox;
 import ru.hofftech.liga.lessons.billing.model.enums.Operation;
 import ru.hofftech.liga.lessons.billing.repository.OrderInboxRepository;
 import ru.hofftech.liga.lessons.billing.repository.OrderRepository;
@@ -47,9 +46,6 @@ class BillingServiceTest {
     BillingService billingService;
 
     @Mock
-    BillingConfiguration billingConfiguration;
-
-    @Mock
     OrderEntitiesService orderEntitiesService;
 
     @Test
@@ -63,17 +59,17 @@ class BillingServiceTest {
                 10
         );
 
-        OrderInboxEntity mockInboxEntity = new OrderInboxEntity();
-        OrderEntity mockEntity = new OrderEntity();
+        OrderInbox mockInboxEntity = new OrderInbox();
+        Order mockEntity = new Order();
 
         when(orderEntitiesService.prepareOrderEntity(any(OrderKafkaDto.class))).thenReturn(mockEntity);
         when(orderEntitiesService.prepareOrderInboxEntity(any(OrderKafkaDto.class))).thenReturn(mockInboxEntity);
-        when(orderInboxRepository.save(any(OrderInboxEntity.class))).thenReturn(mockInboxEntity);
+        when(orderInboxRepository.save(any(OrderInbox.class))).thenReturn(mockInboxEntity);
 
         billingService.saveOrder(orderDto);
 
-        verify(orderInboxRepository, times(1)).save(any(OrderInboxEntity.class)); // Два вызова: первый для создания, второй для обновления processed
-        verify(orderRepository, times(1)).save(any(OrderEntity.class));
+        verify(orderInboxRepository, times(1)).save(any(OrderInbox.class)); // Два вызова: первый для создания, второй для обновления processed
+        verify(orderRepository, times(1)).save(any(Order.class));
     }
 
     @Test
@@ -92,14 +88,14 @@ class BillingServiceTest {
                 new UserOrdersResponseDto("Order1", now, "Погрузка", 2, 5, 100)
         );
 
-        List<OrderEntity> mockFoundEntities = List.of(
-                new OrderEntity(0L, "Order1", now, "Погрузка", 2, 5, 100)
+        List<Order> mockFoundEntities = List.of(
+                new Order(0L, "Order1", now, "Погрузка", 2, 5, 100)
         );
 
         var pageable = PageRequest.of(0, 100);
         var page = new PageImpl<>(mockFoundEntities, pageable, mockResponses.size());
         when(orderRepository.findByName("Order1", pageable)).thenReturn(page);
-        when(orderMapper.toFindUserOrdersUserResponseDtoList(anyList())).thenReturn(mockResponses);
+        when(orderMapper.toUserOrdersResponseDtoList(anyList())).thenReturn(mockResponses);
 
         List<UserOrdersResponseDto> result = billingService.findUserOrders(command, 0, 100);
 
@@ -114,6 +110,6 @@ class BillingServiceTest {
                     .name())
                 .isEqualTo("Order1");
         verify(orderRepository, times(1)).findByName(eq("Order1"), any());
-        verify(orderMapper, times(1)).toFindUserOrdersUserResponseDtoList(anyList());
+        verify(orderMapper, times(1)).toUserOrdersResponseDtoList(anyList());
     }
 }
