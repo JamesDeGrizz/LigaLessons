@@ -12,9 +12,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.hofftech.liga.lessons.packageloader.model.dto.CreateParcelUserCommandDto;
+import ru.hofftech.liga.lessons.packageloader.model.dto.CreateParcelUserCommandResponseDto;
 import ru.hofftech.liga.lessons.packageloader.model.dto.DeleteParcelUserCommandDto;
 import ru.hofftech.liga.lessons.packageloader.model.dto.EditParcelUserCommandDto;
+import ru.hofftech.liga.lessons.packageloader.model.dto.EditParcelUserCommandResponseDto;
 import ru.hofftech.liga.lessons.packageloader.model.dto.FindParcelUserCommandDto;
+import ru.hofftech.liga.lessons.packageloader.model.dto.FindParcelUserCommandResponseDto;
 import ru.hofftech.liga.lessons.packageloader.service.command.CreateParcelUserCommandService;
 import ru.hofftech.liga.lessons.packageloader.service.command.DeleteParcelUserCommandService;
 import ru.hofftech.liga.lessons.packageloader.service.command.EditParcelUserCommandService;
@@ -31,28 +34,28 @@ public class ParcelController {
     private final EditParcelUserCommandService editParcelUserCommandService;
 
     @GetMapping
-    public String findAll() {
-        return findParcelUserCommandService.execute(new FindParcelUserCommandDto(""));
+    public FindParcelUserCommandResponseDto findAll() {
+        return findParcelUserCommandService.execute(new FindParcelUserCommandDto(null));
     }
 
     @GetMapping("/{parcelId}")
-    public String find(@PathVariable String parcelId) {
+    public FindParcelUserCommandResponseDto find(@PathVariable String parcelId) {
         return findParcelUserCommandService.execute(new FindParcelUserCommandDto(parcelId));
     }
 
     @PostMapping()
-    public String create(@RequestBody CreateParcelUserCommandDto dto) {
+    public CreateParcelUserCommandResponseDto create(@RequestBody CreateParcelUserCommandDto dto) {
         return createParcelUserCommandService.execute(dto);
     }
 
     @PutMapping("/{parcelId}")
-    public String update(@PathVariable String parcelId,
-                         @RequestBody CreateParcelUserCommandDto dto) {
+    public EditParcelUserCommandResponseDto update(@PathVariable String parcelId,
+                                                   @RequestBody CreateParcelUserCommandDto dto) {
         return editParcelUserCommandService.execute(new EditParcelUserCommandDto(parcelId, dto.parcelId(), dto.form(), dto.symbol()));
     }
 
     @DeleteMapping("/{parcelId}")
-    public String delete(@PathVariable String parcelId) {
-        return deleteParcelUserCommandService.execute(new DeleteParcelUserCommandDto(parcelId));
+    public void delete(@PathVariable String parcelId) {
+        deleteParcelUserCommandService.execute(new DeleteParcelUserCommandDto(parcelId));
     }
 }

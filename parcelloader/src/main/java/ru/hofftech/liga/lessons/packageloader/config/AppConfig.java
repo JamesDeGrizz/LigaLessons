@@ -5,9 +5,9 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import ru.hofftech.liga.lessons.packageloader.mapper.ParcelMapper;
+import ru.hofftech.liga.lessons.packageloader.repository.OrderRepository;
 import ru.hofftech.liga.lessons.packageloader.repository.ParcelRepository;
 import ru.hofftech.liga.lessons.packageloader.service.FileLoaderService;
-import ru.hofftech.liga.lessons.packageloader.service.KafkaSenderService;
 import ru.hofftech.liga.lessons.packageloader.service.ReportParcelService;
 import ru.hofftech.liga.lessons.packageloader.service.ReportTruckService;
 import ru.hofftech.liga.lessons.packageloader.service.TruckService;
@@ -120,9 +120,8 @@ public class AppConfig {
 
     @Bean
     public FindParcelUserCommandService findParcelUserCommandService(
-            ParcelRepository parcelRepository,
-            ParcelMapper parcelMapper) {
-        return new FindParcelUserCommandService(parcelRepository, parcelMapper);
+            ParcelRepository parcelRepository) {
+        return new FindParcelUserCommandService(parcelRepository);
     }
 
     @Bean
@@ -132,32 +131,28 @@ public class AppConfig {
             ParcelRepository parcelRepository,
             LoadParcelsUserCommandValidator commandValidator,
             ApplicationContext applicationContext,
-            KafkaSenderService kafkaSenderService,
             ParcelMapper parcelMapper,
-            TopicsConfiguration topicsConfiguration) {
+            OrderRepository orderRepository) {
         return new LoadParcelsUserCommandService(
                 fileLoaderService,
                 reportTruckService,
                 parcelRepository,
                 commandValidator,
                 applicationContext,
-                kafkaSenderService,
                 parcelMapper,
-                topicsConfiguration);
+                orderRepository);
     }
 
     @Bean
     public UnloadTrucksUserCommandService unloadTrucksUserCommandService(
             FileLoaderService fileLoaderService,
             ReportParcelService reportParcelService,
-            KafkaSenderService kafkaSenderService,
-            UnloadTrucksUserCommandValidator commandValidator,
-            TopicsConfiguration topicsConfiguration) {
+            OrderRepository orderRepository,
+            UnloadTrucksUserCommandValidator commandValidator) {
         return new UnloadTrucksUserCommandService(
                 fileLoaderService,
                 reportParcelService,
                 commandValidator,
-                kafkaSenderService,
-                topicsConfiguration);
+                orderRepository);
     }
 }

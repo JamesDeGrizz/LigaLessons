@@ -1,14 +1,15 @@
 package ru.hofftech.liga.lessons.packageloader.service.command;
 
 import lombok.RequiredArgsConstructor;
-import ru.hofftech.liga.lessons.packageloader.config.TopicsConfiguration;
 import ru.hofftech.liga.lessons.packageloader.model.Parcel;
 import ru.hofftech.liga.lessons.packageloader.model.Truck;
-import ru.hofftech.liga.lessons.packageloader.model.dto.OrderDto;
 import ru.hofftech.liga.lessons.packageloader.model.dto.UnloadTrucksUserCommandDto;
+import ru.hofftech.liga.lessons.packageloader.model.dto.UnloadTrucksUserCommandResponseDto;
+import ru.hofftech.liga.lessons.packageloader.model.entity.OrderOutbox;
+import ru.hofftech.liga.lessons.packageloader.model.entity.OrderOutboxId;
 import ru.hofftech.liga.lessons.packageloader.model.enums.Command;
+import ru.hofftech.liga.lessons.packageloader.repository.OrderRepository;
 import ru.hofftech.liga.lessons.packageloader.service.FileLoaderService;
-import ru.hofftech.liga.lessons.packageloader.service.KafkaSenderService;
 import ru.hofftech.liga.lessons.packageloader.service.ReportParcelService;
 import ru.hofftech.liga.lessons.packageloader.validator.UnloadTrucksUserCommandValidator;
 
@@ -24,22 +25,21 @@ public class UnloadTrucksUserCommandService {
     private final FileLoaderService fileLoaderService;
     private final ReportParcelService reportParcelService;
     private final UnloadTrucksUserCommandValidator commandValidator;
-    private final KafkaSenderService kafkaSenderService;
-    private final TopicsConfiguration topicsConfiguration;
+    private final OrderRepository orderRepository;
 
-    public String execute(UnloadTrucksUserCommandDto command) {
+    public UnloadTrucksUserCommandResponseDto execute(UnloadTrucksUserCommandDto command) {
         if (command == null) {
-            return "Посылки не могут быть разгружены: \nПередан пустой список аргументов";
+            throw new IllegalArgumentException("Посылки не могут быть разгружены: \nПередан пустой список аргументов");
         }
 
         var validationErrors = commandValidator.validate(command);
         if (!validationErrors.isEmpty()) {
-            return "Посылки не могут быть разгружены: \n" + String.join("\n", validationErrors);
+            throw new IllegalArgumentException("Посылки не могут быть разгружены: \n" + String.join("\n", validationErrors));
         }
 
         var trucks = fileLoaderService.getTrucks(command.infile());
         if (trucks.isEmpty()) {
-            return "Не удалось загрузить грузовики из файла";
+            throw new IllegalArgumentException("Не удалось загрузить грузовики из файла");
         }
 
         var parcels = getParcelsFromTrucks(trucks);
@@ -47,9 +47,21 @@ public class UnloadTrucksUserCommandService {
         reportParcelService.reportParcels(parcels, command.withCount());
         reportParcelService.saveParcelsToFile(command.outfile(), parcels, command.withCount());
 
-        sendNewOrder(parcels, trucks.size(), command);
+        orderRepository.save(
+                OrderOutbox.builder()
+                        .id(OrderOutboxId.builder()
+                                .name(command.userId())
+                                .date(new Date())
+                                .operation(Command.UNLOAD_TRUCKS.toString())
+                                .build())
+                        .trucksCount(trucks.size())
+                        .parcelsCount(parcels.size())
+                        .cellsCount(parcels.stream()
+                                .mapToInt(parcel -> parcel.getSize())
+                                .sum())
+                        .build());
 
-        return "Посылки успешно разгружены";
+        return new UnloadTrucksUserCommandResponseDto("Посылки успешно разгружены");
     }
 
     private List<Parcel> getParcelsFromTrucks(List<Truck> trucks) {
@@ -58,13 +70,5 @@ public class UnloadTrucksUserCommandService {
             packages.addAll(truck.getParcels());
         });
         return packages;
-    }
-
-    private void sendNewOrder(List<Parcel> parcels, int trucksCount, UnloadTrucksUserCommandDto command) {
-        var placedCellsCount = parcels.stream()
-                .mapToInt(parcel -> parcel.getSize())
-                .sum();
-        var order = new OrderDto(command.userId(), new Date(), Command.UNLOAD_TRUCKS, trucksCount, parcels.size(), placedCellsCount);
-        kafkaSenderService.send(topicsConfiguration.billing().orders(), order);
     }
 }

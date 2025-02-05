@@ -3,18 +3,19 @@ package ru.hofftech.liga.lessons.packageloader.service.command;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationContext;
-import ru.hofftech.liga.lessons.packageloader.config.TopicsConfiguration;
 import ru.hofftech.liga.lessons.packageloader.mapper.ParcelMapper;
 import ru.hofftech.liga.lessons.packageloader.model.Parcel;
 import ru.hofftech.liga.lessons.packageloader.model.Truck;
 import ru.hofftech.liga.lessons.packageloader.model.TruckSize;
 import ru.hofftech.liga.lessons.packageloader.model.dto.LoadParcelsUserCommandDto;
-import ru.hofftech.liga.lessons.packageloader.model.dto.OrderDto;
+import ru.hofftech.liga.lessons.packageloader.model.dto.LoadParcelsUserCommandResponseDto;
+import ru.hofftech.liga.lessons.packageloader.model.entity.OrderOutbox;
+import ru.hofftech.liga.lessons.packageloader.model.entity.OrderOutboxId;
 import ru.hofftech.liga.lessons.packageloader.model.enums.Command;
 import ru.hofftech.liga.lessons.packageloader.model.enums.PlacingAlgorithm;
+import ru.hofftech.liga.lessons.packageloader.repository.OrderRepository;
 import ru.hofftech.liga.lessons.packageloader.repository.ParcelRepository;
 import ru.hofftech.liga.lessons.packageloader.service.FileLoaderService;
-import ru.hofftech.liga.lessons.packageloader.service.KafkaSenderService;
 import ru.hofftech.liga.lessons.packageloader.service.ReportTruckService;
 import ru.hofftech.liga.lessons.packageloader.service.logistic.BalancedFillTruckLogisticService;
 import ru.hofftech.liga.lessons.packageloader.service.logistic.FullFillTruckLogisticService;
@@ -42,18 +43,17 @@ public class LoadParcelsUserCommandService {
     private final ParcelRepository parcelRepository;
     private final LoadParcelsUserCommandValidator commandValidator;
     private final ApplicationContext applicationContext;
-    private final KafkaSenderService kafkaSenderService;
     private final ParcelMapper parcelMapper;
-    private final TopicsConfiguration topicsConfiguration;
+    private final OrderRepository orderRepository;
 
-    public String execute(LoadParcelsUserCommandDto command) {
+    public LoadParcelsUserCommandResponseDto execute(LoadParcelsUserCommandDto command) {
         if (command == null) {
-            return "Посылки не могут быть погружены: \nПередан пустой список аргументов";
+            throw new IllegalArgumentException("Посылки не могут быть погружены: \nПередан пустой список аргументов");
         }
 
         var validationErrors = commandValidator.validate(command);
         if (!validationErrors.isEmpty()) {
-            return "Посылки не могут быть погружены: \n" + String.join("\n", validationErrors);
+            throw new IllegalArgumentException("Посылки не могут быть погружены: \n" + String.join("\n", validationErrors));
         }
 
         var algorithm = getPlacingAlgorithm(command.type());
@@ -63,20 +63,32 @@ public class LoadParcelsUserCommandService {
         var errors = new ArrayList<String>();
         var parcels = getParcels(command, errors);
         if (!errors.isEmpty()) {
-            return "Посылки не могут быть погружены: \n" + String.join("\n", errors);
+            throw new IllegalArgumentException("Посылки не могут быть погружены: \n" + String.join("\n", errors));
         }
 
         var trucks = placePackagesToTrucks(parcels, algorithm, truckSizes, errors);
         if (!errors.isEmpty()) {
-            return "Посылки не могут быть погружены: \n" + String.join("\n", errors);
+            throw new IllegalArgumentException("Посылки не могут быть погружены: \n" + String.join("\n", errors));
         }
 
         reportTruckContent(trucks);
         saveReportToFileIfNeed(needToSaveReport, command.outFilename(), trucks);
 
-        sendNewOrder(parcels, trucks.size(), command);
+        orderRepository.save(
+                OrderOutbox.builder()
+                        .id(OrderOutboxId.builder()
+                                .name(command.userId())
+                                .date(new Date())
+                                .operation(Command.LOAD_PARCELS.toString())
+                                .build())
+                        .trucksCount(trucks.size())
+                        .parcelsCount(parcels.size())
+                        .cellsCount(parcels.stream()
+                                .mapToInt(parcel -> parcel.getSize())
+                                .sum())
+                .build());
 
-        return "Посылки успешно погружены";
+        return new LoadParcelsUserCommandResponseDto("Посылки успешно погружены");
     }
 
     private List<Parcel> getParcels(LoadParcelsUserCommandDto command, List<String> errors) {
@@ -158,13 +170,5 @@ public class LoadParcelsUserCommandService {
         if (needToSaveReport) {
             reportTruckService.saveTrucksToFile(reportFileName, trucks);
         }
-    }
-
-    private void sendNewOrder(List<Parcel> parcels, int trucksCount, LoadParcelsUserCommandDto command) {
-        var placedCellsCount = parcels.stream()
-                .mapToInt(parcel -> parcel.getSize())
-                .sum();
-        var order = new OrderDto(command.userId(), new Date(), Command.LOAD_PARCELS, trucksCount, parcels.size(), placedCellsCount);
-        kafkaSenderService.send(topicsConfiguration.billing().orders(), order);
     }
 }
