@@ -2,6 +2,7 @@ package ru.hofftech.liga.lessons.billing.service;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -31,6 +32,7 @@ public class BillingService {
     private final OrderMapper orderMapper;
 
     @Transactional
+    @Cacheable(value = "caffeine", key = "#command.name()")
     public void saveOrder(OrderDto message) {
         var orderInboxEntity = prepareOrderInboxEntity(message);
         orderInboxRepository.save(orderInboxEntity);
@@ -52,6 +54,7 @@ public class BillingService {
         orderInboxRepository.save(orderInboxEntity);
     }
 
+    @Cacheable(value = "caffeine", key = "#command.name()")
     public List<FindUserOrdersUserResponseDto> findUserOrders(FindUserOrdersUserCommandDto command) {
         if (command == null) {
             throw new IllegalArgumentException("Заказы не могут быть показаны: \nПередан пустой список аргументов");
