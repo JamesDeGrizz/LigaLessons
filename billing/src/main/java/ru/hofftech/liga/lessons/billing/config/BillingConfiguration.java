@@ -4,9 +4,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 
 @EnableConfigurationProperties
-@ConfigurationProperties(prefix = "billing")
-public record BillingConfiguration(Pricing pricing) {
-
-    public record Pricing(int load, int unload) {
-    }
+@ConfigurationProperties(prefix = "billing.pricing")
+public record BillingConfiguration(int load, int unload) {
 }

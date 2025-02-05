@@ -89,6 +89,8 @@ services:
       SPRING_KAFKA_BOOTSTRAP-SERVERS: kafka:9092
     ports:
       - "8083:8083"
+    env_file:
+      - billing/credentials.env
     networks:
       - spring-rest-client
     depends_on:

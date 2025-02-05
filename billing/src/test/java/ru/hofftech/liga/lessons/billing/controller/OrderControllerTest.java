@@ -6,8 +6,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
-import ru.hofftech.liga.lessons.billing.model.dto.FindUserOrdersUserCommandDto;
-import ru.hofftech.liga.lessons.billing.model.dto.FindUserOrdersUserResponseDto;
+import ru.hofftech.liga.lessons.billing.model.dto.UserOrdersResponseDto;
 import ru.hofftech.liga.lessons.billing.service.BillingService;
 
 import java.util.Date;
@@ -32,21 +31,19 @@ class OrderControllerTest {
 
     @Test
     public void testFindUserOrders_Success() throws Exception {
-        // Arrange
         String userId = "user123";
-        List<FindUserOrdersUserResponseDto> mockResponses = List.of(
-                new FindUserOrdersUserResponseDto("Order1", new Date(), "Погрузка", 2, 5, 100)
+        List<UserOrdersResponseDto> mockResponses = List.of(
+                new UserOrdersResponseDto("Order1", new Date(), "Погрузка", 2, 5, 100)
         );
 
-        when(billingService.findUserOrders(new FindUserOrdersUserCommandDto(userId)))
+        when(billingService.findUserOrders(userId))
                 .thenReturn(mockResponses);
 
-        // Act & Assert
         mockMvc.perform(get("/api/v1/orders/{userid}", userId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].name").value("Order1"))
                 .andExpect(jsonPath("$[0].operation").value("Погрузка"));
 
-        verify(billingService, times(1)).findUserOrders(any(FindUserOrdersUserCommandDto.class));
+        verify(billingService, times(1)).findUserOrders(any(String.class));
     }
 }

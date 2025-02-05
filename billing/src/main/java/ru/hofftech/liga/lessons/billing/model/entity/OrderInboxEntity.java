@@ -29,6 +29,4 @@ public class OrderInboxEntity {
 
     @Column(name = "cells_count")
     private int cellsCount;
-
-    private boolean processed;
 }

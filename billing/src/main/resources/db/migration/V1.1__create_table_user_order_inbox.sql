@@ -4,8 +4,7 @@ create table billing.user_order_inbox(
     operation       text        not null,
     trucks_count    int         not null,
     parcels_count   int         not null,
-    cells_count     int         not null,
-    processed       boolean     not null
+    cells_count     int         not null
 );
 
 alter table billing.user_order_inbox
