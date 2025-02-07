@@ -9,9 +9,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class ReportParcelServiceTest {
     private final ReportParcelService service = new ReportParcelService();
@@ -30,37 +28,21 @@ class ReportParcelServiceTest {
     @Test
     void saveParcelsToFile_ShouldCreateFileWithCorrectContent() throws IOException {
         Path testFile = tempDir.resolve("test_report.csv");
-
-        service.saveParcelsToFile(
-                testFile.toString(),
-                createTestParcels(),
-                true
-        );
+        service.saveParcelsToFile(testFile.toString(), createTestParcels(), true);
 
         String content = Files.readString(testFile);
-        assertAll(
-                () -> assertTrue(content.contains("Box;2")),
-                () -> assertTrue(content.contains("Envelope;1"))
-        );
+        assertThat(content).contains("Box;2")
+                .contains("Envelope;1");
     }
 
     @Test
     void saveParcelsToFile_ShouldCreateSimpleFileWhenCountDisabled() throws IOException {
         Path testFile = tempDir.resolve("simple_report.txt");
-
-        service.saveParcelsToFile(
-                testFile.toString(),
-                createTestParcels(),
-                false
-        );
+        service.saveParcelsToFile(testFile.toString(), createTestParcels(), false);
 
         String content = Files.readString(testFile);
-        assertAll(
-                () -> assertTrue(content.contains("Box")),
-                () -> assertTrue(content.contains("Envelope")),
-                () -> assertFalse(content.contains(";"))
-        );
+        assertThat(content).contains("Box")
+                .contains("Envelope")
+                .doesNotContain(";");
     }
-
-
 }
