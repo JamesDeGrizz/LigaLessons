@@ -12,3 +12,18 @@ spring:
 topics:
   billing:
     orders: parcels.orders.0
+
+task:
+  executor:
+    core-pool-size: 10
+    max-pool-size: 20
+    queue-capacity: 500
+    thread-name-prefix: async-
+  scheduler:
+    pool-size: 5
+    thread-name-prefix: Scheduler-
+  send-unprocessed-orders:
+    rate-ms: 1000
+
+parcels:
+  delimiter:

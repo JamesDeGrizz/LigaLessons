@@ -68,7 +68,7 @@ class BillingServiceTest {
 
         billingService.saveOrder(orderDto);
 
-        verify(orderInboxRepository, times(1)).save(any(OrderInbox.class)); // Два вызова: первый для создания, второй для обновления processed
+        verify(orderInboxRepository, times(1)).save(any(OrderInbox.class));
         verify(orderRepository, times(1)).save(any(Order.class));
     }
 

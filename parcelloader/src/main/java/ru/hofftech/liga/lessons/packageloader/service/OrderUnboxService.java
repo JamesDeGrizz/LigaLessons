@@ -1,21 +1,29 @@
-package ru.hofftech.liga.lessons.packageloader.task;
+package ru.hofftech.liga.lessons.packageloader.service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import ru.hofftech.liga.lessons.packageloader.model.dto.OrderDto;
 import ru.hofftech.liga.lessons.packageloader.repository.OrderRepository;
-import ru.hofftech.liga.lessons.packageloader.service.KafkaSenderService;
 
+/**
+ * Класс для отправки необработанных заказов в сервис биллинга
+ */
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class OrderMonitor {
+public class OrderUnboxService {
     private final OrderRepository orderRepository;
     private final KafkaSenderService kafkaSenderService;
 
-    @Scheduled(fixedRate = 1000)
+    @Value("${task.send-unprocessed-orders.rate-ms}")
+    private final int sendUnprocessedOrdersRateMs = 1000;
+
+    @Scheduled(fixedRate = sendUnprocessedOrdersRateMs)
+    @Transactional
     public void sendUnprocessedOrders() {
         var unprocessedOrders = orderRepository.findAllBySent(false);
 
@@ -28,7 +36,7 @@ public class OrderMonitor {
 
         for (var unprocessedOrder : unprocessedOrders) {
             kafkaSenderService.sendNewOrder(OrderDto.builder()
-                            .name(unprocessedOrder.getId().getName())
+                    .name(unprocessedOrder.getId().getName())
                     .date(unprocessedOrder.getId().getDate())
                     .operation(unprocessedOrder.getId().getOperation())
                     .trucksCount(unprocessedOrder.getTrucksCount())

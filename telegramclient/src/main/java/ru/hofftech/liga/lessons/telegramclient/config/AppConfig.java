@@ -26,7 +26,6 @@ public class AppConfig {
     private String parcelsLoaderUrl;
 
 
-    // Telegram
     @Bean
     public TelegramController telegramController(TelegramService telegramService) {
         return new TelegramController(telegramService);
@@ -43,7 +42,6 @@ public class AppConfig {
     }
 
 
-    // Services
     @Bean
     public UserCommandParserService userCommandParserService() {
         return new UserCommandParserService();

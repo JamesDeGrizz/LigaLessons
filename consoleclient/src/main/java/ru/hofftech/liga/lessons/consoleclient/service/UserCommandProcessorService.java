@@ -17,7 +17,7 @@ public class UserCommandProcessorService {
     public String processCommand(BaseUserCommandDto command) {
         return switch (command) {
             case CreateParcelUserCommandDto create -> parcelLoaderClientService.createParcel(create);
-            case FindParcelUserCommandDto find -> parcelLoaderClientService.findUserOrders(find.parcelId());
+            case FindParcelUserCommandDto find -> parcelLoaderClientService.getParcel(find.parcelId());
             case EditParcelUserCommandDto edit -> parcelLoaderClientService.updateParcel(edit.currentParcelId(), new CreateParcelUserCommandDto(edit.newParcelId(), edit.form(), edit.symbol()));
             case DeleteParcelUserCommandDto delete -> parcelLoaderClientService.deleteParcel(delete.parcelId());
             case LoadParcelsUserCommandDto load -> parcelLoaderClientService.load(load);

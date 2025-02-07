@@ -28,7 +28,6 @@ public class KafkaSenderService {
                 .build();
 
         if (!streamBridge.send(topic, message)){
-            // todo: outbox
             log.error("Не удалось отправить сообщение в биллинг сервис {}, заказ не будет сохранён", payload);
         }
     }

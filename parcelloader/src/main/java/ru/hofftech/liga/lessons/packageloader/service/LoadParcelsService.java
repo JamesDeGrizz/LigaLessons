@@ -1,25 +1,19 @@
-package ru.hofftech.liga.lessons.packageloader.service.command;
+package ru.hofftech.liga.lessons.packageloader.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.ApplicationContext;
 import ru.hofftech.liga.lessons.packageloader.mapper.ParcelMapper;
 import ru.hofftech.liga.lessons.packageloader.model.Parcel;
 import ru.hofftech.liga.lessons.packageloader.model.Truck;
 import ru.hofftech.liga.lessons.packageloader.model.TruckSize;
+import ru.hofftech.liga.lessons.packageloader.model.dto.LoadParcelsResponseDto;
 import ru.hofftech.liga.lessons.packageloader.model.dto.LoadParcelsUserCommandDto;
-import ru.hofftech.liga.lessons.packageloader.model.dto.LoadParcelsUserCommandResponseDto;
 import ru.hofftech.liga.lessons.packageloader.model.entity.OrderOutbox;
 import ru.hofftech.liga.lessons.packageloader.model.entity.OrderOutboxId;
 import ru.hofftech.liga.lessons.packageloader.model.enums.Command;
-import ru.hofftech.liga.lessons.packageloader.model.enums.PlacingAlgorithm;
 import ru.hofftech.liga.lessons.packageloader.repository.OrderRepository;
 import ru.hofftech.liga.lessons.packageloader.repository.ParcelRepository;
-import ru.hofftech.liga.lessons.packageloader.service.FileLoaderService;
-import ru.hofftech.liga.lessons.packageloader.service.ReportTruckService;
-import ru.hofftech.liga.lessons.packageloader.service.logistic.BalancedFillTruckLogisticService;
-import ru.hofftech.liga.lessons.packageloader.service.logistic.FullFillTruckLogisticService;
-import ru.hofftech.liga.lessons.packageloader.service.logistic.OnePerTruckLogisticService;
+import ru.hofftech.liga.lessons.packageloader.service.logistic.LogisticAlgorithmResolver;
 import ru.hofftech.liga.lessons.packageloader.validator.LoadParcelsUserCommandValidator;
 
 import java.util.ArrayList;
@@ -33,20 +27,22 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @RequiredArgsConstructor
-public class LoadParcelsUserCommandService {
+public class LoadParcelsService {
     private static final String PARCELS_DELIMITER = ",";
     private static final String TRUCKS_DELIMITER = ",";
     private static final String TRUCKS_SIZE_DELIMITER = "x";
+    private static final int TRUCKS_SIZE_WIDTH_INDEX = 0;
+    private static final int TRUCKS_SIZE_HEIGHT_INDEX = 1;
 
     private final FileLoaderService fileLoaderService;
     private final ReportTruckService reportTruckService;
     private final ParcelRepository parcelRepository;
     private final LoadParcelsUserCommandValidator commandValidator;
-    private final ApplicationContext applicationContext;
+    private final LogisticAlgorithmResolver logisticAlgorithmResolver;
     private final ParcelMapper parcelMapper;
     private final OrderRepository orderRepository;
 
-    public LoadParcelsUserCommandResponseDto execute(LoadParcelsUserCommandDto command) {
+    public LoadParcelsResponseDto execute(LoadParcelsUserCommandDto command) {
         if (command == null) {
             throw new IllegalArgumentException("Посылки не могут быть погружены: \nПередан пустой список аргументов");
         }
@@ -56,7 +52,6 @@ public class LoadParcelsUserCommandService {
             throw new IllegalArgumentException("Посылки не могут быть погружены: \n" + String.join("\n", validationErrors));
         }
 
-        var algorithm = getPlacingAlgorithm(command.type());
         var truckSizes = getTruckSizes(command.trucks());
         var needToSaveReport = command.outFilename() != null && !command.outFilename().isEmpty();
 
@@ -66,7 +61,7 @@ public class LoadParcelsUserCommandService {
             throw new IllegalArgumentException("Посылки не могут быть погружены: \n" + String.join("\n", errors));
         }
 
-        var trucks = placePackagesToTrucks(parcels, algorithm, truckSizes, errors);
+        var trucks = placePackagesToTrucks(parcels, command.type(), truckSizes, errors);
         if (!errors.isEmpty()) {
             throw new IllegalArgumentException("Посылки не могут быть погружены: \n" + String.join("\n", errors));
         }
@@ -88,7 +83,7 @@ public class LoadParcelsUserCommandService {
                                 .sum())
                 .build());
 
-        return new LoadParcelsUserCommandResponseDto("Посылки успешно погружены");
+        return new LoadParcelsResponseDto("Посылки успешно погружены");
     }
 
     private List<Parcel> getParcels(LoadParcelsUserCommandDto command, List<String> errors) {
@@ -113,17 +108,12 @@ public class LoadParcelsUserCommandService {
                 errors.add("Посылки с названием \"" + packageName + "\" не существует");
                 continue;
             }
-            parcels.add(parcelMapper.toParcelDto(found.get()));
+            parcels.add(parcelMapper.toParcel(found.get()));
         }
 
         return parcels.stream()
                 .sorted((p1, p2) -> p1.getWidth() * p1.getHeight() - p2.getWidth() * p2.getHeight())
                 .collect(Collectors.toList());
-    }
-
-    private PlacingAlgorithm getPlacingAlgorithm(String algorithmString) {
-        var algorithm = Integer.parseInt(algorithmString);
-        return PlacingAlgorithm.valueOf(algorithm);
     }
 
     private List<TruckSize> getTruckSizes(String trucks) {
@@ -132,24 +122,18 @@ public class LoadParcelsUserCommandService {
         var result = new ArrayList<TruckSize>();
         for (var truckSize : truckSizeList) {
             var widthAndHeight = truckSize.split(TRUCKS_SIZE_DELIMITER);
-            var width = Integer.parseInt(widthAndHeight[0]);
-            var height = Integer.parseInt(widthAndHeight[1]);
+            var width = Integer.parseInt(widthAndHeight[TRUCKS_SIZE_WIDTH_INDEX]);
+            var height = Integer.parseInt(widthAndHeight[TRUCKS_SIZE_HEIGHT_INDEX]);
             result.add(new TruckSize(width, height));
         }
 
         return result;
     }
 
-    private List<Truck> placePackagesToTrucks(List<Parcel> parcels, PlacingAlgorithm algorithm, List<TruckSize> truckSizes, List<String> errors) {
+    private List<Truck> placePackagesToTrucks(List<Parcel> parcels, String algorithm, List<TruckSize> truckSizes, List<String> errors) {
         List<Truck> trucks;
         try {
-            var logisticService = switch (algorithm) {
-                case ONE_PER_TRUCK -> applicationContext.getBean(OnePerTruckLogisticService.class);
-                case FILL_TRUCK -> applicationContext.getBean(FullFillTruckLogisticService.class);
-                case BALANCED -> applicationContext.getBean(BalancedFillTruckLogisticService.class);
-                case NONE_OF -> throw new IllegalArgumentException("Не выбран ни один алгоритм");
-
-            };
+            var logisticService = logisticAlgorithmResolver.getLogisticService(algorithm);
             trucks = logisticService.placeParcelsToTrucks(parcels, truckSizes);
         } catch (Exception e) {
             errors.add(e.getMessage());

@@ -18,17 +18,12 @@ public class ReportTruckServiceTest {
 
     @Test
     public void testReportTruckContent() {
-        // Arrange
         char[][] content = {
                 {'A', 'B', 'C'},
                 {'D', 'E', 'F'},
                 {'G', 'H', 'I'}
         };
 
-        // Act
         reportTruckService.reportTruckContent(content);
-
-        // Assert
-        // Здесь можно добавить проверку вывода в лог, если это необходимо
     }
 }

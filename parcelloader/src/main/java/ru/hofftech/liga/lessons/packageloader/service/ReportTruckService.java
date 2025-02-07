@@ -16,6 +16,9 @@ import java.util.stream.IntStream;
 @Slf4j
 public class ReportTruckService {
     private static final String TRUCKS_SAVED_TO_FILE_MESSAGE = "Грузовики успешно сохранены в файл ";
+    private static final String TRUCK_BORDER_SYMBOL = "+";
+    private static final String TRUCK_BORDER_SYMBOL_WITH_NEWLINE = "+\n";
+    private static final int ZERO_INDEX = 0;
 
     /**
      * Выводит содержимое грузовика в виде отчета.
@@ -29,14 +32,14 @@ public class ReportTruckService {
         IntStream.range(0, content.length)
                 .mapToObj(index -> content[content.length - 1 - index])
                 .forEach(row -> {
-                    builder.append("+");
-                    IntStream.range(0, row.length).forEach(j -> builder.append(row[j]));
-                    builder.append("+\n");
+                    builder.append(TRUCK_BORDER_SYMBOL);
+                    IntStream.range(ZERO_INDEX, row.length).forEach(j -> builder.append(row[j]));
+                    builder.append(TRUCK_BORDER_SYMBOL_WITH_NEWLINE);
                 });
 
-        builder.append("+");
-        IntStream.range(0, content[0].length).forEach(j -> builder.append("+"));
-        builder.append("+\n");
+        builder.append(TRUCK_BORDER_SYMBOL);
+        IntStream.range(ZERO_INDEX, content[ZERO_INDEX].length).forEach(j -> builder.append(TRUCK_BORDER_SYMBOL));
+        builder.append(TRUCK_BORDER_SYMBOL_WITH_NEWLINE);
 
         log.info(builder.toString());
     }

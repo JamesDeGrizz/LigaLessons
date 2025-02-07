@@ -19,7 +19,6 @@ class ReportParcelServiceTest {
     @TempDir
     Path tempDir;
 
-    // Тестовые данные
     private List<Parcel> createTestParcels() {
         return List.of(
                 new Parcel(List.of("XX"), "Box", 'C', null),

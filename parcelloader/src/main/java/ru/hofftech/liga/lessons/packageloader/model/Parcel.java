@@ -78,15 +78,6 @@ public class Parcel {
     }
 
     /**
-     * Проверяет, размещена ли посылка.
-     *
-     * @return true, если посылка размещена, false в противном случае
-     */
-    public boolean placed() {
-        return placingPoints != null;
-    }
-
-    /**
      * Размещает посылку в указанных точках размещения.
      *
      * @param placingPoints список точек размещения

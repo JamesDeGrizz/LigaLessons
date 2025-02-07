@@ -4,6 +4,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 import ru.hofftech.liga.lessons.packageloader.model.Parcel;
+import ru.hofftech.liga.lessons.packageloader.model.dto.ParcelDto;
 import ru.hofftech.liga.lessons.packageloader.model.entity.ParcelEntity;
 
 import java.util.Arrays;
@@ -13,18 +14,16 @@ import java.util.List;
 public abstract class ParcelMapper {
     static final String DELIMITER = ",";
 
-    @Mapping(target = "content", source = "content", qualifiedByName = "stringListToString")
+    @Mapping(target = "content", source = "form")
     @Mapping(target = "id", ignore = true)
-    public abstract ParcelEntity toParcelEntity(Parcel dto);
+    public abstract ParcelEntity toParcelEntity(ParcelDto dto);
+
+    @Mapping(target = "form", source = "content")
+    public abstract ParcelDto toParcelDto(ParcelEntity entity);
 
     @Mapping(target = "content", source = "content", qualifiedByName = "stringToStringList")
     @Mapping(target = "placingPoints", ignore = true)
-    public abstract Parcel toParcelDto(ParcelEntity entity);
-
-    @Named("stringListToString")
-    public static String stringListToString(List<String> content) {
-        return String.join(DELIMITER, content);
-    }
+    public abstract Parcel toParcel(ParcelEntity entity);
 
     @Named("stringToStringList")
     public static List<String> stringToStringList(String content) {

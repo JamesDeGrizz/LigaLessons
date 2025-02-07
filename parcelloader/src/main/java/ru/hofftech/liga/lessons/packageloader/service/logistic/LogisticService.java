@@ -1,4 +1,4 @@
-package ru.hofftech.liga.lessons.packageloader.service.interfaces;
+package ru.hofftech.liga.lessons.packageloader.service.logistic;
 
 import ru.hofftech.liga.lessons.packageloader.model.Parcel;
 import ru.hofftech.liga.lessons.packageloader.model.Truck;

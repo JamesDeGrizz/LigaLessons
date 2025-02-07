@@ -1,4 +1,4 @@
-package ru.hofftech.liga.lessons.packageloader.service.logistic;
+package ru.hofftech.liga.lessons.packageloader.service.logistic.impl;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -6,7 +6,7 @@ import ru.hofftech.liga.lessons.packageloader.model.Parcel;
 import ru.hofftech.liga.lessons.packageloader.model.Truck;
 import ru.hofftech.liga.lessons.packageloader.model.TruckSize;
 import ru.hofftech.liga.lessons.packageloader.service.TruckService;
-import ru.hofftech.liga.lessons.packageloader.service.interfaces.LogisticService;
+import ru.hofftech.liga.lessons.packageloader.service.logistic.LogisticService;
 
 import java.util.ArrayList;
 import java.util.Comparator;

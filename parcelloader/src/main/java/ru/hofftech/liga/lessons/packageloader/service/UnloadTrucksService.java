@@ -1,16 +1,14 @@
-package ru.hofftech.liga.lessons.packageloader.service.command;
+package ru.hofftech.liga.lessons.packageloader.service;
 
 import lombok.RequiredArgsConstructor;
 import ru.hofftech.liga.lessons.packageloader.model.Parcel;
 import ru.hofftech.liga.lessons.packageloader.model.Truck;
 import ru.hofftech.liga.lessons.packageloader.model.dto.UnloadTrucksUserCommandDto;
-import ru.hofftech.liga.lessons.packageloader.model.dto.UnloadTrucksUserCommandResponseDto;
+import ru.hofftech.liga.lessons.packageloader.model.dto.UnloadTrucksResponseDto;
 import ru.hofftech.liga.lessons.packageloader.model.entity.OrderOutbox;
 import ru.hofftech.liga.lessons.packageloader.model.entity.OrderOutboxId;
 import ru.hofftech.liga.lessons.packageloader.model.enums.Command;
 import ru.hofftech.liga.lessons.packageloader.repository.OrderRepository;
-import ru.hofftech.liga.lessons.packageloader.service.FileLoaderService;
-import ru.hofftech.liga.lessons.packageloader.service.ReportParcelService;
 import ru.hofftech.liga.lessons.packageloader.validator.UnloadTrucksUserCommandValidator;
 
 import java.util.ArrayList;
@@ -21,13 +19,13 @@ import java.util.List;
  * Сервис для разгрузки грузовиков на основе команд пользователя.
  */
 @RequiredArgsConstructor
-public class UnloadTrucksUserCommandService {
+public class UnloadTrucksService {
     private final FileLoaderService fileLoaderService;
     private final ReportParcelService reportParcelService;
     private final UnloadTrucksUserCommandValidator commandValidator;
     private final OrderRepository orderRepository;
 
-    public UnloadTrucksUserCommandResponseDto execute(UnloadTrucksUserCommandDto command) {
+    public UnloadTrucksResponseDto execute(UnloadTrucksUserCommandDto command) {
         if (command == null) {
             throw new IllegalArgumentException("Посылки не могут быть разгружены: \nПередан пустой список аргументов");
         }
@@ -57,11 +55,11 @@ public class UnloadTrucksUserCommandService {
                         .trucksCount(trucks.size())
                         .parcelsCount(parcels.size())
                         .cellsCount(parcels.stream()
-                                .mapToInt(parcel -> parcel.getSize())
+                                .mapToInt(Parcel::getSize)
                                 .sum())
                         .build());
 
-        return new UnloadTrucksUserCommandResponseDto("Посылки успешно разгружены");
+        return new UnloadTrucksResponseDto("Посылки успешно разгружены");
     }
 
     private List<Parcel> getParcelsFromTrucks(List<Truck> trucks) {

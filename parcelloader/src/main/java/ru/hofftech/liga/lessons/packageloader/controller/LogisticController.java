@@ -8,27 +8,27 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.hofftech.liga.lessons.packageloader.model.dto.LoadParcelsUserCommandDto;
-import ru.hofftech.liga.lessons.packageloader.model.dto.LoadParcelsUserCommandResponseDto;
+import ru.hofftech.liga.lessons.packageloader.model.dto.LoadParcelsResponseDto;
 import ru.hofftech.liga.lessons.packageloader.model.dto.UnloadTrucksUserCommandDto;
-import ru.hofftech.liga.lessons.packageloader.model.dto.UnloadTrucksUserCommandResponseDto;
-import ru.hofftech.liga.lessons.packageloader.service.command.LoadParcelsUserCommandService;
-import ru.hofftech.liga.lessons.packageloader.service.command.UnloadTrucksUserCommandService;
+import ru.hofftech.liga.lessons.packageloader.model.dto.UnloadTrucksResponseDto;
+import ru.hofftech.liga.lessons.packageloader.service.LoadParcelsService;
+import ru.hofftech.liga.lessons.packageloader.service.UnloadTrucksService;
 
 @RestController
 @Tag(name = "LogisticController", description = "Операции с посылками")
-@RequestMapping(path = "/api/v1/logistic", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(path = "/api/v1/logistics", produces = MediaType.APPLICATION_JSON_VALUE)
 @RequiredArgsConstructor
 public class LogisticController {
-    private final LoadParcelsUserCommandService loadParcelsUserCommandService;
-    private final UnloadTrucksUserCommandService unloadTrucksUserCommandService;
+    private final LoadParcelsService loadParcelsService;
+    private final UnloadTrucksService unloadTrucksService;
 
     @PostMapping("/loading")
-    public LoadParcelsUserCommandResponseDto load(@RequestBody LoadParcelsUserCommandDto dto) {
-        return loadParcelsUserCommandService.execute(dto);
+    public LoadParcelsResponseDto load(@RequestBody LoadParcelsUserCommandDto dto) {
+        return loadParcelsService.execute(dto);
     }
 
     @PostMapping("/unloading")
-    public UnloadTrucksUserCommandResponseDto unload(@RequestBody UnloadTrucksUserCommandDto dto) {
-        return unloadTrucksUserCommandService.execute(dto);
+    public UnloadTrucksResponseDto unload(@RequestBody UnloadTrucksUserCommandDto dto) {
+        return unloadTrucksService.execute(dto);
     }
 }

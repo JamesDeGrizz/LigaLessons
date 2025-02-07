@@ -1,4 +1,4 @@
-package ru.hofftech.liga.lessons.packageloader.service.logistic;
+package ru.hofftech.liga.lessons.packageloader.service.logistic.impl;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

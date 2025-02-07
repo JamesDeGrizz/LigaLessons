@@ -16,7 +16,6 @@ public class AppConfig {
     @Value("${services.url.parcels-loader}")
     private String parcelsLoaderUrl;
 
-    // Services
     @Bean
     public UserCommandProcessorService userCommandProcessorService(ParcelLoaderClient parcelLoaderClientService) {
         return new UserCommandProcessorService(parcelLoaderClientService);
