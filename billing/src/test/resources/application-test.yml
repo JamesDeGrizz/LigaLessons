@@ -1,8 +1,12 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5435/postgres
-    username: postgres
-    password: postgres
+#    url: jdbc:postgresql://localhost:5432/delivery_db
+#    username: test
+#    password: test
     driver-class-name: org.postgresql.Driver
+
   kafka:
-    bootstrap-servers: localhost:29092
+    bootstrap-servers: ${spring.kafka.bootstrap-servers}
+
+  flyway:
+    locations: classpath:db/migration

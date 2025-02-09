@@ -67,7 +67,11 @@ dependencies {
 
     testImplementation(platform("org.junit:junit-bom:${Versions.JUNIT_BOM}"))
     testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("org.testcontainers:junit-jupiter")
+    testImplementation("org.testcontainers:testcontainers")
     testImplementation("org.junit.jupiter:junit-jupiter")
+    testImplementation("org.testcontainers:postgresql")
+    testImplementation("org.testcontainers:kafka")
     testImplementation("org.assertj:assertj-core:${Versions.ASSERTJ_CORE}")
 }
 

@@ -3,8 +3,6 @@ package ru.hofftech.liga.lessons.packageloader.service;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import ru.hofftech.liga.lessons.packageloader.model.dto.OrderDto;
 import ru.hofftech.liga.lessons.packageloader.repository.OrderRepository;
@@ -19,10 +17,6 @@ public class OrderUnboxService {
     private final OrderRepository orderRepository;
     private final KafkaSenderService kafkaSenderService;
 
-    @Value("${task.send-unprocessed-orders.rate-ms}")
-    private final int sendUnprocessedOrdersRateMs = 1000;
-
-    @Scheduled(fixedRate = sendUnprocessedOrdersRateMs)
     @Transactional
     public void sendUnprocessedOrders() {
         var unprocessedOrders = orderRepository.findAllBySent(false);
