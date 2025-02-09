@@ -2,16 +2,16 @@ package ru.hofftech.liga.lessons.telegramclient.model.dto;
 
 import java.util.Map;
 
-public record UnloadTrucksUserCommandDto(String infile,
-                                         String outfile,
-                                         String userId,
-                                         boolean withCount) {
+public record UnloadTrucksRequestDto(String infile,
+                                     String outfile,
+                                     String userId,
+                                     boolean withCount) {
     private static final String ARGUMENT_IN_FILE = "--infile";
     private static final String ARGUMENT_OUT_FILE = "--outfile";
     private static final String ARGUMENT_WITH_COUNT = "--withcount";
     private static final String ARGUMENT_USER_ID = "--user-id";
 
-    public static UnloadTrucksUserCommandDto fromArgsMap(Map<String, String> args) {
+    public static UnloadTrucksRequestDto fromArgsMap(Map<String, String> args) {
         if (args == null || args.isEmpty()) {
             return null;
         }
@@ -32,6 +32,6 @@ public record UnloadTrucksUserCommandDto(String infile,
             userId = args.get(ARGUMENT_USER_ID);
         }
 
-        return new UnloadTrucksUserCommandDto(infile, outfile, userId, withCount);
+        return new UnloadTrucksRequestDto(infile, outfile, userId, withCount);
     }
 }

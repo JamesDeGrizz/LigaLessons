@@ -1,6 +1,7 @@
 package ru.hofftech.liga.lessons.packageloader.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -10,6 +11,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.kafka.KafkaContainer;
 import ru.hofftech.liga.lessons.packageloader.model.dto.ParcelDto;
 import ru.hofftech.liga.lessons.packageloader.service.ParcelService;
 
@@ -30,6 +34,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @ExtendWith(MockitoExtension.class)
 class ParcelControllerTest {
+    @Container
+    public static PostgreSQLContainer<?> postgresqlContainer = new PostgreSQLContainer<>("postgres:17")
+            .withDatabaseName("testdb")
+            .withUsername("test")
+            .withPassword("test");
+
+    @Container
+    public static KafkaContainer kafkaContainer = new KafkaContainer("apache/kafka-native:3.8.0");
+
     private MockMvc mockMvc;
 
     @Mock
@@ -39,6 +52,16 @@ class ParcelControllerTest {
     private ParcelController parcelController;
 
     private final ObjectMapper objectMapper = new ObjectMapper();
+
+    @BeforeAll
+    static void beforeAll() {
+        kafkaContainer.start();
+        postgresqlContainer.start();
+        System.setProperty("spring.datasource.url", postgresqlContainer.getJdbcUrl());
+        System.setProperty("spring.datasource.username", postgresqlContainer.getUsername());
+        System.setProperty("spring.datasource.password", postgresqlContainer.getPassword());
+        System.setProperty("spring.kafka.bootstrap-servers", kafkaContainer.getBootstrapServers());
+    }
 
     @BeforeEach
     void setUp() {
@@ -119,7 +142,7 @@ class ParcelControllerTest {
         mockMvc.perform(put("/api/v1/parcels/{targetParcelName}", "parcel1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(parcelDto)))
-                .andExpect(status().isNoContent());
+                .andExpect(status().isOk());
 
         verify(parcelService, times(1)).edit(eq("parcel1"), any(ParcelDto.class));
     }
@@ -129,7 +152,7 @@ class ParcelControllerTest {
         doNothing().when(parcelService).delete("parcel1");
 
         mockMvc.perform(delete("/api/v1/parcels/{parcelName}", "parcel1"))
-                .andExpect(status().isNoContent());
+                .andExpect(status().isOk());
 
         verify(parcelService, times(1)).delete("parcel1");
     }

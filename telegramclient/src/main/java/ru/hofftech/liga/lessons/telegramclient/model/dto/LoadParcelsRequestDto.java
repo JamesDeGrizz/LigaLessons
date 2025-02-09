@@ -2,13 +2,13 @@ package ru.hofftech.liga.lessons.telegramclient.model.dto;
 
 import java.util.Map;
 
-public record LoadParcelsUserCommandDto(String out,
-                                        String type,
-                                        String trucks,
-                                        String userId,
-                                        String outFilename,
-                                        String parcelsText,
-                                        String parcelsFile) {
+public record LoadParcelsRequestDto(String out,
+                                    String type,
+                                    String trucks,
+                                    String userId,
+                                    String outFilename,
+                                    String parcelsText,
+                                    String parcelsFile) {
     private static final String ARGUMENT_OUT_TYPE = "--out";
     private static final String ARGUMENT_OUT_FILENAME = "--out-filename";
     private static final String ARGUMENT_PARCELS_TEXT = "--parcels-text";
@@ -17,7 +17,7 @@ public record LoadParcelsUserCommandDto(String out,
     private static final String ARGUMENT_TRUCKS = "--trucks";
     private static final String ARGUMENT_USER_ID = "--user-id";
 
-    public static LoadParcelsUserCommandDto fromArgsMap(Map<String, String> args) {
+    public static LoadParcelsRequestDto fromArgsMap(Map<String, String> args) {
         if (args == null || args.isEmpty()) {
             return null;
         }
@@ -52,6 +52,6 @@ public record LoadParcelsUserCommandDto(String out,
             parcelsFile = args.get(ARGUMENT_PARCELS_FILE);
         }
 
-        return new LoadParcelsUserCommandDto(out, type, trucks, userId, outFilename, parcelsText, parcelsFile);
+        return new LoadParcelsRequestDto(out, type, trucks, userId, outFilename, parcelsText, parcelsFile);
     }
 }

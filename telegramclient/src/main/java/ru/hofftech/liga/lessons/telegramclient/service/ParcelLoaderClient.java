@@ -7,8 +7,8 @@ import org.springframework.web.service.annotation.GetExchange;
 import org.springframework.web.service.annotation.PostExchange;
 import org.springframework.web.service.annotation.PutExchange;
 import ru.hofftech.liga.lessons.telegramclient.model.dto.CreateParcelUserCommandDto;
-import ru.hofftech.liga.lessons.telegramclient.model.dto.LoadParcelsUserCommandDto;
-import ru.hofftech.liga.lessons.telegramclient.model.dto.UnloadTrucksUserCommandDto;
+import ru.hofftech.liga.lessons.telegramclient.model.dto.LoadParcelsRequestDto;
+import ru.hofftech.liga.lessons.telegramclient.model.dto.UnloadTrucksRequestDto;
 
 public interface ParcelLoaderClient {
     @GetExchange("/api/v1/parcels/{parcelId}")
@@ -25,10 +25,10 @@ public interface ParcelLoaderClient {
     String deleteParcel(@PathVariable String parcelId);
 
     @PostExchange("/api/v1/logistic/loading")
-    String load(@RequestBody LoadParcelsUserCommandDto dto);
+    String load(@RequestBody LoadParcelsRequestDto dto);
 
     @PostExchange("/api/v1/logistic/unloading")
-    String unload(@RequestBody UnloadTrucksUserCommandDto dto);
+    String unload(@RequestBody UnloadTrucksRequestDto dto);
 
     @GetExchange("/api/v1/orders/{userid}")
     String findUserOrders(@PathVariable String userid);

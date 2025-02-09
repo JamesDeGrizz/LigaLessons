@@ -6,3 +6,4 @@ telegram:
 services:
   url:
     parcels-loader: http://localhost:8080
+    billing: http://localhost:8083
