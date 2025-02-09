@@ -2,6 +2,8 @@ package ru.hofftech.liga.lessons.telegramclient.service;
 
 import lombok.extern.slf4j.Slf4j;
 import ru.hofftech.liga.lessons.telegramclient.model.ParsedCommand;
+import ru.hofftech.liga.lessons.telegramclient.model.dto.LoadParcelsRequestDto;
+import ru.hofftech.liga.lessons.telegramclient.model.dto.UnloadTrucksRequestDto;
 import ru.hofftech.liga.lessons.telegramclient.model.enums.Command;
 
 import java.util.Collections;
@@ -39,6 +41,23 @@ public class UserCommandParserService {
     private final Pattern oneArgumentPattern = Pattern.compile(ONE_ARGUMENT_REGEX);
     private final Pattern flagsArgumentPattern = Pattern.compile(FLAGS_ARGUMENT_REGEX);
 
+    private static final String ARGUMENT_NAME = "--name";
+    private static final String ARGUMENT_SYMBOL = "--symbol";
+    private static final String ARGUMENT_FORM = "--form";
+    private static final String ARGUMENT_TARGET_PARCEL_NAME = "--targetParcelName";
+    private static final String ARGUMENT_USER_ID = "--user-id";
+
+    private static final String ARGUMENT_OUT_TYPE = "--out";
+    private static final String ARGUMENT_OUT_FILENAME = "--out-filename";
+    private static final String ARGUMENT_PARCELS_TEXT = "--parcels-text";
+    private static final String ARGUMENT_PARCELS_FILE = "--parcels-file";
+    private static final String ARGUMENT_ALGORITHM_TYPE = "--type";
+    private static final String ARGUMENT_TRUCKS = "--trucks";
+
+    private static final String ARGUMENT_IN_FILE = "--infile";
+    private static final String ARGUMENT_OUT_FILE = "--outfile";
+    private static final String ARGUMENT_WITH_COUNT = "--withcount";
+
     public ParsedCommand parse(String userCommand) {
         var commandMatcher = commandPattern.matcher(userCommand);
 
@@ -57,6 +76,108 @@ public class UserCommandParserService {
             case ORDERS_COMMAND -> new ParsedCommand(Command.SHOW_ORDERS, args);
             default -> null;
         };
+    }
+
+    public String getName(Map<String, String> args) {
+        if (args == null || args.isEmpty() || !args.containsKey(ARGUMENT_NAME)) {
+            return null;
+        }
+
+        return args.get(ARGUMENT_NAME);
+    }
+
+    public String getSymbol(Map<String, String> args) {
+        if (args == null || args.isEmpty() || !args.containsKey(ARGUMENT_SYMBOL)) {
+            return null;
+        }
+
+        return args.get(ARGUMENT_SYMBOL);
+    }
+
+    public String getForm(Map<String, String> args) {
+        if (args == null || args.isEmpty() || !args.containsKey(ARGUMENT_FORM)) {
+            return null;
+        }
+
+        return args.get(ARGUMENT_FORM);
+    }
+
+    public String getTargetParcelName(Map<String, String> args) {
+        if (args == null || args.isEmpty() || !args.containsKey(ARGUMENT_TARGET_PARCEL_NAME)) {
+            return null;
+        }
+
+        return args.get(ARGUMENT_TARGET_PARCEL_NAME);
+    }
+
+    public String getUserId(Map<String, String> args) {
+        if (args == null || args.isEmpty() || !args.containsKey(ARGUMENT_USER_ID)) {
+            return null;
+        }
+
+        return args.get(ARGUMENT_USER_ID);
+    }
+
+    public LoadParcelsRequestDto getLoadParcelsRequestDto(Map<String, String> args) {
+        if (args == null || args.isEmpty()) {
+            return null;
+        }
+
+        String out = null;
+        String type = null;
+        String trucks = null;
+        String userId = null;
+        String outFilename = null;
+        String parcelsText = null;
+        String parcelsFile = null;
+
+        if (args.containsKey(ARGUMENT_OUT_TYPE)) {
+            out = args.get(ARGUMENT_OUT_TYPE);
+        }
+        if (args.containsKey(ARGUMENT_ALGORITHM_TYPE)) {
+            type = args.get(ARGUMENT_ALGORITHM_TYPE);
+        }
+        if (args.containsKey(ARGUMENT_TRUCKS)) {
+            trucks = args.get(ARGUMENT_TRUCKS);
+        }
+        if (args.containsKey(ARGUMENT_USER_ID)) {
+            userId = args.get(ARGUMENT_USER_ID);
+        }
+        if (args.containsKey(ARGUMENT_OUT_FILENAME)) {
+            outFilename = args.get(ARGUMENT_OUT_FILENAME);
+        }
+        if (args.containsKey(ARGUMENT_PARCELS_TEXT)) {
+            parcelsText = args.get(ARGUMENT_PARCELS_TEXT);
+        }
+        if (args.containsKey(ARGUMENT_PARCELS_FILE)) {
+            parcelsFile = args.get(ARGUMENT_PARCELS_FILE);
+        }
+
+        return new LoadParcelsRequestDto(out, type, trucks, userId, outFilename, parcelsText, parcelsFile);
+    }
+
+    public UnloadTrucksRequestDto getUnloadTrucksRequestDto(Map<String, String> args) {
+        if (args == null || args.isEmpty()) {
+            return null;
+        }
+
+        String infile = null;
+        String outfile = null;
+        String userId = null;
+        Boolean withCount = null;
+
+        if (args.containsKey(ARGUMENT_IN_FILE)) {
+            infile = args.get(ARGUMENT_IN_FILE);
+        }
+        if (args.containsKey(ARGUMENT_OUT_FILE)) {
+            outfile = args.get(ARGUMENT_OUT_FILE);
+        }
+        withCount = args.containsKey(ARGUMENT_WITH_COUNT);
+        if (args.containsKey(ARGUMENT_USER_ID)) {
+            userId = args.get(ARGUMENT_USER_ID);
+        }
+
+        return new UnloadTrucksRequestDto(infile, outfile, userId, withCount);
     }
 
     private Map<String, String> parseArguments(String userCommand) {
