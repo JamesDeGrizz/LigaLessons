@@ -9,7 +9,6 @@ import ru.hofftech.liga.lessons.telegramclient.model.enums.Command;
 @Service
 public class UserCommandProcessorService {
     private final UserCommandParserService userCommandParserService;
-    private final ParcelLoaderClient parcelLoaderClientService;
     private final ParcelService parcelService;
     private final BillingService billingService;
     private final LogisticService logisticService;
@@ -28,7 +27,7 @@ public class UserCommandProcessorService {
                                 .name(userCommandParserService.getName(args))
                                 .form(userCommandParserService.getForm(args))
                                 .symbol(userCommandParserService.getSymbol(args))
-                        .build()).toString();
+                                .build()).toString();
                 case Command.FIND_PARCEL -> parcelService.findParcel(userCommandParserService.getName(args));
                 case Command.EDIT_PARCEL -> parcelService.updateParcel(
                         userCommandParserService.getTargetParcelName(args),
@@ -38,8 +37,10 @@ public class UserCommandProcessorService {
                                 .symbol(userCommandParserService.getSymbol(args))
                                 .build());
                 case Command.DELETE_PARCEL -> parcelService.deleteParcel(userCommandParserService.getName(args));
-                case Command.LOAD_PARCELS -> logisticService.load(userCommandParserService.getLoadParcelsRequestDto(args));
-                case Command.UNLOAD_TRUCKS -> logisticService.unload(userCommandParserService.getUnloadTrucksRequestDto(args));
+                case Command.LOAD_PARCELS ->
+                        logisticService.load(userCommandParserService.getLoadParcelsRequestDto(args));
+                case Command.UNLOAD_TRUCKS ->
+                        logisticService.unload(userCommandParserService.getUnloadTrucksRequestDto(args));
                 case Command.SHOW_ORDERS -> billingService.getOrders(userCommandParserService.getUserId(args));
             };
         } catch (Exception e) {

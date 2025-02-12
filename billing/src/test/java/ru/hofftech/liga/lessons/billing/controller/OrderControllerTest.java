@@ -45,8 +45,6 @@ class OrderControllerTest {
 
     @BeforeAll
     static void beforeAll() {
-        kafkaContainer.start();
-        postgresqlContainer.start();
         System.setProperty("spring.datasource.url", postgresqlContainer.getJdbcUrl());
         System.setProperty("spring.datasource.username", postgresqlContainer.getUsername());
         System.setProperty("spring.datasource.password", postgresqlContainer.getPassword());

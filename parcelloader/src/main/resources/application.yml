@@ -24,6 +24,3 @@ task:
     thread-name-prefix: Scheduler-
   send-unprocessed-orders:
     rate-ms: 1000
-
-parcels:
-  delimiter:
