@@ -4,14 +4,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
-import ru.hofftech.liga.lessons.consoleclient.model.dto.LoadParcelsUserCommandDto;
-import ru.hofftech.liga.lessons.consoleclient.model.dto.UnloadTrucksUserCommandDto;
-import ru.hofftech.liga.lessons.consoleclient.service.UserCommandProcessorService;
+import ru.hofftech.liga.lessons.consoleclient.model.dto.LoadParcelsRequestDto;
+import ru.hofftech.liga.lessons.consoleclient.model.dto.UnloadTrucksRequestDto;
+import ru.hofftech.liga.lessons.consoleclient.service.LogisticService;
 
 @ShellComponent
 @RequiredArgsConstructor
 public class LogisticController {
-    private final UserCommandProcessorService userCommandProcessorService;
+    private final LogisticService logisticService;
 
     @ShellMethod("Загрузка посылок в грузовики")
     public String load(@ShellOption String out,
@@ -21,7 +21,7 @@ public class LogisticController {
                        @ShellOption(value = "out-filename", defaultValue = "") String outFilename,
                        @ShellOption(value = "parcels-text", defaultValue = "") String parcelsText,
                        @ShellOption(value = "parcels-file", defaultValue = "") String parcelsFile) {
-        return userCommandProcessorService.processCommand(new LoadParcelsUserCommandDto(out, type, trucks, userId, outFilename, parcelsText, parcelsFile));
+        return logisticService.load(new LoadParcelsRequestDto(out, type, trucks, userId, outFilename, parcelsText, parcelsFile));
     }
 
     @ShellMethod("Разгрузка грузовиков")
@@ -29,6 +29,6 @@ public class LogisticController {
                          @ShellOption String outfile,
                          @ShellOption(value = "user-id") String userId,
                          @ShellOption(value = "with-count", defaultValue = "false") boolean withCount) {
-        return userCommandProcessorService.processCommand(new UnloadTrucksUserCommandDto(infile, outfile, userId, withCount));
+        return logisticService.unload(new UnloadTrucksRequestDto(infile, outfile, userId, withCount));
     }
 }

@@ -47,3 +47,10 @@ gradle/
 spring-shell.log
 parcelloader/testFile.json
 parcelloader/trucks.json
+docker-compose-local.yml
+*.env
+parcelloader/src/main/resources/parcels.txt
+parcelloader/src/main/resources/parcels2.txt
+parcelloader/src/main/resources/parcels3.txt
+parcelloader/src/main/resources/parcels4.txt
+parcelloader/src/main/resources/trucks.json

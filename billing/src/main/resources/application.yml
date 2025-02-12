@@ -1,0 +1,28 @@
+spring:
+  datasource:
+    url: ${POSTGRES_URL}
+    username: ${POSTGRES_USERNAME}
+    password: ${POSTGRES_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    show-sql: true
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
+  cloud:
+    function:
+      definition: "orders"
+    stream:
+      kafka:
+        binder:
+          auto-create-topics: true
+          auto-add-partitions: true
+      bindings:
+        orders-in-0:
+          destination: parcels.orders.0
+          group: billing_logistic_v0
+          contentType: application/json
+
+billing:
+  pricing:
+    load: 80
+    unload: 50

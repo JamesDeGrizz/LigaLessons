@@ -28,6 +28,7 @@ object Versions {
     const val MAPSTRUCT = "1.6.3"
     const val MAPSTRUCT_LOMBOK = "0.2.0"
     const val SWAGGER = "2.8.3"
+    const val CLOUD = "2024.0.0"
 }
 
 dependencies {
@@ -35,9 +36,11 @@ dependencies {
     annotationProcessor("org.projectlombok:lombok-mapstruct-binding:${Versions.MAPSTRUCT_LOMBOK}")
     annotationProcessor("org.projectlombok:lombok:${Versions.LOMBOK}")
 
+    implementation(platform("org.springframework.cloud:spring-cloud-dependencies:${Versions.CLOUD}"))
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:${Versions.SWAGGER}")
+    implementation("org.springframework.cloud:spring-cloud-starter-stream-kafka")
 
     implementation("org.flywaydb:flyway-core")
     implementation("org.flywaydb:flyway-database-postgresql")
@@ -63,6 +66,10 @@ dependencies {
     testImplementation(platform("org.junit:junit-bom:${Versions.JUNIT_BOM}"))
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.junit.jupiter:junit-jupiter")
+    testImplementation("org.testcontainers:junit-jupiter")
+    testImplementation("org.testcontainers:testcontainers")
+    testImplementation("org.testcontainers:postgresql")
+    testImplementation("org.testcontainers:kafka")
     testImplementation("org.assertj:assertj-core:${Versions.ASSERTJ_CORE}")
 }
 

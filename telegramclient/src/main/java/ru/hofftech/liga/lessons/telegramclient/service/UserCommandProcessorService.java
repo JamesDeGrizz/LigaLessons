@@ -2,20 +2,16 @@ package ru.hofftech.liga.lessons.telegramclient.service;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.hofftech.liga.lessons.telegramclient.model.dto.CreateParcelUserCommandDto;
-import ru.hofftech.liga.lessons.telegramclient.model.dto.DeleteParcelUserCommandDto;
-import ru.hofftech.liga.lessons.telegramclient.model.dto.EditParcelUserCommandDto;
-import ru.hofftech.liga.lessons.telegramclient.model.dto.FindParcelUserCommandDto;
-import ru.hofftech.liga.lessons.telegramclient.model.dto.FindUserOrdersUserCommandDto;
-import ru.hofftech.liga.lessons.telegramclient.model.dto.LoadParcelsUserCommandDto;
-import ru.hofftech.liga.lessons.telegramclient.model.dto.UnloadTrucksUserCommandDto;
+import ru.hofftech.liga.lessons.telegramclient.model.dto.ParcelDto;
 import ru.hofftech.liga.lessons.telegramclient.model.enums.Command;
 
 @AllArgsConstructor
 @Service
 public class UserCommandProcessorService {
     private final UserCommandParserService userCommandParserService;
-    private final ParcelLoaderClient parcelLoaderClientService;
+    private final ParcelService parcelService;
+    private final BillingService billingService;
+    private final LogisticService logisticService;
 
     public String processRawInput(String userInput) {
         try {
@@ -24,14 +20,28 @@ public class UserCommandProcessorService {
                 return "Введена нераспознанная команда. Попробуйте ещё раз";
             }
 
+            var args = command.getArgs();
             return switch (command.getCommand()) {
-                case Command.CREATE_PARCEL -> parcelLoaderClientService.createParcel(CreateParcelUserCommandDto.fromArgsMap(command.getArgs()));
-                case Command.FIND_PARCEL -> parcelLoaderClientService.getParcel(FindParcelUserCommandDto.fromArgsMap(command.getArgs()).parcelId());
-                case Command.EDIT_PARCEL -> parcelLoaderClientService.updateParcel(EditParcelUserCommandDto.fromArgsMap(command.getArgs()).currentParcelId(), CreateParcelUserCommandDto.fromArgsMap(command.getArgs()));
-                case Command.DELETE_PARCEL -> parcelLoaderClientService.deleteParcel(DeleteParcelUserCommandDto.fromArgsMap(command.getArgs()).parcelId());
-                case Command.LOAD_PARCELS -> parcelLoaderClientService.load(LoadParcelsUserCommandDto.fromArgsMap(command.getArgs()));
-                case Command.UNLOAD_TRUCKS -> parcelLoaderClientService.unload(UnloadTrucksUserCommandDto.fromArgsMap(command.getArgs()));
-                case Command.SHOW_ORDERS -> parcelLoaderClientService.findUserOrders(FindUserOrdersUserCommandDto.fromArgsMap(command.getArgs()).userId());
+                case Command.CREATE_PARCEL -> parcelService.createParcel(
+                        ParcelDto.builder()
+                                .name(userCommandParserService.getName(args))
+                                .form(userCommandParserService.getForm(args))
+                                .symbol(userCommandParserService.getSymbol(args))
+                                .build()).toString();
+                case Command.FIND_PARCEL -> parcelService.findParcel(userCommandParserService.getName(args));
+                case Command.EDIT_PARCEL -> parcelService.updateParcel(
+                        userCommandParserService.getTargetParcelName(args),
+                        ParcelDto.builder()
+                                .name(userCommandParserService.getName(args))
+                                .form(userCommandParserService.getForm(args))
+                                .symbol(userCommandParserService.getSymbol(args))
+                                .build());
+                case Command.DELETE_PARCEL -> parcelService.deleteParcel(userCommandParserService.getName(args));
+                case Command.LOAD_PARCELS ->
+                        logisticService.load(userCommandParserService.getLoadParcelsRequestDto(args));
+                case Command.UNLOAD_TRUCKS ->
+                        logisticService.unload(userCommandParserService.getUnloadTrucksRequestDto(args));
+                case Command.SHOW_ORDERS -> billingService.getOrders(userCommandParserService.getUserId(args));
             };
         } catch (Exception e) {
             return e.getMessage();

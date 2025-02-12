@@ -1,5 +1,5 @@
 services:
-  postgres:
+  parcels_db:
     image: postgres
     container_name: parcels_db
     ports:
@@ -10,6 +10,55 @@ services:
       - POSTGRES_PASSWORD=postgres
     networks:
       - spring-rest-client
+      
+  billing_db:
+    image: postgres
+    container_name: billing_db
+    ports:
+      - 5435:5432
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - PORT=5435
+    networks:
+      - spring-rest-client
+
+  kafka:
+    image: apache/kafka:latest
+    container_name: kafka
+    ports:
+      - 29092:29092
+      - 29997:29997
+    environment:
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_LISTENERS: PLAINTEXT://:9092,CONTROLLER://:9093,EXTERNAL://:29092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://:9092,EXTERNAL://localhost:29092
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,EXTERNAL:PLAINTEXT
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_NUM_PARTITIONS: 10
+      KAFKA_JMX_PORT: 29997
+      KAFKA_JMX_HOSTNAME: kafka
+    networks:
+      - spring-rest-client
+
+  kafka-ui:
+    container_name: kafka-ui
+    image: provectuslabs/kafka-ui:latest
+    ports:
+      - 8085:8080
+    depends_on:
+      - kafka
+    environment:
+      KAFKA_CLUSTERS_0_NAME: local
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
+      KAFKA_CLUSTERS_0_METRICS_PORT: 29997
 
   parcelloader:
     build:
@@ -17,15 +66,33 @@ services:
     container_name: parcelloader
     restart: always
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/postgres
+      SPRING_DATASOURCE_URL: jdbc:postgresql://parcels_db:5432/postgres
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: postgres
+      SPRING_KAFKA_BOOTSTRAP-SERVERS: kafka:29092
+    env_file:
+      - parcelloader_credentials.env
     ports:
       - "8080:8080"
     networks:
       - spring-rest-client
     depends_on:
-      - postgres
+      - parcels_db
+      
+  billing:
+    build:
+      context: ./billing
+    container_name: billing
+    restart: always
+    ports:
+      - "8083:8083"
+    env_file:
+      - billing_credentials.env
+    networks:
+      - spring-rest-client
+    depends_on:
+      - billing_db
+      - kafka
 
   consoleclient:
     build:
@@ -35,10 +102,12 @@ services:
       - "8081:8081"
     environment:
       PARCEL_LOADER_URL: "http://parcelloader:8080"
+      BILLING_URL: "http://billing:8083"
     networks:
       - spring-rest-client
     depends_on:
       - parcelloader
+      - billing
 
   telegramclient:
     build:
@@ -46,6 +115,7 @@ services:
     container_name: telegramclient
     environment:
       PARCEL_LOADER_URL: "http://parcelloader:8080"
+      BILLING_URL: "http://billing:8083"
     env_file:
       - telegramclient/credentials.env
     ports:
@@ -54,6 +124,7 @@ services:
       - spring-rest-client
     depends_on:
       - parcelloader
+      - billing
 
 networks:
   spring-rest-client:

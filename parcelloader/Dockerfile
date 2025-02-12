@@ -2,9 +2,6 @@ FROM openjdk:21-jdk-slim AS build
 WORKDIR /app
 COPY . /app
 RUN chmod +x ./gradlew && ./gradlew clean build -x test --no-daemon
-RUN ls -la
-RUN ls -la build
-RUN ls -la build/libs
 
 FROM openjdk:21-jdk-slim AS builder
 WORKDIR /app
